@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CartItem } from "@/components/CartItem";
 import { Shop } from "@/types/shop";
 
 const ELECTRONICS_SHOPS: Shop[] = [
@@ -181,6 +182,12 @@ const CartPage = () => {
   const { items, removeFromCart } = useCart();
   const navigate = useNavigate();
 
+  const handleCheckout = () => {
+    // Here you would typically handle the checkout process
+    // For now, we'll just navigate to a hypothetical checkout page
+    navigate("/checkout");
+  };
+
   if (items.length === 0) {
     return (
       <div className="container py-8">
@@ -202,94 +209,47 @@ const CartPage = () => {
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back
       </Button>
-      <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
-      <div className="space-y-6">
-        {items.map((item) => {
-          const otherShops = ELECTRONICS_SHOPS.filter(
-            (shop) =>
-              shop.name !== item.shopName &&
-              shop.products.some((p) => p.model === item.model)
-          );
-
-          return (
-            <div
-              key={item.id}
-              className="border rounded-lg p-6 space-y-4 bg-white shadow-sm"
-            >
-              <div className="flex items-center justify-between border-b pb-4">
-                <div>
-                  <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p className="text-sm text-gray-600">from {item.shopName}</p>
-                  <p className="text-xl font-bold mt-2 text-primary">
-                    ₹{item.price.toLocaleString()}
-                  </p>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
+          <div className="space-y-6">
+            {items.map((item) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                shops={ELECTRONICS_SHOPS}
+                onRemove={removeFromCart}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="lg:w-80">
+          <div className="bg-white p-6 rounded-lg shadow-sm border sticky top-8">
+            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+            <div className="space-y-2 mb-4">
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm">
+                  <span>{item.name}</span>
+                  <span>₹{item.price.toLocaleString()}</span>
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Remove
-                </Button>
-              </div>
-              {otherShops.length > 0 && (
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-sm mb-3 text-gray-700">
-                    Available at other shops:
-                  </h4>
-                  <div className="space-y-3">
-                    {otherShops.map((shop) => {
-                      const product = shop.products.find(
-                        (p) => p.model === item.model
-                      );
-                      if (!product) return null;
-
-                      const priceDifference = product.price - item.price;
-                      const isLowerPrice = priceDifference < 0;
-
-                      return (
-                        <div
-                          key={shop.name}
-                          className="flex items-center justify-between p-2 rounded hover:bg-gray-100 transition-colors"
-                        >
-                          <div>
-                            <p className="font-medium">{shop.name}</p>
-                            <p className="text-sm text-gray-600">
-                              {shop.distance} • {shop.isOpen ? "Open" : "Closed"}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p
-                              className={`font-semibold ${
-                                isLowerPrice
-                                  ? "text-green-600"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              ₹{product.price.toLocaleString()}
-                            </p>
-                            {priceDifference !== 0 && (
-                              <p
-                                className={`text-sm ${
-                                  isLowerPrice
-                                    ? "text-green-600"
-                                    : "text-gray-500"
-                                }`}
-                              >
-                                {isLowerPrice ? "Save " : ""}
-                                ₹{Math.abs(priceDifference).toLocaleString()}
-                                {isLowerPrice ? " here!" : " more"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              ))}
             </div>
-          );
-        })}
+            <div className="border-t pt-4">
+              <div className="flex justify-between font-semibold">
+                <span>Total</span>
+                <span>
+                  ₹
+                  {items
+                    .reduce((total, item) => total + item.price, 0)
+                    .toLocaleString()}
+                </span>
+              </div>
+            </div>
+            <Button className="w-full mt-6" onClick={handleCheckout}>
+              Proceed to Checkout
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
