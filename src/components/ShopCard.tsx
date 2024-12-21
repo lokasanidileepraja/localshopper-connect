@@ -2,17 +2,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Star } from "lucide-react";
+import { Shop } from "@/types/shop";
 
-interface ShopCardProps {
-  name: string;
-  category: string;
-  rating: number;
-  distance: string;
-  image: string;
-  isOpen: boolean;
-}
-
-export const ShopCard = ({ name, category, rating, distance, image, isOpen }: ShopCardProps) => {
+export const ShopCard = ({ name, category, rating, distance, image, isOpen, products }: Shop) => {
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="p-0">
@@ -37,6 +29,17 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen }: Sh
         <div className="mb-4 flex items-center justify-between text-sm text-gray-600">
           <span>{category}</span>
           <span>{distance}</span>
+        </div>
+        <div className="mb-4">
+          <h4 className="mb-2 font-medium">Available Products</h4>
+          <ul className="space-y-1 text-sm">
+            {products.slice(0, 3).map((product) => (
+              <li key={product.id} className="flex items-center justify-between">
+                <span>{product.name}</span>
+                <span className="font-medium">₹{product.price.toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="flex gap-2">
           <Button className="flex-1">View Shop</Button>
