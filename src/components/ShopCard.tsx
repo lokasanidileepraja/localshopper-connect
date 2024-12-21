@@ -3,8 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Star } from "lucide-react";
 import { Shop } from "@/types/shop";
+import { useNavigate } from "react-router-dom";
 
 export const ShopCard = ({ name, category, rating, distance, image, isOpen, products }: Shop) => {
+  const navigate = useNavigate();
+
   return (
     <Card className="overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="p-0">
@@ -34,7 +37,11 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
           <h4 className="mb-2 font-medium">Available Products</h4>
           <ul className="space-y-1 text-sm">
             {products.slice(0, 3).map((product) => (
-              <li key={product.id} className="flex items-center justify-between">
+              <li 
+                key={product.id} 
+                className="flex items-center justify-between cursor-pointer hover:text-primary"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
                 <span>{product.name}</span>
                 <span className="font-medium">₹{product.price.toLocaleString()}</span>
               </li>
@@ -42,7 +49,12 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
           </ul>
         </div>
         <div className="flex gap-2">
-          <Button className="flex-1">View Shop</Button>
+          <Button 
+            className="flex-1"
+            onClick={() => navigate(`/shop/${name.toLowerCase()}`)}
+          >
+            View Shop
+          </Button>
           <Button variant="outline" size="icon">
             <MessageCircle className="h-4 w-4" />
           </Button>
