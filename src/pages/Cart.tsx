@@ -132,13 +132,15 @@ const CartPage = () => {
           return (
             <div
               key={item.id}
-              className="border rounded-lg p-4 space-y-4"
+              className="border rounded-lg p-6 space-y-4 bg-white shadow-sm"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border-b pb-4">
                 <div>
-                  <h3 className="font-semibold">{item.name}</h3>
+                  <h3 className="text-lg font-semibold">{item.name}</h3>
                   <p className="text-sm text-gray-600">from {item.shopName}</p>
-                  <p className="font-bold mt-1">₹{item.price.toLocaleString()}</p>
+                  <p className="text-xl font-bold mt-2 text-primary">
+                    ₹{item.price.toLocaleString()}
+                  </p>
                 </div>
                 <Button
                   variant="outline"
@@ -148,31 +150,55 @@ const CartPage = () => {
                 </Button>
               </div>
               {otherShops.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-sm mb-2">
-                    Also available at:
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-sm mb-3 text-gray-700">
+                    Available at other shops:
                   </h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {otherShops.map((shop) => {
                       const product = shop.products.find(
                         (p) => p.model === item.model
                       );
                       if (!product) return null;
+
+                      const priceDifference = product.price - item.price;
+                      const isLowerPrice = priceDifference < 0;
+
                       return (
                         <div
                           key={shop.name}
-                          className="flex items-center justify-between text-sm"
+                          className="flex items-center justify-between p-2 rounded hover:bg-gray-100 transition-colors"
                         >
-                          <span>{shop.name}</span>
-                          <span
-                            className={
-                              product.price < item.price
-                                ? "text-green-600 font-medium"
-                                : ""
-                            }
-                          >
-                            ₹{product.price.toLocaleString()}
-                          </span>
+                          <div>
+                            <p className="font-medium">{shop.name}</p>
+                            <p className="text-sm text-gray-600">
+                              {shop.distance} • {shop.isOpen ? "Open" : "Closed"}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p
+                              className={`font-semibold ${
+                                isLowerPrice
+                                  ? "text-green-600"
+                                  : "text-gray-900"
+                              }`}
+                            >
+                              ₹{product.price.toLocaleString()}
+                            </p>
+                            {priceDifference !== 0 && (
+                              <p
+                                className={`text-sm ${
+                                  isLowerPrice
+                                    ? "text-green-600"
+                                    : "text-gray-500"
+                                }`}
+                              >
+                                {isLowerPrice ? "Save " : ""}
+                                ₹{Math.abs(priceDifference).toLocaleString()}
+                                {isLowerPrice ? " here!" : " more"}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
