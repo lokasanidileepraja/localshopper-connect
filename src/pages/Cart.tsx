@@ -32,6 +32,16 @@ const ELECTRONICS_SHOPS: Shop[] = [
         model: "MacBook Air M2",
         inStock: true,
         image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      },
+      {
+        id: "7",
+        name: "Samsung Galaxy S23",
+        category: "mobile",
+        price: 75999,
+        brand: "Samsung",
+        model: "Galaxy S23",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
       }
     ]
   },
@@ -60,7 +70,8 @@ const ELECTRONICS_SHOPS: Shop[] = [
         price: 74999,
         brand: "Samsung",
         model: "Galaxy S23",
-        inStock: true
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
       }
     ]
   },
@@ -89,7 +100,78 @@ const ELECTRONICS_SHOPS: Shop[] = [
         price: 24999,
         brand: "Apple",
         model: "AirPods Pro 2nd Gen",
-        inStock: true
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
+      }
+    ]
+  },
+  {
+    name: "ElectroMart",
+    category: "Electronics Store",
+    rating: 4.6,
+    distance: "1.5 km",
+    image: "https://images.unsplash.com/photo-1478860409698-8707f313ee8b",
+    isOpen: true,
+    products: [
+      {
+        id: "8",
+        name: "iPhone 15",
+        category: "mobile",
+        price: 77999,
+        brand: "Apple",
+        model: "iPhone 15",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      },
+      {
+        id: "9",
+        name: "Samsung Galaxy S23",
+        category: "mobile",
+        price: 73999,
+        brand: "Samsung",
+        model: "Galaxy S23",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+      },
+      {
+        id: "10",
+        name: "AirPods Pro",
+        category: "accessory",
+        price: 23999,
+        brand: "Apple",
+        model: "AirPods Pro 2nd Gen",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
+      }
+    ]
+  },
+  {
+    name: "Smart Electronics",
+    category: "Electronics Store",
+    rating: 4.4,
+    distance: "2.0 km",
+    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1",
+    isOpen: true,
+    products: [
+      {
+        id: "11",
+        name: "iPhone 15",
+        category: "mobile",
+        price: 80999,
+        brand: "Apple",
+        model: "iPhone 15",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      },
+      {
+        id: "12",
+        name: "Samsung Galaxy S23",
+        category: "mobile",
+        price: 76999,
+        brand: "Samsung",
+        model: "Galaxy S23",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
       }
     ]
   }
