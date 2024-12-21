@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Shop } from "@/types/shop";
 import { ShopCard } from "@/components/ShopCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/components/ui/use-toast";
 
 const ELECTRONICS_SHOPS: Shop[] = [
   {
@@ -99,6 +100,8 @@ const ELECTRONICS_SHOPS: Shop[] = [
 const ShopPage = () => {
   const { shopName } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
   
   const shop = ELECTRONICS_SHOPS.find(
     (s) => s.name.toLowerCase() === shopName?.toLowerCase()
@@ -108,16 +111,35 @@ const ShopPage = () => {
     return <div>Shop not found</div>;
   }
 
+  const handleAddToCart = (productId: string) => {
+    const product = shop.products.find((p) => p.id === productId);
+    if (product) {
+      addToCart(product, shop.name);
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart.`,
+      });
+    }
+  };
+
   return (
     <div className="container py-8">
-      <Button
-        variant="ghost"
-        className="mb-4"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
+      <div className="flex justify-between items-center mb-4">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => navigate("/cart")}
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" />
+          View Cart
+        </Button>
+      </div>
       <ShopCard {...shop} />
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">All Products</h2>
@@ -149,6 +171,13 @@ const ShopPage = () => {
                   {product.inStock ? "In Stock" : "Out of Stock"}
                 </span>
               </p>
+              <Button
+                className="w-full mt-4"
+                onClick={() => handleAddToCart(product.id)}
+                disabled={!product.inStock}
+              >
+                Add to Cart
+              </Button>
             </div>
           ))}
         </div>
