@@ -6,7 +6,7 @@ import { CartList } from "@/components/cart/CartList";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { useToast } from "@/components/ui/use-toast";
 
-// Keep the ELECTRONICS_SHOPS data constant
+// Keep the ELECTRONICS_SHOPS data constant but fix the category types
 const ELECTRONICS_SHOPS = [
   {
     name: "TechHub Electronics",
@@ -19,7 +19,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "1",
         name: "iPhone 15",
-        category: "mobile",
+        category: "mobile" as const,
         price: 79999,
         brand: "Apple",
         model: "iPhone 15",
@@ -29,7 +29,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "2",
         name: "MacBook Air M2",
-        category: "laptop",
+        category: "laptop" as const,
         price: 114900,
         brand: "Apple",
         model: "MacBook Air M2",
@@ -39,7 +39,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "7",
         name: "Samsung Galaxy S23",
-        category: "mobile",
+        category: "mobile" as const,
         price: 75999,
         brand: "Samsung",
         model: "Galaxy S23",
@@ -59,7 +59,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "3",
         name: "iPhone 15",
-        category: "mobile",
+        category: "mobile" as const,
         price: 78999,
         brand: "Apple",
         model: "iPhone 15",
@@ -69,7 +69,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "4",
         name: "Samsung Galaxy S23",
-        category: "mobile",
+        category: "mobile" as const,
         price: 74999,
         brand: "Samsung",
         model: "Galaxy S23",
@@ -89,7 +89,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "5",
         name: "iPhone 15",
-        category: "mobile",
+        category: "mobile" as const,
         price: 81999,
         brand: "Apple",
         model: "iPhone 15",
@@ -99,7 +99,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "6",
         name: "AirPods Pro",
-        category: "accessory",
+        category: "accessory" as const,
         price: 24999,
         brand: "Apple",
         model: "AirPods Pro 2nd Gen",
@@ -119,7 +119,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "8",
         name: "iPhone 15",
-        category: "mobile",
+        category: "mobile" as const,
         price: 77999,
         brand: "Apple",
         model: "iPhone 15",
@@ -129,7 +129,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "9",
         name: "Samsung Galaxy S23",
-        category: "mobile",
+        category: "mobile" as const,
         price: 73999,
         brand: "Samsung",
         model: "Galaxy S23",
@@ -139,7 +139,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "10",
         name: "AirPods Pro",
-        category: "accessory",
+        category: "accessory" as const,
         price: 23999,
         brand: "Apple",
         model: "AirPods Pro 2nd Gen",
@@ -159,7 +159,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "11",
         name: "iPhone 15",
-        category: "mobile",
+        category: "mobile" as const,
         price: 80999,
         brand: "Apple",
         model: "iPhone 15",
@@ -169,7 +169,7 @@ const ELECTRONICS_SHOPS = [
       {
         id: "12",
         name: "Samsung Galaxy S23",
-        category: "mobile",
+        category: "mobile" as const,
         price: 76999,
         brand: "Samsung",
         model: "Galaxy S23",
