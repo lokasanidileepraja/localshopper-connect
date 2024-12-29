@@ -1,10 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { CartList } from "@/components/cart/CartList";
-import { CartSummary } from "@/components/cart/CartSummary";
 import { useToast } from "@/components/ui/use-toast";
+import { CartLayout } from "@/components/cart/CartLayout";
+import { CartHeader } from "@/components/cart/CartHeader";
+import { CartContent } from "@/components/cart/CartContent";
 
 // Keep the ELECTRONICS_SHOPS data constant but fix the category types
 const ELECTRONICS_SHOPS = [
@@ -182,7 +180,6 @@ const ELECTRONICS_SHOPS = [
 
 const CartPage = () => {
   const { items, removeFromCart } = useCart();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleCheckout = () => {
@@ -193,27 +190,15 @@ const CartPage = () => {
   };
 
   return (
-    <div className="container py-8">
-      <Button variant="ghost" className="mb-4" onClick={() => navigate(-1)}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
-          <CartList
-            items={items}
-            shops={ELECTRONICS_SHOPS}
-            onRemove={removeFromCart}
-          />
-        </div>
-        {items.length > 0 && (
-          <div className="lg:w-80">
-            <CartSummary items={items} onCheckout={handleCheckout} />
-          </div>
-        )}
-      </div>
-    </div>
+    <CartLayout>
+      <CartHeader />
+      <CartContent 
+        items={items}
+        shops={ELECTRONICS_SHOPS}
+        onRemove={removeFromCart}
+        onCheckout={handleCheckout}
+      />
+    </CartLayout>
   );
 };
 
