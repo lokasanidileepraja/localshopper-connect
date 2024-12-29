@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { CartItem } from "@/components/CartItem";
-import { Shop } from "@/types/shop";
+import { CartList } from "@/components/cart/CartList";
+import { CartSummary } from "@/components/cart/CartSummary";
+import { useToast } from "@/components/ui/use-toast";
 
-const ELECTRONICS_SHOPS: Shop[] = [
+// Keep the ELECTRONICS_SHOPS data constant
+const ELECTRONICS_SHOPS = [
   {
     name: "TechHub Electronics",
     category: "Electronics Store",
@@ -181,27 +183,14 @@ const ELECTRONICS_SHOPS: Shop[] = [
 const CartPage = () => {
   const { items, removeFromCart } = useCart();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleCheckout = () => {
-    // Here you would typically handle the checkout process
-    // For now, we'll just navigate to a hypothetical checkout page
-    navigate("/checkout");
+    toast({
+      title: "Proceeding to checkout",
+      description: "This feature will be implemented soon.",
+    });
   };
-
-  if (items.length === 0) {
-    return (
-      <div className="container py-8">
-        <Button variant="ghost" className="mb-4" onClick={() => navigate(-1)}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-        <div className="text-center py-8">
-          <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
-          <p className="text-gray-600">Start shopping to add items to your cart</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container py-8">
@@ -212,44 +201,17 @@ const CartPage = () => {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1">
           <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
-          <div className="space-y-6">
-            {items.map((item) => (
-              <CartItem
-                key={item.id}
-                item={item}
-                shops={ELECTRONICS_SHOPS}
-                onRemove={removeFromCart}
-              />
-            ))}
-          </div>
+          <CartList
+            items={items}
+            shops={ELECTRONICS_SHOPS}
+            onRemove={removeFromCart}
+          />
         </div>
-        <div className="lg:w-80">
-          <div className="bg-white p-6 rounded-lg shadow-sm border sticky top-8">
-            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-2 mb-4">
-              {items.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <span>{item.name}</span>
-                  <span>₹{item.price.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-            <div className="border-t pt-4">
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>
-                  ₹
-                  {items
-                    .reduce((total, item) => total + item.price, 0)
-                    .toLocaleString()}
-                </span>
-              </div>
-            </div>
-            <Button className="w-full mt-6" onClick={handleCheckout}>
-              Proceed to Checkout
-            </Button>
+        {items.length > 0 && (
+          <div className="lg:w-80">
+            <CartSummary items={items} onCheckout={handleCheckout} />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
