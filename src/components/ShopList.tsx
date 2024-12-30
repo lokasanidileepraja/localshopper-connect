@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ShopCard } from "./ShopCard";
 import { PriceComparison } from "./PriceComparison";
 import { Shop } from "@/types/shop";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useQuery } from "@tanstack/react-query";
 
 const ELECTRONICS_SHOPS: Shop[] = [
   {
@@ -97,17 +99,31 @@ const ELECTRONICS_SHOPS: Shop[] = [
 export const ShopList = () => {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
 
+  const { data: shops, isLoading } = useQuery({
+    queryKey: ["shops"],
+    queryFn: () => Promise.resolve(ELECTRONICS_SHOPS),
+  });
+
   const handleCompare = (model: string) => {
     setSelectedModel(model === selectedModel ? null : model);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent, model: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCompare(model);
+    }
+  };
+
+  if (isLoading) return <LoadingSpinner />;
+
   const availableModels = Array.from(
     new Set(
-      ELECTRONICS_SHOPS.flatMap((shop) =>
+      shops?.flatMap((shop) =>
         shop.products
           .filter((product) => product.category === "mobile")
           .map((product) => product.model)
-      )
+      ) || []
     )
   );
 
@@ -117,7 +133,7 @@ export const ShopList = () => {
         <div className="mb-8">
           <h2 className="mb-4 text-3xl font-bold">Compare Mobile Prices</h2>
           <PriceComparison
-            shops={ELECTRONICS_SHOPS}
+            shops={shops || []}
             models={availableModels}
             selectedModel={selectedModel}
             onModelSelect={handleCompare}
@@ -125,7 +141,7 @@ export const ShopList = () => {
         </div>
         <h2 className="mb-8 text-3xl font-bold">Nearby Electronics Shops</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ELECTRONICS_SHOPS.map((shop) => (
+          {shops?.map((shop) => (
             <ShopCard key={shop.name} {...shop} />
           ))}
         </div>
