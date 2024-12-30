@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Smartphone } from "lucide-react";
+import { Smartphone, ArrowUpDown } from "lucide-react";
 
 interface PriceComparisonProps {
   shops: Shop[];
@@ -25,16 +25,18 @@ export const PriceComparison = ({
 }: PriceComparisonProps) => {
   if (!selectedModel) {
     return (
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {models.map((model) => (
           <Button
             key={model}
             variant="outline"
             onClick={() => onModelSelect(model)}
-            className="gap-2"
+            className="group relative overflow-hidden bg-white hover:bg-gray-50 transition-colors"
           >
-            <Smartphone className="h-4 w-4" />
-            Compare {model} prices
+            <div className="flex items-center gap-2">
+              <Smartphone className="h-4 w-4 text-primary transition-transform group-hover:scale-110" />
+              <span>Compare {model}</span>
+            </div>
           </Button>
         ))}
       </div>
@@ -54,12 +56,27 @@ export const PriceComparison = ({
     .sort((a, b) => (a.product!.price > b.product!.price ? 1 : -1));
 
   return (
-    <div className="rounded-lg border">
+    <div className="rounded-lg border bg-white shadow-sm">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Comparing prices for {selectedModel}
+          </h3>
+          <Button variant="ghost" size="sm" onClick={() => onModelSelect("")}>
+            Close
+          </Button>
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[200px]">Shop</TableHead>
-            <TableHead>Price</TableHead>
+            <TableHead>
+              <div className="flex items-center gap-1">
+                Price
+                <ArrowUpDown className="h-4 w-4 text-gray-500" />
+              </div>
+            </TableHead>
             <TableHead>Distance</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Stock</TableHead>
@@ -67,9 +84,11 @@ export const PriceComparison = ({
         </TableHeader>
         <TableBody>
           {priceComparison.map(({ shopName, product, distance, isOpen }) => (
-            <TableRow key={shopName}>
+            <TableRow key={shopName} className="group hover:bg-gray-50">
               <TableCell className="font-medium">{shopName}</TableCell>
-              <TableCell>₹{product!.price.toLocaleString()}</TableCell>
+              <TableCell className="font-semibold text-primary">
+                ₹{product!.price.toLocaleString()}
+              </TableCell>
               <TableCell>{distance}</TableCell>
               <TableCell>
                 <span
@@ -79,7 +98,7 @@ export const PriceComparison = ({
                       : "bg-red-100 text-red-700"
                   }`}
                 >
-                  {isOpen ? "Open" : "Closed"}
+                  {isOpen ? "Open Now" : "Closed"}
                 </span>
               </TableCell>
               <TableCell>
@@ -97,11 +116,6 @@ export const PriceComparison = ({
           ))}
         </TableBody>
       </Table>
-      <div className="flex justify-end p-4">
-        <Button variant="ghost" onClick={() => onModelSelect(selectedModel)}>
-          Close Comparison
-        </Button>
-      </div>
     </div>
   );
 };
