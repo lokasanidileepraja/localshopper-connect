@@ -9,53 +9,57 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
   const navigate = useNavigate();
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="p-0">
-        <div className="relative h-48 w-full">
-          <img src={image} alt={name} className="h-full w-full object-cover" />
+        <div className="relative h-48 w-full overflow-hidden">
+          <img 
+            src={image} 
+            alt={name} 
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
+          />
           <Badge
             variant={isOpen ? "default" : "secondary"}
-            className="absolute right-2 top-2"
+            className="absolute right-2 top-2 z-10"
           >
-            {isOpen ? "Open" : "Closed"}
+            {isOpen ? "Open Now" : "Closed"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-semibold">{name}</h3>
-          <div className="flex items-center gap-1">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-semibold text-lg">{name}</h3>
+          <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-full">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm">{rating}</span>
+            <span className="text-sm font-medium text-yellow-700">{rating}</span>
           </div>
         </div>
         <div className="mb-4 flex items-center justify-between text-sm text-gray-600">
-          <span>{category}</span>
-          <span>{distance}</span>
+          <span className="bg-gray-100 px-2 py-1 rounded-full">{category}</span>
+          <span className="text-primary font-medium">{distance}</span>
         </div>
-        <div className="mb-4">
-          <h4 className="mb-2 font-medium">Available Products</h4>
-          <ul className="space-y-1 text-sm">
+        <div className="mb-4 space-y-3">
+          <h4 className="font-medium text-gray-900">Available Products</h4>
+          <ul className="space-y-2">
             {products.slice(0, 3).map((product) => (
               <li 
                 key={product.id} 
-                className="flex items-center justify-between cursor-pointer hover:text-primary"
+                className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-gray-50 cursor-pointer"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
-                <span>{product.name}</span>
-                <span className="font-medium">₹{product.price.toLocaleString()}</span>
+                <span className="text-sm text-gray-700">{product.name}</span>
+                <span className="font-medium text-sm text-primary">₹{product.price.toLocaleString()}</span>
               </li>
             ))}
           </ul>
         </div>
         <div className="flex gap-2">
           <Button 
-            className="flex-1"
-            onClick={() => navigate(`/shop/${name.toLowerCase()}`)}
+            className="flex-1 bg-primary hover:bg-primary/90"
+            onClick={() => navigate(`/shop/${name}`)}
           >
-            View Shop
+            Visit Store
           </Button>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="hover:text-primary">
             <MessageCircle className="h-4 w-4" />
           </Button>
         </div>
