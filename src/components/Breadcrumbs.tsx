@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,8 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Home } from "lucide-react";
 
 export const Breadcrumbs = () => {
@@ -18,8 +18,10 @@ export const Breadcrumbs = () => {
     <Breadcrumb className="mb-4 px-4">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink as={Link} to="/">
-            <Home className="h-4 w-4" />
+          <BreadcrumbLink asChild>
+            <Link to="/">
+              <Home className="h-4 w-4" />
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {pathnames.map((name, index) => {
@@ -33,8 +35,8 @@ export const Breadcrumbs = () => {
                 {isLast ? (
                   <BreadcrumbPage>{name}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink as={Link} to={routeTo}>
-                    {name}
+                  <BreadcrumbLink asChild>
+                    <Link to={routeTo}>{name}</Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
