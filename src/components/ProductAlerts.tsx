@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Bell, PriceChange } from "lucide-react";
+import { Bell, TrendingDown } from "lucide-react";
 
 interface ProductAlertsProps {
   productId: string;
@@ -91,7 +91,7 @@ export const ProductAlerts = ({
 
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <PriceChange className="h-5 w-5 text-primary" />
+            <TrendingDown className="h-5 w-5 text-primary" />
             <h3 className="font-medium">Price Alert</h3>
           </div>
           <Input
