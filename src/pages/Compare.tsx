@@ -24,19 +24,17 @@ const Compare = () => {
 
   return (
     <div className="container py-8 space-y-12">
-      <section>
-        <h1 className="text-3xl font-bold mb-8">Compare Products & Shops</h1>
-        <div className="space-y-12">
-          <section>
-            <h2 className="text-2xl font-bold mb-6">Compare Shops</h2>
-            <ShopComparison {...shopComparisonProps} />
-          </section>
-          
-          <section>
-            <h2 className="text-2xl font-bold mb-6">Compare Prices</h2>
-            <PriceComparison {...priceComparisonProps} />
-          </section>
-        </div>
+      <h1 className="text-3xl font-bold mb-8">Compare Products & Shops</h1>
+      <div className="space-y-12">
+        <section>
+          <h2 className="text-2xl font-bold mb-6">Compare Shops</h2>
+          <ShopComparison {...shopComparisonProps} />
+        </section>
+        
+        <section>
+          <h2 className="text-2xl font-bold mb-6">Compare Prices</h2>
+          <PriceComparison {...priceComparisonProps} />
+        </section>
       </div>
     </div>
   );
