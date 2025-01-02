@@ -14,8 +14,8 @@ import { ProductRecommendations } from "@/components/ProductRecommendations";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 
 const Index = () => {
-  // Mock data and handlers for demonstration
-  const mockShopData = {
+  // Mock data for ShopComparison
+  const shopComparisonProps = {
     currentShop: "TechHub Electronics",
     price: 79999,
     otherShops: ELECTRONICS_SHOPS.filter(shop => shop.name !== "TechHub Electronics"),
@@ -25,13 +25,32 @@ const Index = () => {
     }
   };
 
-  const mockPriceData = {
+  // Mock data for PriceComparison
+  const priceComparisonProps = {
     shops: ELECTRONICS_SHOPS,
-    models: ["iPhone 15", "Galaxy S23"],
-    selectedModel: null,
+    models: ["iPhone 15", "Galaxy S23", "MacBook Air M2", "AirPods Pro 2nd Gen"],
+    selectedModel: "iPhone 15",
     onModelSelect: (model: string) => {
       console.log(`Selected model: ${model}`);
     }
+  };
+
+  // Mock data for BulkPurchase
+  const bulkPurchaseProps = {
+    productId: "1", // iPhone 15 ID from the mock data
+    basePrice: 79999
+  };
+
+  // Mock data for ProductAlerts
+  const productAlertsProps = {
+    productId: "1",
+    inStock: true,
+    currentPrice: 79999
+  };
+
+  // Mock data for ProductRecommendations
+  const productRecommendationsProps = {
+    currentProductId: "1"
   };
 
   return (
@@ -45,11 +64,32 @@ const Index = () => {
         <AddressManager />
         <PaymentMethods />
         <OrderHistory />
-        <ShopComparison {...mockShopData} />
-        <PriceComparison {...mockPriceData} />
-        <BulkPurchase productId="iphone-15" basePrice={79999} />
-        <ProductAlerts productId="iphone-15" inStock={true} currentPrice={79999} />
-        <ProductRecommendations currentProductId="iphone-15" />
+        <div className="space-y-12">
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Compare Shops</h2>
+            <ShopComparison {...shopComparisonProps} />
+          </section>
+          
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Compare Prices</h2>
+            <PriceComparison {...priceComparisonProps} />
+          </section>
+          
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Bulk Purchase Options</h2>
+            <BulkPurchase {...bulkPurchaseProps} />
+          </section>
+          
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Product Alerts</h2>
+            <ProductAlerts {...productAlertsProps} />
+          </section>
+          
+          <section>
+            <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
+            <ProductRecommendations {...productRecommendationsProps} />
+          </section>
+        </div>
       </div>
     </div>
   );
