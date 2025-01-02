@@ -1,25 +1,22 @@
 import { ShopComparison } from "@/components/ShopComparison";
 import { PriceComparison } from "@/components/PriceComparison";
-import { ELECTRONICS_SHOPS } from "@/data/shops";
+import { Shop } from "@/types/shop";
 
 const Compare = () => {
   const shopComparisonProps = {
-    currentShop: "TechHub Electronics",
-    price: 79999,
-    otherShops: ELECTRONICS_SHOPS.filter(shop => shop.name !== "TechHub Electronics"),
-    productModel: "iPhone 15",
-    onShopSelect: (shopName: string, price: number) => {
-      console.log(`Selected shop: ${shopName} with price: ${price}`);
-    }
+    shops: [] as Shop[],
+    onCompare: (shopIds: string[]) => {
+      console.log("Comparing shops:", shopIds);
+    },
   };
 
   const priceComparisonProps = {
-    shops: ELECTRONICS_SHOPS,
-    models: ["iPhone 15", "Galaxy S23", "MacBook Air M2", "AirPods Pro 2nd Gen"],
-    selectedModel: "iPhone 15",
+    shops: [] as Shop[],
+    models: ["iPhone 15", "Samsung Galaxy S23", "Google Pixel 8"],
+    selectedModel: null,
     onModelSelect: (model: string) => {
-      console.log(`Selected model: ${model}`);
-    }
+      console.log("Selected model:", model);
+    },
   };
 
   return (
