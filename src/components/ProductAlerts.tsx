@@ -1,29 +1,27 @@
-import React from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
+interface ProductAlertsProps {
+  productId: string;
+  inStock: boolean;
+  currentPrice: number;
+}
 
-export const ProductAlerts = () => {
-  const { toast } = useToast();
-
-  const handleSetAlert = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Product alerts will be available soon!",
-    });
-  };
-
+export const ProductAlerts = ({
+  productId,
+  inStock,
+  currentPrice,
+}: ProductAlertsProps) => {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold">Product Alerts</h2>
-        <p className="text-gray-500">Get notified about product updates</p>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Product Alerts</h2>
+      <div className="space-y-2">
+        {!inStock && (
+          <button className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-primary/90">
+            Notify When Available
+          </button>
+        )}
+        <button className="w-full py-2 px-4 border border-primary text-primary rounded hover:bg-primary/10">
+          Set Price Alert
+        </button>
       </div>
-
-      <Button onClick={handleSetAlert}>
-        <Bell className="h-4 w-4 mr-2" />
-        Set Price Alert
-      </Button>
     </div>
   );
 };

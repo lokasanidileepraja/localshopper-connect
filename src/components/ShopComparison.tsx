@@ -1,31 +1,49 @@
-import React from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { Scale } from "lucide-react";
+interface ShopComparisonProps {
+  currentShop: string;
+  price: number;
+  otherShops: Shop[];
+  productModel: string;
+  onShopSelect: (shopName: string, price: number) => void;
+}
 
-export const ShopComparison = () => {
-  const { toast } = useToast();
-  const [comparisons, setComparisons] = React.useState([]);
-
-  React.useEffect(() => {
-    toast({
-      title: "Coming Soon",
-      description: "Shop comparison will be available soon!",
-    });
-  }, []);
-
+export const ShopComparison = ({
+  currentShop,
+  price,
+  otherShops,
+  productModel,
+  onShopSelect,
+}: ShopComparisonProps) => {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold">Shop Comparison</h2>
-        <p className="text-gray-500">Compare prices across different shops</p>
-      </div>
+    <div className="space-y-4">
+      <h4 className="text-sm font-semibold">Compare with other shops</h4>
+      <div className="space-y-2">
+        {otherShops.map((shop) => {
+          const matchingProduct = shop.products.find(
+            (p) => p.model === productModel
+          );
+          if (!matchingProduct) return null;
 
-      {comparisons.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg">
-          <Scale className="h-12 w-12 mx-auto text-gray-400" />
-          <p className="mt-2 text-gray-500">No comparisons available yet</p>
-        </div>
-      ) : null}
+          return (
+            <div
+              key={shop.name}
+              className="flex items-center justify-between p-2 rounded hover:bg-gray-50"
+            >
+              <div>
+                <p className="font-medium">{shop.name}</p>
+                <p className="text-sm text-gray-600">
+                  {shop.distance} • {shop.isOpen ? "Open" : "Closed"}
+                </p>
+              </div>
+              <button
+                className="text-primary hover:underline"
+                onClick={() => onShopSelect(shop.name, matchingProduct.price)}
+              >
+                ₹{matchingProduct.price.toLocaleString()}
+              </button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
