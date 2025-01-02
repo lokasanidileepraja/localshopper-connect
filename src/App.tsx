@@ -11,6 +11,10 @@ import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Product from "./pages/Product";
 import Cart from "./pages/Cart";
+import Compare from "./pages/Compare";
+import Bulk from "./pages/Bulk";
+import Alerts from "./pages/Alerts";
+import Recommendations from "./pages/Recommendations";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +40,10 @@ const App = () => (
                 <Route path="/shop/:shopName" element={<Shop />} />
                 <Route path="/product/:productId" element={<Product />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/compare" element={<Compare />} />
+                <Route path="/bulk" element={<Bulk />} />
+                <Route path="/alerts" element={<Alerts />} />
+                <Route path="/recommendations" element={<Recommendations />} />
               </Routes>
             </BrowserRouter>
           </ErrorBoundary>
