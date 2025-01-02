@@ -1,4 +1,7 @@
 import { Shop } from "@/types/shop";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { MapPin, Clock } from "lucide-react";
 
 interface ShopComparisonProps {
   currentShop: string;
@@ -15,7 +18,15 @@ export const ShopComparison = ({
   productModel,
   onShopSelect,
 }: ShopComparisonProps) => {
-  if (!otherShops) return null; // Add null check to prevent mapping over undefined
+  const { toast } = useToast();
+  if (!otherShops) return null;
+
+  const handleDirections = (shopName: string) => {
+    toast({
+      title: "Opening Maps",
+      description: `Getting directions to ${shopName}`,
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -27,23 +38,48 @@ export const ShopComparison = ({
           );
           if (!matchingProduct) return null;
 
+          const priceDifference = matchingProduct.price - price;
+          const priceDifferenceText = priceDifference > 0 
+            ? `₹${Math.abs(priceDifference).toLocaleString()} more expensive`
+            : `₹${Math.abs(priceDifference).toLocaleString()} cheaper`;
+
           return (
             <div
               key={shop.name}
-              className="flex items-center justify-between p-2 rounded hover:bg-gray-50"
+              className="flex flex-col gap-2 p-4 rounded-lg border hover:border-primary transition-colors"
             >
-              <div>
-                <p className="font-medium">{shop.name}</p>
-                <p className="text-sm text-gray-600">
-                  {shop.distance} • {shop.isOpen ? "Open" : "Closed"}
-                </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">{shop.name}</h3>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    <span>{shop.distance}</span>
+                    <Clock className="h-4 w-4 ml-2" />
+                    <span>{shop.isOpen ? "Open" : "Closed"}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-lg text-primary">
+                    ₹{matchingProduct.price.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-600">{priceDifferenceText}</p>
+                </div>
               </div>
-              <button
-                className="text-primary hover:underline"
-                onClick={() => onShopSelect(shop.name, matchingProduct.price)}
-              >
-                ₹{matchingProduct.price.toLocaleString()}
-              </button>
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  className="flex-1"
+                  onClick={() => onShopSelect(shop.name, matchingProduct.price)}
+                >
+                  Select Store
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleDirections(shop.name)}
+                >
+                  Get Directions
+                </Button>
+              </div>
             </div>
           );
         })}
