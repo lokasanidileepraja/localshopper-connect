@@ -1,3 +1,5 @@
+import { Shop } from "@/types/shop";
+
 interface PriceComparisonProps {
   shops: Shop[];
   models: string[];

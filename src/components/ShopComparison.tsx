@@ -1,3 +1,5 @@
+import { Shop } from "@/types/shop";
+
 interface ShopComparisonProps {
   currentShop: string;
   price: number;
@@ -13,6 +15,8 @@ export const ShopComparison = ({
   productModel,
   onShopSelect,
 }: ShopComparisonProps) => {
+  if (!otherShops) return null; // Add null check to prevent mapping over undefined
+
   return (
     <div className="space-y-4">
       <h4 className="text-sm font-semibold">Compare with other shops</h4>

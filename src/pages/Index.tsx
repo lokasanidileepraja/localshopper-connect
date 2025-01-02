@@ -11,8 +11,29 @@ import { PriceComparison } from "@/components/PriceComparison";
 import { BulkPurchase } from "@/components/BulkPurchase";
 import { ProductAlerts } from "@/components/ProductAlerts";
 import { ProductRecommendations } from "@/components/ProductRecommendations";
+import { ELECTRONICS_SHOPS } from "@/data/shops";
 
 const Index = () => {
+  // Mock data and handlers for demonstration
+  const mockShopData = {
+    currentShop: "TechHub Electronics",
+    price: 79999,
+    otherShops: ELECTRONICS_SHOPS.filter(shop => shop.name !== "TechHub Electronics"),
+    productModel: "iPhone 15",
+    onShopSelect: (shopName: string, price: number) => {
+      console.log(`Selected shop: ${shopName} with price: ${price}`);
+    }
+  };
+
+  const mockPriceData = {
+    shops: ELECTRONICS_SHOPS,
+    models: ["iPhone 15", "Galaxy S23"],
+    selectedModel: null,
+    onModelSelect: (model: string) => {
+      console.log(`Selected model: ${model}`);
+    }
+  };
+
   return (
     <div className="min-h-screen space-y-8">
       <Hero />
@@ -24,11 +45,11 @@ const Index = () => {
         <AddressManager />
         <PaymentMethods />
         <OrderHistory />
-        <ShopComparison />
-        <PriceComparison />
-        <BulkPurchase />
-        <ProductAlerts />
-        <ProductRecommendations />
+        <ShopComparison {...mockShopData} />
+        <PriceComparison {...mockPriceData} />
+        <BulkPurchase productId="iphone-15" basePrice={79999} />
+        <ProductAlerts productId="iphone-15" inStock={true} currentPrice={79999} />
+        <ProductRecommendations currentProductId="iphone-15" />
       </div>
     </div>
   );
