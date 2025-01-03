@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useState, useEffect } from "react";
 
 const FEATURED_PRODUCTS = [
   {
@@ -34,6 +36,36 @@ const FEATURED_PRODUCTS = [
 
 export const FeaturedProducts = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading state
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((index) => (
+              <Card key={index} className="animate-pulse">
+                <div className="h-48 bg-gray-200" />
+                <div className="p-4 space-y-4">
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded w-1/2" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 bg-gray-50">

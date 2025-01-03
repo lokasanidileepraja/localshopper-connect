@@ -5,6 +5,7 @@ import { Newsletter } from "@/components/Newsletter";
 import { Testimonials } from "@/components/Testimonials";
 import { BrandsShowcase } from "@/components/BrandsShowcase";
 import { Categories } from "@/components/Categories";
+import { BackToTop } from "@/components/BackToTop";
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <BrandsShowcase />
       <Testimonials />
       <Newsletter />
+      <BackToTop />
     </div>
   );
 };
