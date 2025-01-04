@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Bell, BellOff } from "lucide-react";
+import { Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { AlertForm } from "./AlertForm";
+import { ActiveAlert } from "./ActiveAlert";
 
 interface PriceAlertsProps {
   productName: string;
@@ -17,15 +17,6 @@ export const PriceAlerts = ({ productName, currentPrice }: PriceAlertsProps) => 
   const { toast } = useToast();
 
   const handleSetAlert = () => {
-    if (!targetPrice || Number(targetPrice) >= currentPrice) {
-      toast({
-        title: "Invalid Price",
-        description: "Please enter a target price lower than the current price",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsAlertSet(true);
     toast({
       title: "Price Alert Set",
@@ -63,39 +54,17 @@ export const PriceAlerts = ({ productName, currentPrice }: PriceAlertsProps) => 
           </div>
           
           {!isAlertSet ? (
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={targetPrice}
-                  onChange={(e) => setTargetPrice(e.target.value)}
-                  placeholder="Enter target price"
-                  className="flex-1"
-                />
-                <Button onClick={handleSetAlert}>
-                  Set Alert
-                </Button>
-              </div>
-              <p className="text-sm text-gray-500">
-                We'll notify you when the price drops below your target price
-              </p>
-            </div>
+            <AlertForm
+              targetPrice={targetPrice}
+              onTargetPriceChange={setTargetPrice}
+              onSetAlert={handleSetAlert}
+              currentPrice={currentPrice}
+            />
           ) : (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center justify-between p-4 rounded-lg bg-primary/10">
-                <div>
-                  <p className="font-medium">Alert Set</p>
-                  <p className="text-sm text-gray-600">Target: ₹{Number(targetPrice).toLocaleString()}</p>
-                </div>
-                <Button variant="outline" size="icon" onClick={handleRemoveAlert}>
-                  <BellOff className="h-4 w-4" />
-                </Button>
-              </div>
-            </motion.div>
+            <ActiveAlert
+              targetPrice={targetPrice}
+              onRemoveAlert={handleRemoveAlert}
+            />
           )}
         </motion.div>
       </CardContent>

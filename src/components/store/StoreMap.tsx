@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { ELECTRONICS_SHOPS } from "@/data/shops";
+import { initializeMap } from "@/utils/mapUtils";
 
 export const StoreMap = () => {
   const [mapboxToken, setMapboxToken] = useState("");
@@ -13,47 +14,10 @@ export const StoreMap = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const { toast } = useToast();
 
-  const initializeMap = (token: string) => {
-    if (!mapContainer.current) return;
-
-    mapboxgl.accessToken = token;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [77.2090, 28.6139], // Default to Delhi coordinates
-      zoom: 11
-    });
-
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    // Add markers for each store
-    ELECTRONICS_SHOPS.forEach(shop => {
-      // For demo purposes, generating random coordinates around Delhi
-      const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
-      const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
-
-      const popup = new mapboxgl.Popup({ offset: 25 })
-        .setHTML(`
-          <div class="p-2">
-            <h3 class="font-semibold">${shop.name}</h3>
-            <p class="text-sm">${shop.isOpen ? 'Open' : 'Closed'}</p>
-            <p class="text-sm">Rating: ${shop.rating}⭐</p>
-          </div>
-        `);
-
-      new mapboxgl.Marker()
-        .setLngLat([lng, lat])
-        .setPopup(popup)
-        .addTo(map.current);
-    });
-  };
-
   const handleSaveToken = () => {
     if (!mapboxToken) {
       toast({
-        title: "Error",
+        title: "Missing Token",
         description: "Please enter your Mapbox token",
         variant: "destructive",
       });
@@ -61,11 +25,13 @@ export const StoreMap = () => {
     }
     
     try {
-      initializeMap(mapboxToken);
-      toast({
-        title: "Success",
-        description: "Map initialized successfully",
-      });
+      if (mapContainer.current) {
+        map.current = initializeMap(mapContainer.current, mapboxToken, ELECTRONICS_SHOPS);
+        toast({
+          title: "Success",
+          description: "Map initialized successfully",
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
