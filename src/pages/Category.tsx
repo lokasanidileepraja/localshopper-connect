@@ -4,25 +4,31 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 const Category = () => {
   const { categoryName } = useParams();
   const { toast } = useToast();
   
-  // Simulate loading state
+  // Move toast notification to useEffect to prevent render loop
+  useEffect(() => {
+    if (categoryName) {
+      const categoryProducts = products[categoryName.toLowerCase()] || [];
+      if (categoryProducts.length === 0) {
+        toast({
+          title: "Category Empty",
+          description: "No products found in this category",
+          variant: "destructive",
+        });
+      }
+    }
+  }, [categoryName, toast]);
+
   if (!categoryName) {
     return <LoadingSpinner />;
   }
 
   const categoryProducts = products[categoryName.toLowerCase()] || [];
-
-  if (categoryProducts.length === 0) {
-    toast({
-      title: "Category Empty",
-      description: "No products found in this category",
-      variant: "destructive",
-    });
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
