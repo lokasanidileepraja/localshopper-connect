@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCategoryFilter } from "@/hooks/useCategoryFilter";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { CategoryHeader } from "./categories/CategoryHeader";
 import { CategoryGrid } from "./categories/CategoryGrid";
 import { categories } from "@/data/categories";
+import { motion } from "framer-motion";
 
 export const Categories = () => {
   const navigate = useNavigate();
@@ -20,22 +21,34 @@ export const Categories = () => {
       toast({
         title: `Browsing ${categoryName}`,
         description: "Loading products in this category...",
+        duration: 2000,
       });
     }
     navigate(`/shop/TechHub Electronics`);
   };
 
   useKeyboardNav(
-    () => setSelectedIndex(prev => Math.max(0, prev - 2)),
-    () => setSelectedIndex(prev => Math.min(categories.length - 1, prev + 2)),
-    () => scrollToCategory(categories[selectedIndex].name)
+    () => setSelectedIndex(prev => Math.max(0, prev - 1)),
+    () => setSelectedIndex(prev => Math.min(filteredCategories().length - 1, prev + 1)),
+    () => scrollToCategory(filteredCategories()[selectedIndex]?.name)
   );
+
+  useEffect(() => {
+    // Reset selected index when filter changes
+    setSelectedIndex(0);
+  }, [filter]);
 
   const filtered = filteredCategories();
 
   return (
-    <section className="py-6 sm:py-12 bg-gradient-to-b from-white to-gray-50" id="categories">
-      <div className="container mx-auto px-4">
+    <motion.section 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="py-8 sm:py-12 bg-gradient-to-b from-white to-gray-50"
+      id="categories"
+    >
+      <div className="container mx-auto px-4 max-w-7xl">
         <CategoryHeader filter={filter} setFilter={setFilter} />
         <CategoryGrid 
           categories={filtered} 
@@ -43,6 +56,6 @@ export const Categories = () => {
           onSelect={scrollToCategory}
         />
       </div>
-    </section>
+    </motion.section>
   );
 };
