@@ -16,6 +16,7 @@ import Checkout from "./pages/Checkout";
 import Product from "./pages/Product";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { CartProvider } from "./contexts/CartContext";
+import Category from "./pages/Category";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/product/:productId" element={<Product />} />
+            <Route path="/category/:categoryName" element={<Category />} />
           </Routes>
         </div>
       </Router>
