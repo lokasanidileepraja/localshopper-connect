@@ -1,13 +1,6 @@
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PriceComparisonSearch } from "@/components/price-compare/PriceComparisonSearch";
-import { PriceComparisonResults } from "@/components/price-compare/PriceComparisonResults";
-import { PriceHistory } from "@/components/price/PriceHistory";
-import { StoreMap } from "@/components/store/StoreMap";
-import { PriceAlerts } from "@/components/price/PriceAlerts";
-import { ComparisonTable } from "@/components/price/ComparisonTable";
-import { NearbyStoreFinder } from "@/components/store/NearbyStoreFinder";
-import { StoreInfo } from "@/components/store/StoreInfo";
+import { PriceCompareTabs } from "@/components/price-compare/PriceCompareTabs";
 import { motion } from "framer-motion";
 
 type Filters = {
@@ -34,31 +27,6 @@ const PriceComparePage = () => {
     setSelectedFilters(filters);
   };
 
-  // Mock data for demonstration
-  const nearbyStores = [
-    {
-      id: "1",
-      name: "TechHub Electronics",
-      distance: "0.8 km",
-      address: "123 Tech Street, Digital City"
-    },
-    {
-      id: "2",
-      name: "Digital World",
-      distance: "1.2 km",
-      address: "456 Gadget Avenue, Circuit Town"
-    }
-  ];
-
-  const selectedStore = {
-    name: "TechHub Electronics",
-    address: "123 Tech Street, Digital City",
-    phone: "+1 234 567 890",
-    hours: "9:00 AM - 9:00 PM",
-    rating: 4.5,
-    isOpen: true
-  };
-
   return (
     <motion.div 
       className="container py-8 space-y-8"
@@ -79,49 +47,10 @@ const PriceComparePage = () => {
         onFilterChange={handleFilterChange}
       />
 
-      <Tabs defaultValue="comparison" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="comparison">Comparison</TabsTrigger>
-          <TabsTrigger value="table">Table View</TabsTrigger>
-          <TabsTrigger value="map">Map View</TabsTrigger>
-          <TabsTrigger value="history">Price History</TabsTrigger>
-          <TabsTrigger value="alerts">Price Alerts</TabsTrigger>
-          <TabsTrigger value="stores">Nearby Stores</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="comparison">
-          <PriceComparisonResults 
-            searchQuery={searchQuery}
-            filters={selectedFilters}
-          />
-        </TabsContent>
-
-        <TabsContent value="table">
-          <ComparisonTable />
-        </TabsContent>
-        
-        <TabsContent value="map">
-          <StoreMap />
-        </TabsContent>
-        
-        <TabsContent value="history">
-          <PriceHistory />
-        </TabsContent>
-        
-        <TabsContent value="alerts">
-          <PriceAlerts />
-        </TabsContent>
-
-        <TabsContent value="stores">
-          <div className="grid gap-6 md:grid-cols-2">
-            <NearbyStoreFinder 
-              stores={nearbyStores}
-              onStoreSelect={(id) => console.log("Selected store:", id)}
-            />
-            <StoreInfo {...selectedStore} />
-          </div>
-        </TabsContent>
-      </Tabs>
+      <PriceCompareTabs 
+        searchQuery={searchQuery}
+        filters={selectedFilters}
+      />
     </motion.div>
   );
 };
