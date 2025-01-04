@@ -1,10 +1,12 @@
-import { Product } from "@/types/shop";
+import { Shop } from "@/types/shop";
 
-export const ELECTRONICS_SHOPS = [
+export const ELECTRONICS_SHOPS: Shop[] = [
   {
     id: "1",
     name: "TechHub Electronics",
+    category: "Electronics",
     rating: 4.5,
+    distance: "2.5 km away",
     isOpen: true,
     image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58",
     products: [
@@ -52,7 +54,9 @@ export const ELECTRONICS_SHOPS = [
   {
     id: "2",
     name: "Digital World",
+    category: "Electronics",
     rating: 4.2,
+    distance: "3.8 km away",
     isOpen: false,
     image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
     products: [

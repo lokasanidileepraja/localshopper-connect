@@ -13,6 +13,7 @@ export interface Product {
 }
 
 export interface Shop {
+  id: string;
   name: string;
   category: string;
   rating: number;
