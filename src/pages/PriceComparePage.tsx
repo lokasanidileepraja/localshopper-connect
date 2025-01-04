@@ -5,6 +5,7 @@ import { PriceComparisonResults } from "@/components/price-compare/PriceComparis
 import { PriceHistory } from "@/components/price/PriceHistory";
 import { StoreMap } from "@/components/store/StoreMap";
 import { PriceAlerts } from "@/components/price/PriceAlerts";
+import { ComparisonTable } from "@/components/price/ComparisonTable";
 import { motion } from "framer-motion";
 
 type Filters = {
@@ -52,8 +53,9 @@ const PriceComparePage = () => {
       />
 
       <Tabs defaultValue="comparison" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="comparison">Comparison</TabsTrigger>
+          <TabsTrigger value="table">Table View</TabsTrigger>
           <TabsTrigger value="map">Map View</TabsTrigger>
           <TabsTrigger value="history">Price History</TabsTrigger>
           <TabsTrigger value="alerts">Price Alerts</TabsTrigger>
@@ -64,6 +66,10 @@ const PriceComparePage = () => {
             searchQuery={searchQuery}
             filters={selectedFilters}
           />
+        </TabsContent>
+
+        <TabsContent value="table">
+          <ComparisonTable />
         </TabsContent>
         
         <TabsContent value="map">

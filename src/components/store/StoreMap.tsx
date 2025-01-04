@@ -1,12 +1,54 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { ELECTRONICS_SHOPS } from "@/data/shops";
 
 export const StoreMap = () => {
   const [mapboxToken, setMapboxToken] = useState("");
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
   const { toast } = useToast();
+
+  const initializeMap = (token: string) => {
+    if (!mapContainer.current) return;
+
+    mapboxgl.accessToken = token;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [77.2090, 28.6139], // Default to Delhi coordinates
+      zoom: 11
+    });
+
+    // Add navigation controls
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    // Add markers for each store
+    ELECTRONICS_SHOPS.forEach(shop => {
+      // For demo purposes, generating random coordinates around Delhi
+      const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
+      const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
+
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`
+          <div class="p-2">
+            <h3 class="font-semibold">${shop.name}</h3>
+            <p class="text-sm">${shop.isOpen ? 'Open' : 'Closed'}</p>
+            <p class="text-sm">Rating: ${shop.rating}⭐</p>
+          </div>
+        `);
+
+      new mapboxgl.Marker()
+        .setLngLat([lng, lat])
+        .setPopup(popup)
+        .addTo(map.current);
+    });
+  };
 
   const handleSaveToken = () => {
     if (!mapboxToken) {
@@ -18,11 +60,28 @@ export const StoreMap = () => {
       return;
     }
     
-    toast({
-      title: "Success",
-      description: "Mapbox token saved successfully",
-    });
+    try {
+      initializeMap(mapboxToken);
+      toast({
+        title: "Success",
+        description: "Map initialized successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to initialize map. Please check your token.",
+        variant: "destructive",
+      });
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      if (map.current) {
+        map.current.remove();
+      }
+    };
+  }, []);
 
   return (
     <Card className="p-6">
@@ -45,11 +104,7 @@ export const StoreMap = () => {
           <Button onClick={handleSaveToken}>Save Token</Button>
         </div>
         
-        <div className="h-[400px] bg-muted rounded-lg flex items-center justify-center">
-          <p className="text-muted-foreground">
-            Map will be displayed here after configuring Mapbox
-          </p>
-        </div>
+        <div ref={mapContainer} className="h-[600px] bg-muted rounded-lg" />
       </div>
     </Card>
   );
