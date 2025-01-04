@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bell, ShoppingCart, User, Search } from "lucide-react";
+import { Bell, ShoppingCart, User, Search, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -52,6 +52,16 @@ export const Navigation = () => {
           </form>
           
           <div className="flex items-center gap-2">
+            <Link to="/qa">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </Button>
+            </Link>
+
             <Link to="/notifications">
               <Button 
                 variant="ghost" 
@@ -96,6 +106,9 @@ export const Navigation = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/cart" className="w-full">Cart</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/qa" className="w-full">Q&A Community</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
