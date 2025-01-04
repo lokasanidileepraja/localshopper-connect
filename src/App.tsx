@@ -6,6 +6,8 @@ import { PriceHistory } from "./components/price/PriceHistory";
 import { PriceAlerts } from "./components/price/PriceAlerts";
 import { StoreMap } from "./components/store/StoreMap";
 import Index from "./pages/Index";
+import LocalTech from "./pages/LocalTech";
+import ExpertServices from "./pages/ExpertServices";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
           <Route path="/price-history" element={<PriceHistory />} />
           <Route path="/price-alerts" element={<PriceAlerts />} />
           <Route path="/store-map" element={<StoreMap />} />
+          <Route path="/local-tech" element={<LocalTech />} />
+          <Route path="/expert-services" element={<ExpertServices />} />
         </Routes>
       </div>
     </Router>
