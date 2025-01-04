@@ -5,8 +5,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { useState } from "react";
+import { useCategoryFilter } from "@/hooks/useCategoryFilter";
+import { CategoryCard } from "@/components/CategoryCard";
+import { Input } from "@/components/ui/input";
+import { Category } from "@/types/categories";
 
-const categories = [
+const categories: Category[] = [
   { name: "Phones", icon: Smartphone, color: "bg-blue-100", description: "Latest smartphones and accessories" },
   { name: "Laptops", icon: Laptop, color: "bg-green-100", description: "Powerful laptops for work and play" },
   { name: "Audio", icon: Headphones, color: "bg-yellow-100", description: "High-quality audio equipment" },
@@ -22,6 +26,7 @@ export const Categories = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
   const scrollToCategory = (categoryName: string) => {
     const element = document.getElementById(categoryName);
@@ -41,6 +46,8 @@ export const Categories = () => {
     () => scrollToCategory(categories[selectedIndex].name)
   );
 
+  const filtered = filteredCategories();
+
   return (
     <section className="py-6 sm:py-12 bg-gradient-to-b from-white to-gray-50" id="categories">
       <div className="container mx-auto px-4">
@@ -51,43 +58,38 @@ export const Categories = () => {
         >
           Browse Categories
         </motion.h2>
+        
+        <div className="max-w-md mx-auto mb-8">
+          <Input
+            type="text"
+            placeholder="Search categories..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
         <div className={`grid grid-cols-2 ${isMobile ? 'gap-3' : 'sm:grid-cols-4 gap-6'}`}>
-          {categories.map((category, index) => (
-            <motion.div
+          {filtered.map((category, index) => (
+            <CategoryCard
               key={category.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ 
-                opacity: 1, 
-                scale: selectedIndex === index ? 1.05 : 1,
-                boxShadow: selectedIndex === index ? "0 4px 12px rgba(0,0,0,0.1)" : "none"
-              }}
-              whileHover={{ 
-                scale: isMobile ? 1.02 : 1.05,
-                boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
-              }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className={`${category.color} rounded-xl p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all group`}
-              onClick={() => scrollToCategory(category.name)}
-              id={category.name}
-              tabIndex={0}
-              role="button"
-              aria-label={`Browse ${category.name} category`}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  scrollToCategory(category.name);
-                }
-              }}
-            >
-              <div className="flex flex-col items-center text-center">
-                <category.icon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8'} mb-2 sm:mb-4 group-hover:text-primary transition-colors`} />
-                <h3 className="font-semibold text-sm sm:text-base mb-1 sm:mb-2">{category.name}</h3>
-                <p className="text-xs sm:text-sm text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity line-clamp-2">
-                  {category.description}
-                </p>
-              </div>
-            </motion.div>
+              category={category}
+              onSelect={scrollToCategory}
+              isSelected={selectedIndex === index}
+              index={index}
+            />
           ))}
         </div>
+
+        {filtered.length === 0 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center text-gray-500 mt-8"
+          >
+            No categories found matching your search.
+          </motion.p>
+        )}
       </div>
     </section>
   );
