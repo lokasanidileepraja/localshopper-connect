@@ -1,34 +1,35 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const Wishlist = () => {
   const { toast } = useToast();
-
+  
+  // Mock wishlist data
   const wishlistItems = [
     {
-      id: "1",
-      name: "iPhone 15",
-      price: 79999,
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      id: 1,
+      name: "Smartphone X",
+      price: 799,
+      image: "/placeholder.svg",
     },
     {
-      id: "2",
-      name: "MacBook Air M2",
-      price: 114900,
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      id: 2,
+      name: "Laptop Pro",
+      price: 1299,
+      image: "/placeholder.svg",
     }
   ];
 
-  const handleAddToCart = (itemId: string) => {
+  const handleAddToCart = (itemId: number) => {
     toast({
       title: "Added to Cart",
       description: "Item has been added to your cart.",
     });
   };
 
-  const handleRemove = (itemId: string) => {
+  const handleRemove = (itemId: number) => {
     toast({
       title: "Removed from Wishlist",
       description: "Item has been removed from your wishlist.",
@@ -36,12 +37,12 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-2 mb-6">
+    <div className="container py-12">
+      <div className="flex items-center gap-2 mb-8">
         <Heart className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-bold">My Wishlist</h1>
+        <h1 className="text-3xl font-bold">My Wishlist</h1>
       </div>
-
+      
       {wishlistItems.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {wishlistItems.map((item) => (
@@ -52,12 +53,11 @@ const Wishlist = () => {
                 className="w-full h-48 object-cover"
               />
               <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2">{item.name}</h3>
-                <p className="text-2xl font-bold text-primary mb-4">
-                  ₹{item.price.toLocaleString()}
-                </p>
+                <h3 className="font-semibold mb-2">{item.name}</h3>
+                <p className="text-lg font-bold mb-4">${item.price}</p>
                 <div className="flex gap-2">
                   <Button
+                    variant="outline"
                     className="flex-1"
                     onClick={() => handleAddToCart(item.id)}
                   >
@@ -65,11 +65,11 @@ const Wishlist = () => {
                     Add to Cart
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="icon"
                     onClick={() => handleRemove(item.id)}
                   >
-                    <Trash2 className="h-4 w-4 text-red-500" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -77,12 +77,9 @@ const Wishlist = () => {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">Your wishlist is empty</p>
-            <Button className="mt-4">Continue Shopping</Button>
-          </CardContent>
+        <Card className="p-8 text-center">
+          <p className="text-muted-foreground">Your wishlist is empty</p>
+          <Button className="mt-4">Continue Shopping</Button>
         </Card>
       )}
     </div>

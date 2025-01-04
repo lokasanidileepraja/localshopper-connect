@@ -13,6 +13,10 @@ import PriceComparePage from "@/pages/PriceComparePage";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Orders from "@/pages/Orders";
+import Contact from "@/pages/Contact";
+import FAQ from "@/pages/FAQ";
+import Wishlist from "@/pages/Wishlist";
+import Search from "@/pages/Search";
 
 function App() {
   return (
@@ -32,6 +36,10 @@ function App() {
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/search" element={<Search />} />
         </Routes>
       </Router>
     </CartProvider>
