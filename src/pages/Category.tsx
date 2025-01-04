@@ -1,146 +1,65 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
 import { products } from "@/data/products";
-import { Product } from "@/types/shop";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Star, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { motion } from "framer-motion";
 
 const Category = () => {
   const { categoryName } = useParams();
   const { toast } = useToast();
-
-  const { data: categoryProducts, isLoading, error } = useQuery({
-    queryKey: ["products", categoryName],
-    queryFn: async (): Promise<Product[]> => {
-      // Simulate API call with timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (!categoryName) {
-        throw new Error("Category name is required");
-      }
-
-      // Get all products from all categories
-      const allProducts = Object.values(products).flat();
-      
-      // Filter products by category
-      const filteredProducts = allProducts.filter(
-        product => product.category.toLowerCase() === categoryName.toLowerCase()
-      );
-
-      if (filteredProducts.length === 0) {
-        throw new Error(`No products found in category: ${categoryName}`);
-      }
-
-      return filteredProducts;
-    },
-    meta: {
-      onError: (error: Error) => {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to load products. Please try again later.",
-          variant: "destructive",
-        });
-      }
-    }
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <LoadingSpinner />
-      </div>
-    );
+  
+  // Simulate loading state
+  if (!categoryName) {
+    return <LoadingSpinner />;
   }
 
-  if (error || !categoryProducts) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">
-            {error?.message || "Category not found"}
-          </h1>
-          <Button 
-            onClick={() => window.location.href = '/'}
-            variant="outline"
-          >
-            Return to Home
-          </Button>
-        </div>
-      </div>
-    );
+  const categoryProducts = products[categoryName.toLowerCase()] || [];
+
+  if (categoryProducts.length === 0) {
+    toast({
+      title: "Category Empty",
+      description: "No products found in this category",
+      variant: "destructive",
+    });
   }
 
   return (
-    <ErrorBoundary>
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-3xl font-bold mb-8 capitalize">
-            {categoryName?.replace(/-/g, ' ')}
-          </h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoryProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className="h-full hover:shadow-lg transition-shadow">
-                  <CardContent className="p-0">
-                    <div className="relative">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      />
-                      {product.inStock ? (
-                        <Badge className="absolute top-2 right-2">In Stock</Badge>
-                      ) : (
-                        <Badge variant="secondary" className="absolute top-2 right-2">
-                          Out of Stock
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-                      <p className="text-gray-600 mb-4">{product.description}</p>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-2xl font-bold text-primary">
-                          ₹{product.price.toLocaleString()}
-                        </span>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{product.rating}</span>
-                        </div>
-                      </div>
-                      <Button 
-                        className="w-full" 
-                        disabled={!product.inStock}
-                        onClick={() => window.location.href = `/product/${product.id}`}
-                      >
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        {product.inStock ? 'View Details' : 'Out of Stock'}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 capitalize">{categoryName}</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categoryProducts.map((product) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+                <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                <p className="text-gray-600 mb-2">{product.description}</p>
+                <p className="text-2xl font-bold text-primary">
+                  ₹{product.price.toLocaleString()}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
-    </ErrorBoundary>
+
+      {categoryProducts.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-xl text-gray-600">No products found in this category.</p>
+        </div>
+      )}
+    </div>
   );
 };
 

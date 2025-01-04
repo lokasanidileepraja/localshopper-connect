@@ -6,6 +6,10 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
   const isMobile = useIsMobile();
   const Icon = category.icon;
 
+  const handleClick = () => {
+    onSelect(category.name);
+  };
+
   return (
     <motion.div
       key={category.name}
@@ -21,13 +25,13 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
       }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
       className={`${category.color} rounded-xl p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all group`}
-      onClick={() => onSelect(category.name)}
+      onClick={handleClick}
       role="button"
       tabIndex={0}
       aria-label={`Browse ${category.name} category`}
       onKeyPress={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          onSelect(category.name);
+          handleClick();
         }
       }}
     >

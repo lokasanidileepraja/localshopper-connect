@@ -2,29 +2,27 @@ import { Product } from "@/types/shop";
 
 export const mobiles: Product[] = [
   {
-    id: "4",
-    name: "Samsung Galaxy S21",
-    price: 69999,
-    description: "Flagship smartphone with stunning display",
-    category: "phones",
-    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf",
-    rating: 4.6,
-    stock: 40,
-    brand: "Samsung",
-    model: "Galaxy S21",
-    inStock: true
+    id: "m1",
+    name: "Smartphone Pro",
+    price: 79999,
+    description: "Latest flagship smartphone with advanced camera",
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+    category: "phones"
   },
   {
-    id: "5",
-    name: "OnePlus 9",
-    price: 49999,
-    description: "Fast and smooth performance",
-    category: "phones",
-    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97",
-    rating: 4.5,
-    stock: 25,
-    brand: "OnePlus",
-    model: "9",
-    inStock: true
+    id: "m2",
+    name: "Smart Watch",
+    price: 24999,
+    description: "Advanced fitness tracking smartwatch",
+    image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12",
+    category: "wearables"
+  },
+  {
+    id: "m3",
+    name: "Wireless Earbuds",
+    price: 14999,
+    description: "Premium wireless earbuds with noise cancellation",
+    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df",
+    category: "audio"
   }
 ];
