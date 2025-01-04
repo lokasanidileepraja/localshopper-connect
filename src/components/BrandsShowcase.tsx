@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const brands = [
   { 
@@ -28,33 +29,35 @@ const brands = [
 ];
 
 export const BrandsShowcase = () => {
+  const isMobile = useIsMobile();
+
   return (
-    <section className="py-8 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-6 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8"
+          className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-8"
         >
           Featured Brands
         </motion.h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'sm:grid-cols-4 gap-6'}`}>
           {brands.map((brand, index) => (
             <motion.div
               key={brand.name}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               whileHover={{ 
-                scale: 1.05,
+                scale: isMobile ? 1.02 : 1.05,
                 transition: { duration: 0.2 }
               }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+              className="group relative flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
             >
               <motion.img
                 src={brand.logo}
                 alt={brand.name}
-                className="h-8 sm:h-12 object-contain transition-all duration-300 group-hover:scale-110"
+                className={`${isMobile ? 'h-6 sm:h-8' : 'h-8 sm:h-12'} object-contain transition-all duration-300 group-hover:scale-110`}
                 whileHover={{ rotate: 5 }}
               />
               <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600">{brand.stats}</p>

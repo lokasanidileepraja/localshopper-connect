@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Smartphone, Laptop, Headphones, Camera, Watch, Tv, Speaker, Gamepad } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const categories = [
   { name: "Phones", icon: Smartphone, color: "bg-blue-100", description: "Latest smartphones and accessories" },
@@ -17,6 +18,7 @@ const categories = [
 export const Categories = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const scrollToCategory = (categoryName: string) => {
     const element = document.getElementById(categoryName);
@@ -31,33 +33,33 @@ export const Categories = () => {
   };
 
   return (
-    <section className="py-8 sm:py-16 bg-gradient-to-b from-white to-gray-50" id="categories">
+    <section className="py-6 sm:py-12 bg-gradient-to-b from-white to-gray-50" id="categories">
       <div className="container mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12"
+          className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8"
         >
           Browse Categories
         </motion.h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+        <div className={`grid grid-cols-2 ${isMobile ? 'gap-3' : 'sm:grid-cols-4 gap-6'}`}>
           {categories.map((category, index) => (
             <motion.div
               key={category.name}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ 
-                scale: 1.05,
+                scale: isMobile ? 1.02 : 1.05,
                 boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
               }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className={`${category.color} rounded-xl p-4 sm:p-6 cursor-pointer hover:shadow-lg transition-all group`}
+              className={`${category.color} rounded-xl p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all group`}
               onClick={() => scrollToCategory(category.name)}
               id={category.name}
             >
               <div className="flex flex-col items-center text-center">
-                <category.icon className="h-6 w-6 sm:h-8 sm:w-8 mb-3 sm:mb-4 group-hover:text-primary transition-colors" />
-                <h3 className="font-semibold text-sm sm:text-base mb-2">{category.name}</h3>
+                <category.icon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8'} mb-2 sm:mb-4 group-hover:text-primary transition-colors`} />
+                <h3 className="font-semibold text-sm sm:text-base mb-1 sm:mb-2">{category.name}</h3>
                 <p className="text-xs sm:text-sm text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity line-clamp-2">
                   {category.description}
                 </p>

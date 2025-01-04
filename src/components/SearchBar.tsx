@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const POPULAR_SEARCHES = [
   { name: "iPhone 15", icon: Smartphone },
@@ -22,9 +23,25 @@ export const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    // Load recent searches from localStorage
+    const savedSearches = localStorage.getItem('recentSearches');
+    if (savedSearches) {
+      setRecentSearches(JSON.parse(savedSearches));
+    }
+  }, []);
+
+  const saveRecentSearch = (query: string) => {
+    const updatedSearches = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
+    setRecentSearches(updatedSearches);
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+  };
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
@@ -36,6 +53,7 @@ export const SearchBar = () => {
         });
         return;
       }
+      saveRecentSearch(query);
       navigate("/shop/TechHub Electronics");
     } catch (error) {
       toast({
@@ -62,14 +80,14 @@ export const SearchBar = () => {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-4 sm:py-8">
+    <div className={`max-w-2xl mx-auto px-4 py-4 ${isMobile ? 'sm:py-6' : 'sm:py-8'}`}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="flex flex-col sm:flex-row gap-2">
             <Input
               ref={inputRef}
               type="text"
-              placeholder="Search products... (⌘K)"
+              placeholder={isMobile ? "Search products..." : "Search products... (⌘K)"}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1"
@@ -82,7 +100,7 @@ export const SearchBar = () => {
             <Button 
               onClick={() => handleSearch(searchQuery)}
               disabled={isLoading}
-              className="w-full sm:w-auto"
+              className={`w-full ${isMobile ? '' : 'sm:w-auto'}`}
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -97,6 +115,22 @@ export const SearchBar = () => {
           <Command>
             <CommandInput placeholder="Type to search..." />
             <CommandEmpty>No results found.</CommandEmpty>
+            {recentSearches.length > 0 && (
+              <CommandGroup heading="Recent Searches">
+                {recentSearches.map((search) => (
+                  <CommandItem
+                    key={search}
+                    onSelect={() => {
+                      setSearchQuery(search);
+                      handleSearch(search);
+                    }}
+                  >
+                    <Clock className="mr-2 h-4 w-4" />
+                    {search}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
             <CommandGroup heading="Popular Searches">
               {POPULAR_SEARCHES.map(({ name, icon: Icon }) => (
                 <CommandItem
