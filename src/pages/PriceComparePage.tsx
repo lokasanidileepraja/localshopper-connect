@@ -6,10 +6,17 @@ import { PriceHistory } from "@/components/price/PriceHistory";
 import { StoreMap } from "@/components/store/StoreMap";
 import { PriceAlerts } from "@/components/price/PriceAlerts";
 
+type Filters = {
+  priceRange: [number, number];
+  storeTypes: string[];
+  proximity: number;
+  inStock: boolean;
+};
+
 const PriceComparePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState({
-    priceRange: [0, 200000],
+  const [selectedFilters, setSelectedFilters] = useState<Filters>({
+    priceRange: [0, 200000] as [number, number], // Explicitly type as tuple
     storeTypes: [],
     proximity: 5,
     inStock: false
@@ -19,7 +26,7 @@ const PriceComparePage = () => {
     setSearchQuery(query);
   };
 
-  const handleFilterChange = (filters: typeof selectedFilters) => {
+  const handleFilterChange = (filters: Filters) => {
     setSelectedFilters(filters);
   };
 
