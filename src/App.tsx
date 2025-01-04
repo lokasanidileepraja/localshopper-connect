@@ -17,6 +17,9 @@ import Alerts from "./pages/Alerts";
 import Recommendations from "./pages/Recommendations";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
+import LocalTech from "./pages/LocalTech";
+import PriceComparePage from "./pages/PriceComparePage";
+import ExpertServices from "./pages/ExpertServices";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +51,9 @@ const App = () => (
                 <Route path="/recommendations" element={<Recommendations />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/local-tech" element={<LocalTech />} />
+                <Route path="/price-compare" element={<PriceComparePage />} />
+                <Route path="/expert-services" element={<ExpertServices />} />
               </Routes>
             </BrowserRouter>
           </ErrorBoundary>

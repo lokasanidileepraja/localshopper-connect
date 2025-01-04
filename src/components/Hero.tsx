@@ -44,22 +44,26 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 className="group relative overflow-hidden w-full sm:w-auto"
-                onClick={() => navigate("/shop/TechHub Electronics")}
+                onClick={() => navigate("/local-tech")}
               >
-                <span className="relative z-10">Browse Electronics</span>
+                Find New Tech Locally
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
-                <div className="absolute inset-0 bg-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
                 className="group w-full sm:w-auto"
-                onClick={() => {
-                  window.alert("Store registration coming soon!");
-                }}
+                onClick={() => navigate("/price-compare")}
               >
-                Register Your Store
-                <div className="absolute inset-0 bg-primary-100 opacity-0 group-hover:opacity-10 transition-opacity" />
+                Compare Prices Nearby
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="group w-full sm:w-auto"
+                onClick={() => navigate("/expert-services")}
+              >
+                Expert Local Service
               </Button>
             </div>
           </motion.div>
