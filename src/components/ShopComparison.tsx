@@ -29,6 +29,9 @@ export const ShopComparison = ({
           const product = shop.products.find((p) => p.model === productModel);
           if (!product) return null;
 
+          const priceDifference = price - product.price;
+          const savings = priceDifference > 0 ? priceDifference : 0;
+
           return (
             <Card key={shop.name} className="relative">
               <CardContent className="p-4">
@@ -45,6 +48,11 @@ export const ShopComparison = ({
                     ₹{product.price.toLocaleString()}
                   </span>
                 </div>
+                {savings > 0 && (
+                  <p className="mt-2 text-sm text-green-600">
+                    Save ₹{savings.toLocaleString()}
+                  </p>
+                )}
                 <div className="mt-4">
                   <Button
                     variant="outline"
