@@ -20,7 +20,6 @@ const POPULAR_SEARCHES = [
 export const SearchResults = ({ recentSearches, onSelectSearch }: SearchResultsProps) => {
   return (
     <Command>
-      <CommandInput placeholder="Type to search..." />
       <CommandEmpty>No results found.</CommandEmpty>
       {recentSearches.length > 0 && (
         <CommandGroup heading="Recent Searches">
