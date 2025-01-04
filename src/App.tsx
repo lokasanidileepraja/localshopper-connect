@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PriceComparePage from "./pages/PriceComparePage";
 import StoreDetails from "./pages/StoreDetails";
 import { ComparisonTable } from "./components/price/ComparisonTable";
@@ -18,33 +19,38 @@ import { Breadcrumbs } from "./components/Breadcrumbs";
 import { CartProvider } from "./contexts/CartContext";
 import Category from "./pages/Category";
 
+// Create a client
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Breadcrumbs />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/reset-password" element={<PasswordReset />} />
-            <Route path="/price-compare" element={<PriceComparePage />} />
-            <Route path="/shop/:storeName" element={<StoreDetails />} />
-            <Route path="/comparison-table" element={<ComparisonTable />} />
-            <Route path="/price-history" element={<PriceHistory />} />
-            <Route path="/price-alerts" element={<PriceAlerts />} />
-            <Route path="/store-map" element={<StoreMap />} />
-            <Route path="/local-tech" element={<LocalTech />} />
-            <Route path="/expert-services" element={<ExpertServices />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/product/:productId" element={<Product />} />
-            <Route path="/category/:categoryName" element={<Category />} />
-          </Routes>
-        </div>
-      </Router>
-    </CartProvider>
+    <QueryClientProvider client={queryClient}>
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            <Breadcrumbs />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/reset-password" element={<PasswordReset />} />
+              <Route path="/price-compare" element={<PriceComparePage />} />
+              <Route path="/shop/:storeName" element={<StoreDetails />} />
+              <Route path="/comparison-table" element={<ComparisonTable />} />
+              <Route path="/price-history" element={<PriceHistory />} />
+              <Route path="/price-alerts" element={<PriceAlerts />} />
+              <Route path="/store-map" element={<StoreMap />} />
+              <Route path="/local-tech" element={<LocalTech />} />
+              <Route path="/expert-services" element={<ExpertServices />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/product/:productId" element={<Product />} />
+              <Route path="/category/:categoryName" element={<Category />} />
+            </Routes>
+          </div>
+        </Router>
+      </CartProvider>
+    </QueryClientProvider>
   );
 }
 
