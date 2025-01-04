@@ -12,6 +12,7 @@ import Category from "./pages/Category";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import QA from "./pages/QA";
+import PriceComparePage from "./pages/PriceComparePage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/qa" element={<QA />} />
+                <Route path="/price-compare" element={<PriceComparePage />} />
               </Routes>
             </div>
           </Router>
