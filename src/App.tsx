@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "@/pages/Index";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
@@ -15,23 +16,25 @@ import Orders from "@/pages/Orders";
 
 function App() {
   return (
-    <Router>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/product/:productId" element={<Product />} />
-        <Route path="/category/:categoryName" element={<Category />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/qa" element={<QA />} />
-        <Route path="/price-compare" element={<PriceComparePage />} />
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
-        <Route path="/orders" element={<Orders />} />
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product/:productId" element={<Product />} />
+          <Route path="/category/:categoryName" element={<Category />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/qa" element={<QA />} />
+          <Route path="/price-compare" element={<PriceComparePage />} />
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
+          <Route path="/orders" element={<Orders />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 
