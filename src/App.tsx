@@ -15,6 +15,8 @@ import Compare from "./pages/Compare";
 import Bulk from "./pages/Bulk";
 import Alerts from "./pages/Alerts";
 import Recommendations from "./pages/Recommendations";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +46,8 @@ const App = () => (
                 <Route path="/bulk" element={<Bulk />} />
                 <Route path="/alerts" element={<Alerts />} />
                 <Route path="/recommendations" element={<Recommendations />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
               </Routes>
             </BrowserRouter>
           </ErrorBoundary>
