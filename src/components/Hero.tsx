@@ -40,32 +40,6 @@ export const Hero = () => {
             <p className="text-base sm:text-lg leading-7 text-gray-600 mb-6">
               Discover nearby electronics shops, compare prices on gadgets, and connect directly with local tech retailers. Get the latest devices with the convenience of local shopping and expert support.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className="group relative overflow-hidden w-full sm:w-auto"
-                onClick={() => navigate("/local-tech")}
-              >
-                Find New Tech Locally
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="group w-full sm:w-auto"
-                onClick={() => navigate("/price-compare")}
-              >
-                Compare Prices Nearby
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="group w-full sm:w-auto"
-                onClick={() => navigate("/expert-services")}
-              >
-                Expert Local Service
-              </Button>
-            </div>
           </motion.div>
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
