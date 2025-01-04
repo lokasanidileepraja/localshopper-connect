@@ -10,7 +10,10 @@ export const products: Record<string, Product[]> = {
       category: "Electronics",
       image: "https://images.unsplash.com/photo-1593784991095-a205069470b6",
       rating: 4.5,
-      stock: 10
+      stock: 10,
+      brand: "TechBrand",
+      model: "Smart TV 65",
+      inStock: true
     },
     {
       id: "tablet-1",
@@ -20,7 +23,10 @@ export const products: Record<string, Product[]> = {
       category: "Electronics",
       image: "https://images.unsplash.com/photo-1561154464-82e9adf32764",
       rating: 4.7,
-      stock: 15
+      stock: 15,
+      brand: "TechBrand",
+      model: "Pro Tablet",
+      inStock: true
     }
   ],
   Mobiles: [
@@ -32,7 +38,10 @@ export const products: Record<string, Product[]> = {
       category: "Mobiles",
       image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
       rating: 4.8,
-      stock: 20
+      stock: 20,
+      brand: "TechBrand",
+      model: "TechPhone 15 Pro",
+      inStock: true
     },
     {
       id: "smartphone-2",
@@ -42,7 +51,10 @@ export const products: Record<string, Product[]> = {
       category: "Mobiles",
       image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd",
       rating: 4.6,
-      stock: 25
+      stock: 25,
+      brand: "TechBrand",
+      model: "TechPhone 15",
+      inStock: true
     }
   ],
   Laptops: [
@@ -54,7 +66,10 @@ export const products: Record<string, Product[]> = {
       category: "Laptops",
       image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
       rating: 4.9,
-      stock: 8
+      stock: 8,
+      brand: "TechBrand",
+      model: "UltraBook Pro",
+      inStock: true
     },
     {
       id: "laptop-2",
@@ -64,7 +79,10 @@ export const products: Record<string, Product[]> = {
       category: "Laptops",
       image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
       rating: 4.7,
-      stock: 5
+      stock: 5,
+      brand: "TechBrand",
+      model: "GameBook Elite",
+      inStock: true
     }
   ],
   Accessories: [
@@ -76,7 +94,10 @@ export const products: Record<string, Product[]> = {
       category: "Accessories",
       image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46",
       rating: 4.5,
-      stock: 50
+      stock: 50,
+      brand: "TechBrand",
+      model: "Wireless Mouse",
+      inStock: true
     },
     {
       id: "accessory-2",
@@ -86,7 +107,10 @@ export const products: Record<string, Product[]> = {
       category: "Accessories",
       image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae",
       rating: 4.6,
-      stock: 30
+      stock: 30,
+      brand: "TechBrand",
+      model: "Mechanical Keyboard",
+      inStock: true
     }
   ],
   Audio: [
@@ -98,7 +122,10 @@ export const products: Record<string, Product[]> = {
       category: "Audio",
       image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434",
       rating: 4.7,
-      stock: 40
+      stock: 40,
+      brand: "TechBrand",
+      model: "Pro Wireless Earbuds",
+      inStock: true
     },
     {
       id: "audio-2",
@@ -108,7 +135,10 @@ export const products: Record<string, Product[]> = {
       category: "Audio",
       image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
       rating: 4.8,
-      stock: 25
+      stock: 25,
+      brand: "TechBrand",
+      model: "Over-Ear Headphones",
+      inStock: true
     }
   ],
   Gaming: [
@@ -120,7 +150,10 @@ export const products: Record<string, Product[]> = {
       category: "Gaming",
       image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42",
       rating: 4.9,
-      stock: 15
+      stock: 15,
+      brand: "TechBrand",
+      model: "Pro Gaming Console",
+      inStock: true
     },
     {
       id: "gaming-2",
@@ -130,7 +163,10 @@ export const products: Record<string, Product[]> = {
       category: "Gaming",
       image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac",
       rating: 4.6,
-      stock: 10
+      stock: 10,
+      brand: "TechBrand",
+      model: "VR Headset",
+      inStock: true
     }
   ],
   Wearables: [
@@ -142,7 +178,10 @@ export const products: Record<string, Product[]> = {
       category: "Wearables",
       image: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
       rating: 4.7,
-      stock: 30
+      stock: 30,
+      brand: "TechBrand",
+      model: "Smart Watch Pro",
+      inStock: true
     },
     {
       id: "wearable-2",
@@ -152,7 +191,10 @@ export const products: Record<string, Product[]> = {
       category: "Wearables",
       image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6",
       rating: 4.5,
-      stock: 45
+      stock: 45,
+      brand: "TechBrand",
+      model: "Fitness Band",
+      inStock: true
     }
   ]
 };

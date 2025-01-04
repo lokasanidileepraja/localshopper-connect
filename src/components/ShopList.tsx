@@ -22,7 +22,10 @@ const ELECTRONICS_SHOPS: Shop[] = [
         brand: "Apple",
         model: "iPhone 15",
         inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        description: "Latest iPhone model with advanced features",
+        rating: 4.8,
+        stock: 25
       },
       {
         id: "2",
@@ -32,7 +35,10 @@ const ELECTRONICS_SHOPS: Shop[] = [
         brand: "Apple",
         model: "MacBook Air M2",
         inStock: true,
-        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+        description: "Powerful and portable laptop with M2 chip",
+        rating: 4.9,
+        stock: 15
       }
     ]
   },
@@ -52,7 +58,10 @@ const ELECTRONICS_SHOPS: Shop[] = [
         brand: "Apple",
         model: "iPhone 15",
         inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        description: "Latest iPhone model with advanced features",
+        rating: 4.8,
+        stock: 20
       },
       {
         id: "4",
@@ -61,7 +70,11 @@ const ELECTRONICS_SHOPS: Shop[] = [
         price: 74999,
         brand: "Samsung",
         model: "Galaxy S23",
-        inStock: true
+        inStock: true,
+        description: "Flagship Android smartphone",
+        rating: 4.7,
+        stock: 18,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
       }
     ]
   },
@@ -81,7 +94,10 @@ const ELECTRONICS_SHOPS: Shop[] = [
         brand: "Apple",
         model: "iPhone 15",
         inStock: false,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        description: "Latest iPhone model with advanced features",
+        rating: 4.8,
+        stock: 0
       },
       {
         id: "6",
@@ -90,7 +106,11 @@ const ELECTRONICS_SHOPS: Shop[] = [
         price: 24999,
         brand: "Apple",
         model: "AirPods Pro 2nd Gen",
-        inStock: true
+        inStock: true,
+        description: "Premium wireless earbuds",
+        rating: 4.6,
+        stock: 30,
+        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
       }
     ]
   }
