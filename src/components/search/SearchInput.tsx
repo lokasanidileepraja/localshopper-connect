@@ -6,9 +6,10 @@ interface SearchInputProps {
   onChange: (value: string) => void;
   onEnter: () => void;
   isMobile: boolean;
+  className?: string; // Added className as an optional prop
 }
 
-export const SearchInput = ({ value, onChange, onEnter, isMobile }: SearchInputProps) => {
+export const SearchInput = ({ value, onChange, onEnter, isMobile, className }: SearchInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export const SearchInput = ({ value, onChange, onEnter, isMobile }: SearchInputP
       placeholder={isMobile ? "Search products..." : "Search products... (⌘K)"}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="flex-1"
+      className={className}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           onEnter();
