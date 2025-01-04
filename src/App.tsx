@@ -11,6 +11,9 @@ import ExpertServices from "./pages/ExpertServices";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import PasswordReset from "./pages/auth/PasswordReset";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Product from "./pages/Product";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 
 function App() {
@@ -31,6 +34,9 @@ function App() {
           <Route path="/store-map" element={<StoreMap />} />
           <Route path="/local-tech" element={<LocalTech />} />
           <Route path="/expert-services" element={<ExpertServices />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product/:productId" element={<Product />} />
         </Routes>
       </div>
     </Router>

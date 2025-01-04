@@ -1,18 +1,18 @@
 import { useCart } from "@/contexts/CartContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CartLayout } from "@/components/cart/CartLayout";
 import { CartHeader } from "@/components/cart/CartHeader";
 import { CartContent } from "@/components/cart/CartContent";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 
-const CartPage = () => {
+const Cart = () => {
   const { items, removeFromCart } = useCart();
   const { toast } = useToast();
 
   const handleCheckout = () => {
     toast({
       title: "Proceeding to checkout",
-      description: "This feature will be implemented soon.",
+      description: "Redirecting to checkout page...",
     });
   };
 
@@ -29,4 +29,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default Cart;
