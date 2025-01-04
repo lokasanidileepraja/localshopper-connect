@@ -1,77 +1,29 @@
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
-import { useToast } from "@/hooks/use-toast";
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { Badge } from "@/components/ui/badge";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { initializeMap } from "@/utils/mapUtils";
 
 export const StoreMap = () => {
-  const [mapboxToken, setMapboxToken] = useState("");
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const { toast } = useToast();
-
-  const handleSaveToken = () => {
-    if (!mapboxToken) {
-      toast({
-        title: "Missing Token",
-        description: "Please enter your Mapbox token",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      if (mapContainer.current) {
-        map.current = initializeMap(mapContainer.current, mapboxToken, ELECTRONICS_SHOPS);
-        toast({
-          title: "Success",
-          description: "Map initialized successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to initialize map. Please check your token.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (map.current) {
-        map.current.remove();
-      }
-    };
-  }, []);
-
   return (
-    <Card className="p-6">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Map Configuration Required</h3>
-          <p className="text-sm text-muted-foreground">
-            To view the store locations on a map, please enter your Mapbox public token.
-            You can find this in your Mapbox account dashboard.
-          </p>
+    <div className="container py-8">
+      <h2 className="text-2xl font-bold mb-6">Store Locations</h2>
+      <Card className="p-6">
+        <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+          <p className="text-muted-foreground">Map View Coming Soon</p>
         </div>
-        
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            placeholder="Enter your Mapbox public token"
-            value={mapboxToken}
-            onChange={(e) => setMapboxToken(e.target.value)}
-          />
-          <Button onClick={handleSaveToken}>Save Token</Button>
+        <div className="mt-6 space-y-4">
+          {ELECTRONICS_SHOPS.map((shop) => (
+            <div key={shop.name} className="flex justify-between items-center p-4 border rounded-lg">
+              <div>
+                <h3 className="font-semibold">{shop.name}</h3>
+                <p className="text-sm text-muted-foreground">{shop.distance}</p>
+              </div>
+              <Badge variant={shop.isOpen ? "default" : "secondary"}>
+                {shop.isOpen ? "Open" : "Closed"}
+              </Badge>
+            </div>
+          ))}
         </div>
-        
-        <div ref={mapContainer} className="h-[600px] bg-muted rounded-lg" />
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };
