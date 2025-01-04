@@ -5,6 +5,7 @@ export const CategoryNav = () => {
     <div className="relative mt-2">
       <div className="flex items-center gap-6 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
         {[
+          ["Home", "/"],
           ["Electronics", "/category/electronics"],
           ["Mobiles", "/category/mobiles"],
           ["Laptops", "/category/laptops"],
