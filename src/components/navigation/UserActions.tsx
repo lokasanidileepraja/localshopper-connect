@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bell, ShoppingCart, User, MessageCircle } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import { 
+  ShoppingCart, 
+  User, 
+  Bell, 
+  HelpCircle,
+  Menu 
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,67 +15,38 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const UserActions = () => {
-  const { items } = useCart();
-
   return (
     <div className="flex items-center gap-2">
-      <Link to="/qa">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
-        >
-          <MessageCircle className="h-5 w-5" />
+      <Link to="/cart">
+        <Button variant="ghost" size="icon">
+          <ShoppingCart className="h-5 w-5" />
         </Button>
       </Link>
-
+      
       <Link to="/notifications">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
-        >
+        <Button variant="ghost" size="icon">
           <Bell className="h-5 w-5" />
         </Button>
       </Link>
-      
-      <Link to="/cart">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
-        >
-          <ShoppingCart className="h-5 w-5" />
-          {items.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 text-xs flex items-center justify-center animate-fadeIn">
-              {items.length}
-            </span>
-          )}
-        </Button>
-      </Link>
-      
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
-          >
-            <User className="h-5 w-5" />
+          <Button variant="ghost" size="icon">
+            <Menu className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link to="/profile" className="w-full">Profile</Link>
+            <Link to="/profile" className="w-full">
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/notifications" className="w-full">Notifications</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/cart" className="w-full">Cart</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/qa" className="w-full">Q&A Community</Link>
+            <Link to="/qa" className="w-full">
+              <HelpCircle className="h-4 w-4 mr-2" />
+              Help & FAQ
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
