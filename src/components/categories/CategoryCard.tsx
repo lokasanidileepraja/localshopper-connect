@@ -25,7 +25,7 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
       transition: { 
         duration: 0.5,
         delay: index * 0.1,
-        ease: "easeOut"
+        ease: [0.6, -0.05, 0.01, 0.99]
       }
     },
     hover: { 
@@ -35,6 +35,9 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
         duration: 0.2,
         ease: "easeInOut"
       }
+    },
+    tap: {
+      scale: 0.95
     }
   };
 
@@ -44,15 +47,18 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
       initial="hidden"
       animate="visible"
       whileHover="hover"
+      whileTap="tap"
       className={`
         ${category.color} 
         rounded-xl p-4 sm:p-6 
         cursor-pointer 
         transition-all 
         group
+        backdrop-blur-sm
         ${isSelected ? 'ring-2 ring-primary shadow-lg' : ''}
         hover:shadow-xl
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+        transform-gpu
       `}
       onClick={handleInteraction}
       onKeyPress={(e) => {
@@ -67,8 +73,8 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
     >
       <div className="flex flex-col items-center text-center space-y-3">
         <motion.div
-          whileHover={{ rotate: 360 }}
-          transition={{ duration: 0.5 }}
+          whileHover={{ rotate: 360, scale: 1.2 }}
+          transition={{ duration: 0.5, type: "spring" }}
           className="relative"
         >
           <Icon className={`
@@ -85,14 +91,23 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
             transition={{ duration: 0.3 }}
           />
         </motion.div>
-        <h3 className="font-semibold text-sm sm:text-lg mb-1">{category.name}</h3>
-        <p className="text-xs sm:text-sm text-gray-600 
-          opacity-0 group-hover:opacity-100 
-          transition-opacity duration-200 
-          line-clamp-2 max-w-[200px]"
+        <h3 className="font-semibold text-sm sm:text-lg mb-1 group-hover:text-primary transition-colors">
+          {category.name}
+        </h3>
+        <motion.p 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ 
+            opacity: 1, 
+            height: "auto",
+            transition: { duration: 0.3 }
+          }}
+          className="text-xs sm:text-sm text-gray-600 
+            group-hover:text-gray-800
+            transition-all duration-200 
+            line-clamp-2 max-w-[200px]"
         >
           {category.description}
-        </p>
+        </motion.p>
       </div>
     </motion.div>
   );
