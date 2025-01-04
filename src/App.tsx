@@ -8,6 +8,9 @@ import { StoreMap } from "./components/store/StoreMap";
 import Index from "./pages/Index";
 import LocalTech from "./pages/LocalTech";
 import ExpertServices from "./pages/ExpertServices";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import PasswordReset from "./pages/auth/PasswordReset";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 
 function App() {
@@ -17,6 +20,9 @@ function App() {
         <Breadcrumbs />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/price-compare" element={<PriceComparePage />} />
           <Route path="/shop/:storeName" element={<StoreDetails />} />
           <Route path="/comparison-table" element={<ComparisonTable />} />
