@@ -1,101 +1,27 @@
-import { useState, useRef, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, Smartphone, Laptop, Headphones, Camera, Watch, Tv, Speaker, Gamepad, Clock } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Search, Loader2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const POPULAR_SEARCHES = [
-  { name: "iPhone 15", icon: Smartphone },
-  { name: "MacBook Air", icon: Laptop },
-  { name: "AirPods Pro", icon: Headphones },
-  { name: "Sony Camera", icon: Camera },
-  { name: "Smart Watch", icon: Watch },
-  { name: "4K TV", icon: Tv },
-  { name: "Bluetooth Speaker", icon: Speaker },
-  { name: "Gaming Console", icon: Gamepad }
-];
+import { useState } from "react";
+import { SearchInput } from "./search/SearchInput";
+import { SearchResults } from "./search/SearchResults";
+import { useSearch } from "@/hooks/useSearch";
 
 export const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    // Load recent searches from localStorage
-    const savedSearches = localStorage.getItem('recentSearches');
-    if (savedSearches) {
-      setRecentSearches(JSON.parse(savedSearches));
-    }
-  }, []);
-
-  const saveRecentSearch = (query: string) => {
-    const updatedSearches = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
-    setRecentSearches(updatedSearches);
-    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-  };
-
-  const handleSearch = async (query: string) => {
-    setIsLoading(true);
-    try {
-      if (!query.trim()) {
-        toast({
-          title: "Please enter a search term",
-          description: "Enter a product or shop name to search",
-        });
-        return;
-      }
-      saveRecentSearch(query);
-      navigate("/shop/TechHub Electronics");
-    } catch (error) {
-      toast({
-        title: "Search failed",
-        description: "Please try again later",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-      setOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-        inputRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+  const { searchQuery, setSearchQuery, isLoading, recentSearches, handleSearch } = useSearch();
 
   return (
     <div className={`max-w-2xl mx-auto px-4 py-4 ${isMobile ? 'sm:py-6' : 'sm:py-8'}`}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder={isMobile ? "Search products..." : "Search products... (⌘K)"}
+            <SearchInput
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch(searchQuery);
-                }
-              }}
+              onChange={setSearchQuery}
+              onEnter={() => handleSearch(searchQuery)}
+              isMobile={isMobile}
             />
             <Button 
               onClick={() => handleSearch(searchQuery)}
@@ -112,41 +38,13 @@ export const SearchBar = () => {
           </div>
         </PopoverTrigger>
         <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[600px] p-0">
-          <Command>
-            <CommandInput placeholder="Type to search..." />
-            <CommandEmpty>No results found.</CommandEmpty>
-            {recentSearches.length > 0 && (
-              <CommandGroup heading="Recent Searches">
-                {recentSearches.map((search) => (
-                  <CommandItem
-                    key={search}
-                    onSelect={() => {
-                      setSearchQuery(search);
-                      handleSearch(search);
-                    }}
-                  >
-                    <Clock className="mr-2 h-4 w-4" />
-                    {search}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-            <CommandGroup heading="Popular Searches">
-              {POPULAR_SEARCHES.map(({ name, icon: Icon }) => (
-                <CommandItem
-                  key={name}
-                  onSelect={() => {
-                    setSearchQuery(name);
-                    handleSearch(name);
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <Icon className="h-4 w-4" />
-                  {name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
+          <SearchResults 
+            recentSearches={recentSearches}
+            onSelectSearch={(search) => {
+              setSearchQuery(search);
+              handleSearch(search);
+            }}
+          />
         </PopoverContent>
       </Popover>
     </div>

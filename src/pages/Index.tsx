@@ -1,5 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { SearchBar } from "@/components/SearchBar";
+import { SearchErrorBoundary } from "@/components/search/SearchErrorBoundary";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { Newsletter } from "@/components/Newsletter";
 import { Testimonials } from "@/components/Testimonials";
@@ -73,7 +74,9 @@ const Index = () => {
       )}
       <main className={`${isMobile ? "pt-16" : ""}`}>
         <Hero />
-        <SearchBar />
+        <SearchErrorBoundary>
+          <SearchBar />
+        </SearchErrorBoundary>
         <Categories />
         <FeaturedProducts />
         <BrandsShowcase />
