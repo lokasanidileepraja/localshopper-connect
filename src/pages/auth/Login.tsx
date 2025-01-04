@@ -1,32 +1,71 @@
-import { AuthForm } from "@/components/auth/AuthForm";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement login logic
+    console.log("Login submitted");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your account</p>
-        </div>
-        
-        <AuthForm />
-        
-        <div className="space-y-4">
-          <div className="text-center">
-            <Link to="/reset-password" className="text-primary hover:underline">
-              Forgot your password?
-            </Link>
-          </div>
-          
-          <div className="text-center">
-            <span className="text-gray-600">Don't have an account? </span>
-            <Link to="/register" className="text-primary hover:underline">
-              Sign up
-            </Link>
-          </div>
-        </div>
+      <Button variant="ghost" className="mb-4" onClick={() => navigate(-1)}>
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
+      
+      <div className="max-w-md mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Login</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <Link to="/auth/register" className="text-primary hover:underline">
+                  Create account
+                </Link>
+                <Link
+                  to="/auth/reset-password"
+                  className="text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
