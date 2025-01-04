@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface CategoryHeaderProps {
   filter: string;
@@ -8,6 +9,17 @@ interface CategoryHeaderProps {
 }
 
 export const CategoryHeader = ({ filter, setFilter }: CategoryHeaderProps) => {
+  const { toast } = useToast();
+
+  const clearSearch = () => {
+    setFilter('');
+    toast({
+      title: "Search cleared",
+      description: "Showing all categories",
+      duration: 2000,
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -30,16 +42,33 @@ export const CategoryHeader = ({ filter, setFilter }: CategoryHeaderProps) => {
         transition={{ delay: 0.3 }}
         className="max-w-md mx-auto"
       >
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        <div className="relative group">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 
+            group-hover:text-primary transition-colors" />
           <Input
             type="text"
             placeholder="Search categories..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="pl-10 w-full bg-white/50 backdrop-blur-sm"
+            className="pl-10 pr-10 w-full bg-white/50 backdrop-blur-sm
+              focus:ring-2 focus:ring-primary/20 transition-all
+              hover:bg-white/70"
             aria-label="Search categories"
           />
+          {filter && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2
+                text-gray-400 hover:text-primary transition-colors
+                focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-full"
+              onClick={clearSearch}
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </motion.button>
+          )}
         </div>
       </motion.div>
     </motion.div>

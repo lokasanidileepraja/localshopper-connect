@@ -17,7 +17,8 @@ export const CategoryGrid = ({ categories, selectedIndex, onSelect }: CategoryGr
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   };
@@ -30,8 +31,10 @@ export const CategoryGrid = ({ categories, selectedIndex, onSelect }: CategoryGr
       className="w-full"
     >
       <div className={`
-        grid 
-        ${isMobile ? 'grid-cols-2 gap-3' : 'sm:grid-cols-3 lg:grid-cols-4 gap-6'}
+        grid gap-4 sm:gap-6
+        ${isMobile 
+          ? 'grid-cols-2' 
+          : 'sm:grid-cols-3 lg:grid-cols-4'}
         auto-rows-fr
       `}>
         {categories.map((category, index) => (
@@ -49,10 +52,18 @@ export const CategoryGrid = ({ categories, selectedIndex, onSelect }: CategoryGr
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-12"
+          className="text-center py-12 space-y-4"
         >
           <p className="text-gray-500 text-lg">No categories found matching your search.</p>
-          <p className="text-gray-400 text-sm mt-2">Try adjusting your search terms.</p>
+          <p className="text-gray-400 text-sm">Try adjusting your search terms or browse all categories.</p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+            onClick={() => window.location.reload()}
+          >
+            Reset Search
+          </motion.button>
         </motion.div>
       )}
     </motion.div>
