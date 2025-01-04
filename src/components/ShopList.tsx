@@ -12,6 +12,7 @@ import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { ShopCard } from "./ShopCard";
 import { useQuery } from "@tanstack/react-query";
+import { PriceComparison } from "./PriceComparison";
 
 export const ShopList = () => {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
