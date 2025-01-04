@@ -80,7 +80,10 @@ export const Hero = () => {
               <div className="flex flex-col gap-4">
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl cursor-pointer"
+                  onClick={() => {
+                    navigate("/local-tech");
+                  }}
                 >
                   <Computer className="h-8 w-8 text-primary" />
                   <h3 className="mt-4 font-semibold">Latest Gadgets</h3>
@@ -88,7 +91,10 @@ export const Hero = () => {
                 </motion.div>
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl cursor-pointer"
+                  onClick={() => {
+                    navigate("/price-compare");
+                  }}
                 >
                   <Smartphone className="h-8 w-8 text-primary" />
                   <h3 className="mt-4 font-semibold">Smart Devices</h3>
@@ -98,7 +104,10 @@ export const Hero = () => {
               <div className="flex flex-col gap-4 sm:pt-12">
                 <motion.div 
                   whileHover={{ scale: 1.05 }}
-                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl"
+                  className="rounded-2xl bg-white p-6 shadow-lg transition-all hover:shadow-xl cursor-pointer"
+                  onClick={() => {
+                    navigate("/expert-services");
+                  }}
                 >
                   <CircuitBoard className="h-8 w-8 text-primary" />
                   <h3 className="mt-4 font-semibold">Tech Support</h3>
