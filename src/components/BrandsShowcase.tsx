@@ -4,37 +4,41 @@ const brands = [
   { 
     name: "Apple", 
     logo: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9",
-    description: "Innovation at its finest"
+    description: "Innovation at its finest",
+    stats: "Most Popular Brand"
   },
   { 
     name: "Samsung", 
     logo: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
-    description: "Technology for everyone"
+    description: "Technology for everyone",
+    stats: "Best Value"
   },
   { 
     name: "Sony", 
     logo: "https://images.unsplash.com/photo-1492107376256-4026437926cd",
-    description: "Creating new possibilities"
+    description: "Creating new possibilities",
+    stats: "Top Rated"
   },
   { 
     name: "Dell", 
     logo: "https://images.unsplash.com/photo-1588200908342-23b585c03e26",
-    description: "Empowering professionals"
+    description: "Empowering professionals",
+    stats: "Most Reliable"
   }
 ];
 
 export const BrandsShowcase = () => {
   return (
-    <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-8 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-center mb-8"
+          className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8"
         >
           Featured Brands
         </motion.h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
           {brands.map((brand, index) => (
             <motion.div
               key={brand.name}
@@ -45,19 +49,20 @@ export const BrandsShowcase = () => {
                 transition: { duration: 0.2 }
               }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative flex flex-col items-center justify-center p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+              className="group relative flex flex-col items-center justify-center p-4 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
             >
               <motion.img
                 src={brand.logo}
                 alt={brand.name}
-                className="h-12 object-contain transition-all duration-300 group-hover:scale-110"
+                className="h-8 sm:h-12 object-contain transition-all duration-300 group-hover:scale-110"
                 whileHover={{ rotate: 5 }}
               />
+              <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600">{brand.stats}</p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileHover={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white p-2 rounded-b-xl text-center text-sm"
+                className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white p-2 rounded-b-xl text-center text-xs sm:text-sm"
               >
                 {brand.description}
               </motion.div>
