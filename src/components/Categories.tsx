@@ -14,27 +14,23 @@ export const Categories = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
-  const scrollToCategory = (categoryName: string) => {
-    const element = document.getElementById(categoryName);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      toast({
-        title: `Browsing ${categoryName}`,
-        description: "Loading products in this category...",
-        duration: 2000,
-      });
-    }
-    navigate(`/shop/TechHub Electronics`);
+  const handleCategorySelect = (categoryName: string) => {
+    const formattedCategory = categoryName.toLowerCase();
+    toast({
+      title: `Browsing ${categoryName}`,
+      description: "Loading products in this category...",
+      duration: 2000,
+    });
+    navigate(`/category/${formattedCategory}`);
   };
 
   useKeyboardNav(
     () => setSelectedIndex(prev => Math.max(0, prev - 1)),
     () => setSelectedIndex(prev => Math.min(filteredCategories().length - 1, prev + 1)),
-    () => scrollToCategory(filteredCategories()[selectedIndex]?.name)
+    () => handleCategorySelect(filteredCategories()[selectedIndex]?.name)
   );
 
   useEffect(() => {
-    // Reset selected index when filter changes
     setSelectedIndex(0);
   }, [filter]);
 
@@ -53,7 +49,7 @@ export const Categories = () => {
         <CategoryGrid 
           categories={filtered} 
           selectedIndex={selectedIndex}
-          onSelect={scrollToCategory}
+          onSelect={handleCategorySelect}
         />
       </div>
     </motion.section>

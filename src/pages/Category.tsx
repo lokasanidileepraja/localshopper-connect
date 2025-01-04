@@ -5,6 +5,10 @@ import { products } from "@/data/products";
 import { Product } from "@/types/shop";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Star, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Category = () => {
   const { categoryName } = useParams();
@@ -13,14 +17,13 @@ const Category = () => {
   const { data: categoryProducts, isLoading } = useQuery({
     queryKey: ["products", categoryName],
     queryFn: async (): Promise<Product[]> => {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      if (!categoryName || !products[categoryName]) {
+      if (!categoryName || !products[categoryName.toLowerCase()]) {
         throw new Error("Category not found");
       }
       
-      return products[categoryName];
+      return products[categoryName.toLowerCase()];
     },
     meta: {
       onError: () => {
@@ -56,7 +59,7 @@ const Category = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold mb-8">{categoryName}</h1>
+        <h1 className="text-3xl font-bold mb-8 capitalize">{categoryName}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categoryProducts.map((product) => (
@@ -65,29 +68,40 @@ const Category = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <div className="aspect-w-16 aspect-h-9">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-                <p className="text-gray-600 mb-4">{product.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold">₹{product.price.toLocaleString()}</span>
-                  <div className="flex items-center">
-                    <span className="text-yellow-400">★</span>
-                    <span className="ml-1">{product.rating}</span>
+              <Card className="h-full hover:shadow-lg transition-shadow">
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    {product.inStock ? (
+                      <Badge className="absolute top-2 right-2">In Stock</Badge>
+                    ) : (
+                      <Badge variant="secondary" className="absolute top-2 right-2">Out of Stock</Badge>
+                    )}
                   </div>
-                </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  {product.stock} in stock
-                </p>
-              </div>
+                  <div className="p-4">
+                    <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
+                    <p className="text-gray-600 mb-4">{product.description}</p>
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-2xl font-bold text-primary">
+                        ₹{product.price.toLocaleString()}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{product.rating}</span>
+                      </div>
+                    </div>
+                    <Button className="w-full" disabled={!product.inStock}>
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           ))}
         </div>
