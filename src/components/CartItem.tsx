@@ -3,6 +3,7 @@ import { Product } from "@/types/shop";
 import { ShopComparison } from "./ShopComparison";
 import { Shop } from "@/types/shop";
 import { useState } from "react";
+import { useCart } from "@/contexts/CartContext";
 
 interface CartItemProps {
   item: Product & { shopName: string };
@@ -13,12 +14,14 @@ interface CartItemProps {
 export const CartItem = ({ item, shops, onRemove }: CartItemProps) => {
   const [currentShop, setCurrentShop] = useState(item.shopName);
   const [currentPrice, setCurrentPrice] = useState(item.price);
+  const { updateItemPrice } = useCart();
 
   const otherShops = shops.filter((shop) => shop.name !== currentShop);
 
   const handleShopSelect = (shopName: string, price: number) => {
     setCurrentShop(shopName);
     setCurrentPrice(price);
+    updateItemPrice(item.id, price);
   };
 
   return (
