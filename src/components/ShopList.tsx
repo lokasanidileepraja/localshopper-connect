@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const ELECTRONICS_SHOPS: Shop[] = [
   {
+    id: "shop1",
     name: "TechHub Electronics",
     category: "Electronics Store",
     rating: 4.5,
@@ -43,6 +44,7 @@ const ELECTRONICS_SHOPS: Shop[] = [
     ]
   },
   {
+    id: "shop2",
     name: "Digital World",
     category: "Electronics Store",
     rating: 4.7,
@@ -79,6 +81,7 @@ const ELECTRONICS_SHOPS: Shop[] = [
     ]
   },
   {
+    id: "shop3",
     name: "Gadget Galaxy",
     category: "Electronics Store",
     rating: 4.3,
@@ -162,7 +165,7 @@ export const ShopList = () => {
         <h2 className="mb-8 text-3xl font-bold">Nearby Electronics Shops</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shops?.map((shop) => (
-            <ShopCard key={shop.name} {...shop} />
+            <ShopCard key={shop.id} {...shop} />
           ))}
         </div>
       </div>

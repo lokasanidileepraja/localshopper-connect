@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const ELECTRONICS_SHOPS: Shop[] = [
   {
+    id: "shop1",
     name: "TechHub Electronics",
     category: "Electronics Store",
     rating: 4.5,
@@ -44,6 +45,7 @@ const ELECTRONICS_SHOPS: Shop[] = [
     ]
   },
   {
+    id: "shop2",
     name: "Digital World",
     category: "Electronics Store",
     rating: 4.7,
@@ -80,6 +82,7 @@ const ELECTRONICS_SHOPS: Shop[] = [
     ]
   },
   {
+    id: "shop3",
     name: "Gadget Galaxy",
     category: "Electronics Store",
     rating: 4.3,
