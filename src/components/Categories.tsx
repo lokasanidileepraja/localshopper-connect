@@ -3,6 +3,8 @@ import { Smartphone, Laptop, Headphones, Camera, Watch, Tv, Speaker, Gamepad } f
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useKeyboardNav } from "@/hooks/useKeyboardNav";
+import { useState } from "react";
 
 const categories = [
   { name: "Phones", icon: Smartphone, color: "bg-blue-100", description: "Latest smartphones and accessories" },
@@ -19,6 +21,7 @@ export const Categories = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const scrollToCategory = (categoryName: string) => {
     const element = document.getElementById(categoryName);
@@ -31,6 +34,12 @@ export const Categories = () => {
     }
     navigate(`/shop/TechHub Electronics`);
   };
+
+  useKeyboardNav(
+    () => setSelectedIndex(prev => Math.max(0, prev - (isMobile ? 2 : 4))),
+    () => setSelectedIndex(prev => Math.min(categories.length - 1, prev + (isMobile ? 2 : 4))),
+    () => scrollToCategory(categories[selectedIndex].name)
+  );
 
   return (
     <section className="py-6 sm:py-12 bg-gradient-to-b from-white to-gray-50" id="categories">
@@ -47,7 +56,11 @@ export const Categories = () => {
             <motion.div
               key={category.name}
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ 
+                opacity: 1, 
+                scale: selectedIndex === index ? 1.05 : 1,
+                boxShadow: selectedIndex === index ? "0 4px 12px rgba(0,0,0,0.1)" : "none"
+              }}
               whileHover={{ 
                 scale: isMobile ? 1.02 : 1.05,
                 boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
@@ -56,6 +69,14 @@ export const Categories = () => {
               className={`${category.color} rounded-xl p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all group`}
               onClick={() => scrollToCategory(category.name)}
               id={category.name}
+              tabIndex={0}
+              role="button"
+              aria-label={`Browse ${category.name} category`}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  scrollToCategory(category.name);
+                }
+              }}
             >
               <div className="flex flex-col items-center text-center">
                 <category.icon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8'} mb-2 sm:mb-4 group-hover:text-primary transition-colors`} />
