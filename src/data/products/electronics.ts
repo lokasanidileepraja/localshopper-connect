@@ -7,7 +7,7 @@ export const electronics: Product[] = [
     price: 49999,
     description: "55-inch 4K Ultra HD Smart LED TV",
     image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1",
-    category: "tvs",
+    category: "electronics",
     rating: 4.5,
     stock: 10,
     brand: "TechVision",
@@ -16,28 +16,15 @@ export const electronics: Product[] = [
   },
   {
     id: "e2",
-    name: "Wireless Speaker",
+    name: "Smart Home Hub",
     price: 9999,
-    description: "Premium Bluetooth Speaker with Deep Bass",
-    image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1",
-    category: "speakers",
+    description: "Voice-controlled smart home device",
+    image: "https://images.unsplash.com/photo-1558089687-f282ffcbc126",
+    category: "electronics",
     rating: 4.3,
     stock: 15,
-    brand: "SoundMax",
-    model: "BT-Speaker-Pro",
-    inStock: true
-  },
-  {
-    id: "e3",
-    name: "Gaming Console",
-    price: 39999,
-    description: "Next-gen Gaming Console with 4K Support",
-    image: "https://images.unsplash.com/photo-1486401899868-0e435ed85128",
-    category: "gaming",
-    rating: 4.8,
-    stock: 5,
-    brand: "GameTech",
-    model: "GT-4K-Pro",
+    brand: "SmartLife",
+    model: "SH-200",
     inStock: true
   }
 ];
