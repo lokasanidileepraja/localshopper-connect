@@ -18,6 +18,8 @@ import Product from "./pages/Product";
 import { Breadcrumbs } from "./components/Breadcrumbs";
 import { CartProvider } from "./contexts/CartContext";
 import Category from "./pages/Category";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -46,6 +48,8 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/product/:productId" element={<Product />} />
               <Route path="/category/:categoryName" element={<Category />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/notifications" element={<Notifications />} />
             </Routes>
           </div>
         </Router>
