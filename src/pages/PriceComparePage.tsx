@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PriceComparisonSearch } from "@/components/price-compare/PriceComparisonSearch";
 import { PriceCompareTabs } from "@/components/price-compare/PriceCompareTabs";
+import { Navigation } from "@/components/Navigation";
 import { motion } from "framer-motion";
 
 type Filters = {
@@ -28,30 +29,33 @@ const PriceComparePage = () => {
   };
 
   return (
-    <motion.div 
-      className="container py-8 space-y-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-bold">Compare Prices Nearby</h1>
-        <p className="text-muted-foreground">
-          Find the best deals from local stores and compare prices in real-time
-        </p>
-      </div>
+    <div className="min-h-screen pb-16 md:pb-0">
+      <Navigation />
+      <motion.div 
+        className="container py-8 space-y-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex flex-col gap-4">
+          <h1 className="text-4xl font-bold">Compare Prices Nearby</h1>
+          <p className="text-muted-foreground">
+            Find the best deals from local stores and compare prices in real-time
+          </p>
+        </div>
 
-      <PriceComparisonSearch 
-        onSearch={handleSearch}
-        filters={selectedFilters}
-        onFilterChange={handleFilterChange}
-      />
+        <PriceComparisonSearch 
+          onSearch={handleSearch}
+          filters={selectedFilters}
+          onFilterChange={handleFilterChange}
+        />
 
-      <PriceCompareTabs 
-        searchQuery={searchQuery}
-        filters={selectedFilters}
-      />
-    </motion.div>
+        <PriceCompareTabs 
+          searchQuery={searchQuery}
+          filters={selectedFilters}
+        />
+      </motion.div>
+    </div>
   );
 };
 
