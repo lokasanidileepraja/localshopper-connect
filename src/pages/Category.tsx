@@ -22,13 +22,15 @@ const Category = () => {
       
       return products[categoryName];
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to load products. Please try again later.",
-        variant: "destructive",
-      });
-    },
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to load products. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
   if (isLoading) {

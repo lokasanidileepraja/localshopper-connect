@@ -7,6 +7,9 @@ export interface Product {
   image: string;
   rating: number;
   stock: number;
+  brand: string;
+  model: string;
+  inStock: boolean;
 }
 
 export interface Shop {
