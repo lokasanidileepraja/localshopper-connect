@@ -1,12 +1,12 @@
 export interface Product {
   id: string;
   name: string;
-  category: "mobile" | "laptop" | "accessory";
   price: number;
-  brand: string;
-  model: string;
-  inStock: boolean;
-  image?: string;
+  description: string;
+  category: string;
+  image: string;
+  rating: number;
+  stock: number;
 }
 
 export interface Shop {
