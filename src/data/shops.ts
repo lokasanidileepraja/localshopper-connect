@@ -1,111 +1,99 @@
-import { Shop } from "@/types/shop";
+import { Product } from "@/types/shop";
 
-export const ELECTRONICS_SHOPS: Shop[] = [
+export const ELECTRONICS_SHOPS = [
   {
+    id: "1",
     name: "TechHub Electronics",
-    category: "Electronics Store",
     rating: 4.5,
-    distance: "0.8 km",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     isOpen: true,
+    image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58",
     products: [
       {
         id: "1",
         name: "iPhone 15",
-        category: "mobile",
+        category: "Smartphones",
         price: 79999,
         brand: "Apple",
         model: "iPhone 15",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
+        description: "Latest iPhone with advanced features",
         rating: 4.8,
-        stock: 25
+        stock: 50,
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
       },
       {
         id: "2",
         name: "MacBook Air M2",
-        category: "laptop",
+        category: "Laptops",
         price: 114900,
         brand: "Apple",
         model: "MacBook Air M2",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-        description: "Powerful and portable laptop with M2 chip",
+        description: "Powerful and efficient laptop",
         rating: 4.9,
-        stock: 15
-      }
-    ]
-  },
-  {
-    name: "Digital World",
-    category: "Electronics Store",
-    rating: 4.7,
-    distance: "1.2 km",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    isOpen: true,
-    products: [
-      {
-        id: "3",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 78999,
-        brand: "Apple",
-        model: "iPhone 15",
+        stock: 30,
         inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 20
+        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
       },
       {
-        id: "4",
-        name: "Samsung Galaxy S23",
-        category: "mobile",
-        price: 74999,
-        brand: "Samsung",
-        model: "Galaxy S23",
-        inStock: true,
-        description: "Flagship Android smartphone",
+        id: "3",
+        name: "AirPods Pro",
+        category: "Audio",
+        price: 24999,
+        brand: "Apple",
+        model: "AirPods Pro",
+        description: "Premium wireless earbuds",
         rating: 4.7,
-        stock: 18,
-        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+        stock: 100,
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434"
       }
     ]
   },
   {
-    name: "Gadget Galaxy",
-    category: "Electronics Store",
-    rating: 4.3,
-    distance: "0.5 km",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    id: "2",
+    name: "Digital World",
+    rating: 4.2,
     isOpen: false,
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
     products: [
       {
+        id: "4",
+        name: "Samsung Galaxy S21",
+        category: "Smartphones",
+        price: 69999,
+        brand: "Samsung",
+        model: "Galaxy S21",
+        description: "Latest Samsung smartphone with amazing features",
+        rating: 4.6,
+        stock: 20,
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1612831231234-1234567890ab"
+      },
+      {
         id: "5",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 81999,
-        brand: "Apple",
-        model: "iPhone 15",
-        inStock: false,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
+        name: "Dell XPS 13",
+        category: "Laptops",
+        price: 99999,
+        brand: "Dell",
+        model: "XPS 13",
+        description: "Compact and powerful laptop",
         rating: 4.8,
-        stock: 0
+        stock: 15,
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1612831231234-1234567890cd"
       },
       {
         id: "6",
-        name: "AirPods Pro",
-        category: "accessory",
-        price: 24999,
-        brand: "Apple",
-        model: "AirPods Pro 2nd Gen",
+        name: "Sony WH-1000XM4",
+        category: "Audio",
+        price: 29999,
+        brand: "Sony",
+        model: "WH-1000XM4",
+        description: "Industry-leading noise canceling headphones",
+        rating: 4.9,
+        stock: 50,
         inStock: true,
-        description: "Premium wireless earbuds",
-        rating: 4.6,
-        stock: 30,
-        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
+        image: "https://images.unsplash.com/photo-1612831231234-1234567890ef"
       }
     ]
   }
