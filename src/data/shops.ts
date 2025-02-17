@@ -111,5 +111,79 @@ export const ELECTRONICS_SHOPS: Shop[] = [
         image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
       }
     ]
+  },
+  {
+    id: "shop4",
+    name: "Elite Electronics",
+    category: "Electronics Store",
+    rating: 4.6,
+    distance: "1.5 km",
+    image: "https://images.unsplash.com/photo-1478860409698-8707f313ee8b",
+    isOpen: true,
+    products: [
+      {
+        id: "7",
+        name: "iPhone 15",
+        category: "mobile",
+        price: 77999,
+        brand: "Apple",
+        model: "iPhone 15",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        description: "Latest iPhone model with advanced features",
+        rating: 4.8,
+        stock: 15
+      },
+      {
+        id: "8",
+        name: "Samsung Galaxy S23",
+        category: "mobile",
+        price: 72999,
+        brand: "Samsung",
+        model: "Galaxy S23",
+        inStock: true,
+        description: "Flagship Android smartphone",
+        rating: 4.7,
+        stock: 20,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+      }
+    ]
+  },
+  {
+    id: "shop5",
+    name: "Smart Store",
+    category: "Electronics Store",
+    rating: 4.4,
+    distance: "2.0 km",
+    image: "https://images.unsplash.com/photo-1491933382434-500287f9b54b",
+    isOpen: true,
+    products: [
+      {
+        id: "9",
+        name: "iPhone 15",
+        category: "mobile",
+        price: 76999,
+        brand: "Apple",
+        model: "iPhone 15",
+        inStock: true,
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+        description: "Latest iPhone model with advanced features",
+        rating: 4.8,
+        stock: 10
+      },
+      {
+        id: "10",
+        name: "Samsung Galaxy S23",
+        category: "mobile",
+        price: 73999,
+        brand: "Samsung",
+        model: "Galaxy S23",
+        inStock: true,
+        description: "Flagship Android smartphone",
+        rating: 4.7,
+        stock: 12,
+        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+      }
+    ]
   }
 ];
