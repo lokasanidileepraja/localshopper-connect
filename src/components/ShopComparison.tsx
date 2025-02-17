@@ -2,8 +2,9 @@
 import { Shop } from "@/types/shop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { ShoppingCart, Star, MapPin, Clock, Check } from "lucide-react";
+import { ShoppingCart, Star, MapPin, Clock, Check, TrendingDown } from "lucide-react";
 
 interface ShopComparisonProps {
   currentShop: string;
@@ -29,14 +30,21 @@ export const ShopComparison = ({
 }: ShopComparisonProps) => {
   const [selectedShops, setSelectedShops] = useState<string[]>([]);
 
+  // Generate a random price within ±5% of the current price
+  const getRandomPrice = (basePrice: number) => {
+    const variation = basePrice * 0.05; // 5% variation
+    const randomOffset = Math.random() * variation * 2 - variation;
+    return Math.round(basePrice + randomOffset);
+  };
+
   // Find all prices for this product model with proper typing
   const allShops: ComparisonShop[] = [
-    { name: currentShop, price, },
+    { name: currentShop, price },
     ...otherShops.map(shop => {
       const product = shop.products.find(p => p.model === productModel);
       return {
         name: shop.name,
-        price: product?.price || 0,
+        price: product?.price || getRandomPrice(price),
         rating: shop.rating,
         distance: shop.distance
       };
@@ -70,7 +78,15 @@ export const ShopComparison = ({
                   </div>
                 )}
                 <div>
-                  <p className="font-medium">{shop.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">{shop.name}</p>
+                    {shop.name !== currentShop && shop.price < price && (
+                      <Badge variant="secondary" className="flex items-center gap-1">
+                        <TrendingDown className="h-3 w-3" />
+                        Cheaper
+                      </Badge>
+                    )}
+                  </div>
                   {shop.rating && (
                     <div className="flex items-center gap-1 text-sm text-gray-600">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
