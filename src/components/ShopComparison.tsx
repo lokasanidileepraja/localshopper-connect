@@ -13,6 +13,13 @@ interface ShopComparisonProps {
   onShopSelect: (shopName: string, price: number) => void;
 }
 
+interface ComparisonShop {
+  name: string;
+  price: number;
+  rating?: number;
+  distance?: string;
+}
+
 export const ShopComparison = ({
   currentShop,
   price,
@@ -22,16 +29,21 @@ export const ShopComparison = ({
 }: ShopComparisonProps) => {
   const [selectedShops, setSelectedShops] = useState<string[]>([]);
 
-  // Find all prices for this product model
-  const allShops = [{ name: currentShop, price }, ...otherShops.map(shop => {
-    const product = shop.products.find(p => p.model === productModel);
-    return {
-      ...shop,
-      productPrice: product?.price || 0
-    };
-  })].sort((a, b) => (a.productPrice || a.price) - (b.productPrice || b.price));
+  // Find all prices for this product model with proper typing
+  const allShops: ComparisonShop[] = [
+    { name: currentShop, price, },
+    ...otherShops.map(shop => {
+      const product = shop.products.find(p => p.model === productModel);
+      return {
+        name: shop.name,
+        price: product?.price || 0,
+        rating: shop.rating,
+        distance: shop.distance
+      };
+    })
+  ].sort((a, b) => a.price - b.price);
 
-  const lowestPrice = allShops[0].productPrice || allShops[0].price;
+  const lowestPrice = allShops[0]?.price || 0;
 
   return (
     <div className="space-y-4">
@@ -42,13 +54,13 @@ export const ShopComparison = ({
             <div 
               key={shop.name}
               className={`flex items-center justify-between p-3 rounded-lg ${
-                shop.productPrice === lowestPrice || shop.price === lowestPrice
+                shop.price === lowestPrice
                   ? "bg-green-50 border border-green-200"
                   : "bg-white border"
               }`}
             >
               <div className="flex items-center gap-3">
-                {shop.productPrice === lowestPrice || shop.price === lowestPrice ? (
+                {shop.price === lowestPrice ? (
                   <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
                     <Check className="w-4 h-4 text-green-600" />
                   </div>
@@ -69,7 +81,7 @@ export const ShopComparison = ({
               </div>
               <div className="text-right">
                 <p className="font-bold text-primary">
-                  ₹{((shop.productPrice || shop.price)).toLocaleString()}
+                  ₹{shop.price.toLocaleString()}
                 </p>
                 {shop.distance && (
                   <p className="text-sm text-gray-600 flex items-center gap-1 justify-end">
