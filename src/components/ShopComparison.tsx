@@ -1,8 +1,9 @@
+
 import { Shop } from "@/types/shop";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, MapPin, Clock, Check } from "lucide-react";
 
 interface ShopComparisonProps {
   currentShop: string;
@@ -21,9 +22,67 @@ export const ShopComparison = ({
 }: ShopComparisonProps) => {
   const [selectedShops, setSelectedShops] = useState<string[]>([]);
 
+  // Find all prices for this product model
+  const allShops = [{ name: currentShop, price }, ...otherShops.map(shop => {
+    const product = shop.products.find(p => p.model === productModel);
+    return {
+      ...shop,
+      productPrice: product?.price || 0
+    };
+  })].sort((a, b) => (a.productPrice || a.price) - (b.productPrice || b.price));
+
+  const lowestPrice = allShops[0].productPrice || allShops[0].price;
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Available at other stores</h3>
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-3">Price Comparison</h3>
+        <div className="space-y-2">
+          {allShops.map((shop, index) => (
+            <div 
+              key={shop.name}
+              className={`flex items-center justify-between p-3 rounded-lg ${
+                shop.productPrice === lowestPrice || shop.price === lowestPrice
+                  ? "bg-green-50 border border-green-200"
+                  : "bg-white border"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {shop.productPrice === lowestPrice || shop.price === lowestPrice ? (
+                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                    <Check className="w-4 h-4 text-green-600" />
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">{shop.name}</p>
+                  {shop.rating && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      {shop.rating}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-bold text-primary">
+                  ₹{((shop.productPrice || shop.price)).toLocaleString()}
+                </p>
+                {shop.distance && (
+                  <p className="text-sm text-gray-600 flex items-center gap-1 justify-end">
+                    <MapPin className="h-3 w-3" />
+                    {shop.distance}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         {otherShops.map((shop) => {
           const product = shop.products.find((p) => p.model === productModel);
