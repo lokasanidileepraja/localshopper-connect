@@ -1,8 +1,6 @@
 
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 
 interface BrandsShowcaseProps {
   onBrandClick: (brandName: string) => void;
@@ -10,8 +8,6 @@ interface BrandsShowcaseProps {
 
 export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
-  const { toast } = useToast();
 
   const brands = [
     { 
@@ -40,19 +36,6 @@ export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
     }
   ];
 
-  const handleBrandClick = (brandName: string) => {
-    try {
-      onBrandClick(brandName);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Unable to load brand page. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Brand navigation error:", error);
-    }
-  };
-
   return (
     <section className="py-6 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
@@ -75,10 +58,7 @@ export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
               }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group relative flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
-              onClick={() => handleBrandClick(brand.name)}
-              role="button"
-              tabIndex={0}
-              aria-label={`View ${brand.name} products`}
+              onClick={() => onBrandClick(brand.name)}
             >
               <motion.img
                 src={brand.logo}
