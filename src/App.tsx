@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { CartProvider } from "@/contexts/CartContext";
@@ -17,6 +18,7 @@ import Contact from "@/pages/Contact";
 import FAQ from "@/pages/FAQ";
 import Wishlist from "@/pages/Wishlist";
 import Search from "@/pages/Search";
+import Stores from "@/pages/Stores";
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/stores" element={<Stores />} />
         </Routes>
       </Router>
     </CartProvider>

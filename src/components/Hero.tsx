@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +45,7 @@ export const Hero = () => {
             <Button 
               size="lg"
               className="w-full sm:w-auto bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-6 rounded-full transition-all duration-300 transform hover:scale-105"
-              onClick={() => navigate("/local-tech")}
+              onClick={() => navigate("/stores")}
             >
               Explore Stores
               <ArrowRight className="ml-2 h-5 w-5" />
