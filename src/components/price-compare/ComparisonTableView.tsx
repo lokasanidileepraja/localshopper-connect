@@ -39,7 +39,7 @@ export const ComparisonTableView = ({ searchQuery, filters }: ComparisonTableVie
               <TableCell className="font-medium">{shop.name}</TableCell>
               <TableCell>{shop.distance}</TableCell>
               <TableCell>
-                <Badge variant={shop.isOpen ? "success" : "secondary"}>
+                <Badge variant={shop.isOpen ? "default" : "secondary"}>
                   {shop.isOpen ? "Open" : "Closed"}
                 </Badge>
               </TableCell>

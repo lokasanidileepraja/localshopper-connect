@@ -11,6 +11,7 @@ export interface Product {
   brand: string;
   model: string;
   inStock: boolean;
+  quantity?: number;  // Added quantity as optional property
 }
 
 export interface Shop {

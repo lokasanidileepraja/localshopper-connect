@@ -5,6 +5,7 @@ import { Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { Product } from "@/types/shop";
 
 const Wishlist = () => {
   const { toast } = useToast();
@@ -14,35 +15,35 @@ const Wishlist = () => {
   // Mock wishlist data
   const wishlistItems = [
     {
-      id: 1,
+      id: "1",
       name: "Smartphone X",
       price: 799,
       image: "/placeholder.svg",
-    },
-    {
-      id: 2,
-      name: "Laptop Pro",
-      price: 1299,
-      image: "/placeholder.svg",
-    }
-  ];
-
-  const handleAddToCart = (item: typeof wishlistItems[0]) => {
-    addToCart({
-      id: item.id.toString(),
-      name: item.name,
-      price: item.price,
-      quantity: 1,
-      shopName: "Demo Shop",
       description: "",
       category: "electronics",
-      image: item.image,
       rating: 0,
       stock: 1,
       brand: "",
       model: "",
       inStock: true
-    }, "Demo Shop");
+    },
+    {
+      id: "2",
+      name: "Laptop Pro",
+      price: 1299,
+      image: "/placeholder.svg",
+      description: "",
+      category: "electronics",
+      rating: 0,
+      stock: 1,
+      brand: "",
+      model: "",
+      inStock: true
+    }
+  ];
+
+  const handleAddToCart = (item: Product) => {
+    addToCart(item, "Demo Shop");
     
     toast({
       title: "Added to Cart",
@@ -53,7 +54,7 @@ const Wishlist = () => {
     navigate("/cart");
   };
 
-  const handleRemove = (itemId: number) => {
+  const handleRemove = (itemId: string) => {
     toast({
       title: "Removed from Wishlist",
       description: "Item has been removed from your wishlist.",
