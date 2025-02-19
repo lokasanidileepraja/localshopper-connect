@@ -2,12 +2,36 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Clock } from "lucide-react";
+import { Star, MapPin, Clock, Phone, Globe } from "lucide-react";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const Stores = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleStoreView = (shopId: string) => {
+    // Navigate to the store's product listing page
+    navigate(`/category/electronics?store=${shopId}`);
+  };
+
+  const handleContact = (phone: string) => {
+    window.location.href = `tel:${phone}`;
+    toast({
+      title: "Contact Store",
+      description: "Initiating call to store...",
+    });
+  };
+
+  const handleDirections = (address: string) => {
+    // Open in Google Maps
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
+    toast({
+      title: "Get Directions",
+      description: "Opening store location in maps...",
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -37,11 +61,27 @@ const Stores = () => {
                   <Clock className="h-4 w-4" />
                   <span>{shop.isOpen ? "Open Now" : "Currently Closed"}</span>
                 </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleDirections(shop.address)}
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Directions
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleContact(shop.phone)}
+                  >
+                    <Phone className="h-4 w-4 mr-2" />
+                    Contact
+                  </Button>
+                </div>
                 <Button 
                   className="w-full" 
-                  onClick={() => navigate(`/store/${shop.id}`)}
+                  onClick={() => handleStoreView(shop.id)}
                 >
-                  View Store
+                  View Products
                 </Button>
               </div>
             </CardContent>
