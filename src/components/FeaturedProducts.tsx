@@ -41,7 +41,11 @@ const ALL_PRODUCTS = [
   }
 ];
 
-export const FeaturedProducts = () => {
+interface FeaturedProductsProps {
+  onProductClick: (productId: string) => void;
+}
+
+export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState(ALL_PRODUCTS.slice(0, 3));
@@ -77,12 +81,7 @@ export const FeaturedProducts = () => {
   );
 
   const handleProductClick = (productId: string) => {
-    toast({
-      title: "Loading Product",
-      description: "Taking you to product details...",
-      duration: 2000,
-    });
-    navigate(`/product/${productId}`);
+    onProductClick(productId);
   };
 
   if (isLoading) {

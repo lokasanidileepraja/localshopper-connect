@@ -1,35 +1,40 @@
+
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const brands = [
-  { 
-    name: "Apple", 
-    logo: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9",
-    description: "Innovation at its finest",
-    stats: "Most Popular Brand"
-  },
-  { 
-    name: "Samsung", 
-    logo: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
-    description: "Technology for everyone",
-    stats: "Best Value"
-  },
-  { 
-    name: "Sony", 
-    logo: "https://images.unsplash.com/photo-1492107376256-4026437926cd",
-    description: "Creating new possibilities",
-    stats: "Top Rated"
-  },
-  { 
-    name: "Dell", 
-    logo: "https://images.unsplash.com/photo-1588200908342-23b585c03e26",
-    description: "Empowering professionals",
-    stats: "Most Reliable"
-  }
-];
+interface BrandsShowcaseProps {
+  onBrandClick: (brandName: string) => void;
+}
 
-export const BrandsShowcase = () => {
+export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
   const isMobile = useIsMobile();
+
+  const brands = [
+    { 
+      name: "Apple", 
+      logo: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9",
+      description: "Innovation at its finest",
+      stats: "Most Popular Brand"
+    },
+    { 
+      name: "Samsung", 
+      logo: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
+      description: "Technology for everyone",
+      stats: "Best Value"
+    },
+    { 
+      name: "Sony", 
+      logo: "https://images.unsplash.com/photo-1492107376256-4026437926cd",
+      description: "Creating new possibilities",
+      stats: "Top Rated"
+    },
+    { 
+      name: "Dell", 
+      logo: "https://images.unsplash.com/photo-1588200908342-23b585c03e26",
+      description: "Empowering professionals",
+      stats: "Most Reliable"
+    }
+  ];
 
   return (
     <section className="py-6 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
@@ -52,7 +57,8 @@ export const BrandsShowcase = () => {
                 transition: { duration: 0.2 }
               }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+              className="group relative flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+              onClick={() => onBrandClick(brand.name)}
             >
               <motion.img
                 src={brand.logo}

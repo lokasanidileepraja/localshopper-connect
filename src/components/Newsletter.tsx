@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { Mail, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const Newsletter = () => {
+interface NewsletterProps {
+  onSubmit: (email: string) => void;
+}
+
+export const Newsletter = ({ onSubmit }: NewsletterProps) => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
@@ -13,6 +18,7 @@ export const Newsletter = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
+    onSubmit(email);
     toast({
       title: "Success!",
       description: "Thank you for subscribing to our newsletter.",
