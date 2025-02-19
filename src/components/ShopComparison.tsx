@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ShoppingCart, Star, MapPin, Clock, Check, TrendingDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShopComparisonProps {
   currentShop: string;
@@ -28,6 +31,8 @@ export const ShopComparison = ({
   productModel,
   onShopSelect,
 }: ShopComparisonProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedShops, setSelectedShops] = useState<string[]>([]);
 
   // Generate a random price within ±5% of the current price
@@ -53,6 +58,18 @@ export const ShopComparison = ({
 
   const lowestPrice = allShops[0]?.price || 0;
 
+  const handleStoreSelect = (shopName: string, shopPrice: number) => {
+    onShopSelect(shopName, shopPrice);
+    toast({
+      title: "Store Selected",
+      description: `You've selected ${shopName} with price ₹${shopPrice.toLocaleString()}`,
+    });
+    // Navigate to cart after a brief delay
+    setTimeout(() => {
+      navigate("/cart");
+    }, 1500);
+  };
+
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 p-4 rounded-lg">
@@ -65,7 +82,12 @@ export const ShopComparison = ({
                 shop.price === lowestPrice
                   ? "bg-green-50 border border-green-200"
                   : "bg-white border"
-              }`}
+              } ${shop.name !== currentShop ? "cursor-pointer hover:border-primary" : ""}`}
+              onClick={() => {
+                if (shop.name !== currentShop) {
+                  handleStoreSelect(shop.name, shop.price);
+                }
+              }}
             >
               <div className="flex items-center gap-3">
                 {shop.price === lowestPrice ? (
@@ -120,7 +142,7 @@ export const ShopComparison = ({
           const savings = priceDifference > 0 ? priceDifference : 0;
 
           return (
-            <Card key={shop.name} className="relative">
+            <Card key={shop.name} className="relative hover:border-primary transition-colors">
               <CardContent className="p-4">
                 <div className="mb-4 flex items-center justify-between">
                   <h4 className="font-semibold">{shop.name}</h4>
@@ -144,7 +166,7 @@ export const ShopComparison = ({
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => onShopSelect(shop.name, product.price)}
+                    onClick={() => handleStoreSelect(shop.name, product.price)}
                   >
                     <ShoppingCart className="mr-2 h-4 w-4" />
                     Select Store
