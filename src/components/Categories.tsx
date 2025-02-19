@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
@@ -8,20 +9,18 @@ import { CategoryGrid } from "./categories/CategoryGrid";
 import { categories } from "@/data/categories";
 import { motion } from "framer-motion";
 
-export const Categories = () => {
+interface CategoriesProps {
+  onCategorySelect: (category: string) => void;
+}
+
+export const Categories = ({ onCategorySelect }: CategoriesProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
   const handleCategorySelect = (categoryName: string) => {
-    const formattedCategory = categoryName.toLowerCase();
-    toast({
-      title: `Browsing ${categoryName}`,
-      description: "Loading products in this category...",
-      duration: 2000,
-    });
-    navigate(`/category/${formattedCategory}`);
+    onCategorySelect(categoryName);
   };
 
   useKeyboardNav(
