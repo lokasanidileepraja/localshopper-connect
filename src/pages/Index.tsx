@@ -11,6 +11,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { CartProvider } from "@/contexts/CartContext";
 
 const Index = () => {
   const { toast } = useToast();
@@ -58,21 +59,23 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0">
-      <Navigation />
-      <main>
-        <Hero />
-        <SearchErrorBoundary>
-          <SearchBar onSearch={handleSearch} />
-        </SearchErrorBoundary>
-        <Categories onCategorySelect={handleCategorySelect} />
-        <FeaturedProducts onProductClick={handleProductClick} />
-        <BrandsShowcase onBrandClick={handleBrandClick} />
-        <Testimonials />
-        <Newsletter onSubmit={handleNewsletterSubmit} />
-        <BackToTop />
-      </main>
-    </div>
+    <CartProvider>
+      <div className="min-h-screen pb-16 md:pb-0">
+        <Navigation />
+        <main>
+          <Hero />
+          <SearchErrorBoundary>
+            <SearchBar onSearch={handleSearch} />
+          </SearchErrorBoundary>
+          <Categories onCategorySelect={handleCategorySelect} />
+          <FeaturedProducts onProductClick={handleProductClick} />
+          <BrandsShowcase onBrandClick={handleBrandClick} />
+          <Testimonials />
+          <Newsletter onSubmit={handleNewsletterSubmit} />
+          <BackToTop />
+        </main>
+      </div>
+    </CartProvider>
   );
 };
 
