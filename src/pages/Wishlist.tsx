@@ -33,8 +33,16 @@ const Wishlist = () => {
       name: item.name,
       price: item.price,
       quantity: 1,
-      shopName: "Demo Shop"
-    });
+      shopName: "Demo Shop",
+      description: "",
+      category: "electronics",
+      image: item.image,
+      rating: 0,
+      stock: 1,
+      brand: "",
+      model: "",
+      inStock: true
+    }, "Demo Shop");
     
     toast({
       title: "Added to Cart",

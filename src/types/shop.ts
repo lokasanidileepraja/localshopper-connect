@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -20,5 +21,7 @@ export interface Shop {
   distance: string;
   image: string;
   isOpen: boolean;
+  address: string;
+  phone: string;
   products: Product[];
 }

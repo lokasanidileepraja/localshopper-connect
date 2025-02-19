@@ -9,6 +9,8 @@ export const ELECTRONICS_SHOPS: Shop[] = [
     distance: "0.8 km",
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     isOpen: true,
+    address: "123 Tech Street, Electronics District",
+    phone: "+1234567890",
     products: [
       {
         id: "1",
@@ -46,6 +48,8 @@ export const ELECTRONICS_SHOPS: Shop[] = [
     distance: "1.2 km",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     isOpen: true,
+    address: "456 Digital Avenue, Tech Park",
+    phone: "+1234567891",
     products: [
       {
         id: "3",
@@ -83,6 +87,8 @@ export const ELECTRONICS_SHOPS: Shop[] = [
     distance: "0.5 km",
     image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
     isOpen: false,
+    address: "789 Gadget Road, Innovation Hub",
+    phone: "+1234567892",
     products: [
       {
         id: "5",
@@ -120,6 +126,8 @@ export const ELECTRONICS_SHOPS: Shop[] = [
     distance: "1.5 km",
     image: "https://images.unsplash.com/photo-1478860409698-8707f313ee8b",
     isOpen: true,
+    address: "321 Elite Street, Premium Plaza",
+    phone: "+1234567893",
     products: [
       {
         id: "7",
@@ -157,6 +165,8 @@ export const ELECTRONICS_SHOPS: Shop[] = [
     distance: "2.0 km",
     image: "https://images.unsplash.com/photo-1491933382434-500287f9b54b",
     isOpen: true,
+    address: "654 Smart Avenue, Tech Valley",
+    phone: "+1234567894",
     products: [
       {
         id: "9",
