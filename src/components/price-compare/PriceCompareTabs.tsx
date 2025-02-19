@@ -1,6 +1,10 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PriceComparisonResults } from "./PriceComparisonResults";
-import { useNavigate } from "react-router-dom";
+import { ComparisonTableView } from "./ComparisonTableView";
+import { MapView } from "./MapView";
+import { PriceHistoryView } from "./PriceHistoryView";
+import { PriceAlertView } from "./PriceAlertView";
 
 interface PriceCompareTabsProps {
   searchQuery: string;
@@ -13,32 +17,8 @@ interface PriceCompareTabsProps {
 }
 
 export const PriceCompareTabs = ({ searchQuery, filters }: PriceCompareTabsProps) => {
-  const navigate = useNavigate();
-
-  const handleTabChange = (value: string) => {
-    switch (value) {
-      case "comparison":
-        navigate("/price-compare");
-        break;
-      case "table":
-        navigate("/comparison-table");
-        break;
-      case "map":
-        navigate("/store-map");
-        break;
-      case "history":
-        navigate("/price-history");
-        break;
-      case "alerts":
-        navigate("/price-alerts");
-        break;
-      default:
-        navigate("/price-compare");
-    }
-  };
-
   return (
-    <Tabs defaultValue="comparison" className="w-full" onValueChange={handleTabChange}>
+    <Tabs defaultValue="comparison" className="w-full">
       <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="comparison">Comparison</TabsTrigger>
         <TabsTrigger value="table">Table View</TabsTrigger>
@@ -50,6 +30,41 @@ export const PriceCompareTabs = ({ searchQuery, filters }: PriceCompareTabsProps
       
       <TabsContent value="comparison">
         <PriceComparisonResults 
+          searchQuery={searchQuery}
+          filters={filters}
+        />
+      </TabsContent>
+
+      <TabsContent value="table">
+        <ComparisonTableView 
+          searchQuery={searchQuery}
+          filters={filters}
+        />
+      </TabsContent>
+
+      <TabsContent value="map">
+        <MapView 
+          searchQuery={searchQuery}
+          filters={filters}
+        />
+      </TabsContent>
+
+      <TabsContent value="history">
+        <PriceHistoryView 
+          searchQuery={searchQuery}
+          filters={filters}
+        />
+      </TabsContent>
+
+      <TabsContent value="alerts">
+        <PriceAlertView 
+          searchQuery={searchQuery}
+          filters={filters}
+        />
+      </TabsContent>
+
+      <TabsContent value="stores">
+        <MapView 
           searchQuery={searchQuery}
           filters={filters}
         />
