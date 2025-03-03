@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useToast } from "@/hooks/use-toast";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 // Extended product data
 const ALL_PRODUCTS = [
@@ -137,7 +138,7 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
                 <Card className="group overflow-hidden h-full">
                   <CardContent className="p-0">
                     <div className="relative">
-                      <img
+                      <OptimizedImage
                         src={product.image}
                         alt={product.name}
                         className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
