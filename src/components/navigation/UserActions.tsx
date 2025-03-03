@@ -7,7 +7,7 @@ import {
   User, 
   Bell, 
   HelpCircle,
-  Home
+  MapPin
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,19 +15,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion } from "framer-motion";
 
 export const UserActions = () => {
   const { totalItems } = useCart();
 
   return (
-    <div className="flex items-center gap-2">
-      <Link to="/">
+    <div className="flex items-center gap-1">
+      <Link to="/stores">
         <Button 
           variant="ghost" 
           size="icon"
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
+          className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
         >
-          <Home className="h-5 w-5" />
+          <MapPin className="h-5 w-5" />
         </Button>
       </Link>
 
@@ -35,13 +36,17 @@ export const UserActions = () => {
         <Button 
           variant="ghost" 
           size="icon"
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
+          className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
         >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 text-xs flex items-center justify-center animate-fadeIn">
+            <motion.span 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+            >
               {totalItems}
-            </span>
+            </motion.span>
           )}
         </Button>
       </Link>
@@ -50,7 +55,7 @@ export const UserActions = () => {
         <Button 
           variant="ghost" 
           size="icon"
-          className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
+          className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
         >
           <Bell className="h-5 w-5" />
         </Button>
@@ -61,12 +66,12 @@ export const UserActions = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
+            className="rounded-full text-foreground hover:text-primary hover:bg-secondary"
           >
             <User className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align="end" className="w-48 mt-2">
           <DropdownMenuItem asChild>
             <Link to="/profile" className="w-full">
               <User className="h-4 w-4 mr-2" />
