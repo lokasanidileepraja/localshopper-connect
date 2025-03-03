@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import { useCart } from "@/contexts/CartContext";
 import { products } from "@/data/products";
 import { Product } from "@/types/shop";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { OptimizedImage } from "@/components/OptimizedImage";
 
 const DUMMY_REVIEWS = [
   {
@@ -54,7 +54,7 @@ const ProductImages = ({ images }: { images: string[] }) => {
         animate={{ opacity: 1 }}
         className="aspect-square overflow-hidden rounded-lg bg-muted"
       >
-        <OptimizedImage 
+        <img 
           src={selectedImage} 
           alt="Product" 
           className="h-full w-full object-cover object-center"
@@ -67,7 +67,7 @@ const ProductImages = ({ images }: { images: string[] }) => {
             className={`cursor-pointer border-2 rounded-md overflow-hidden ${selectedImage === image ? 'border-primary' : 'border-transparent'}`}
             onClick={() => setSelectedImage(image)}
           >
-            <OptimizedImage 
+            <img 
               src={image} 
               alt={`Product thumbnail ${i+1}`} 
               className="h-20 w-20 object-cover"

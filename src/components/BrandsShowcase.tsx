@@ -1,8 +1,8 @@
+
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface BrandsShowcaseProps {
   onBrandClick: (brandName: string) => void;
@@ -80,15 +80,12 @@ export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
               tabIndex={0}
               aria-label={`View ${brand.name} products`}
             >
-              <motion.div
+              <motion.img
+                src={brand.logo}
+                alt={brand.name}
+                className={`${isMobile ? 'h-6 sm:h-8' : 'h-8 sm:h-12'} object-contain transition-all duration-300 group-hover:scale-110`}
                 whileHover={{ rotate: 5 }}
-              >
-                <OptimizedImage 
-                  src={brand.logo}
-                  alt={brand.name}
-                  className={`${isMobile ? 'h-6 sm:h-8' : 'h-8 sm:h-12'} object-contain transition-all duration-300 group-hover:scale-110`}
-                />
-              </motion.div>
+              />
               <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600">{brand.stats}</p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}

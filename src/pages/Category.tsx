@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +9,6 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart, ExternalLink } from "lucide-react";
-import { OptimizedImage } from "@/components/OptimizedImage";
 
 const Category = () => {
   const { categoryName } = useParams();
@@ -75,7 +75,7 @@ const Category = () => {
                   className="cursor-pointer"
                   onClick={() => handleProductClick(product.id)}
                 >
-                  <OptimizedImage
+                  <img
                     src={product.image}
                     alt={product.name}
                     className="w-full h-48 object-cover rounded-md mb-4 transition-transform hover:scale-105 duration-300"

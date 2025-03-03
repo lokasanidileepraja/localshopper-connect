@@ -1,3 +1,4 @@
+
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import {
   Table,
@@ -12,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface ComparisonTableViewProps {
   searchQuery: string;
