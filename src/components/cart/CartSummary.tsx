@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/shop";
 import { useCart } from "@/contexts/CartContext";
@@ -7,9 +8,11 @@ interface CartSummaryProps {
   onCheckout: () => void;
 }
 
-export const CartSummary = ({ items, onCheckout }: CartSummaryProps) => {
+export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
   const { items: cartItems } = useCart();
-  const total = cartItems.reduce((sum, item) => sum + (item.currentPrice || item.price), 0);
+  
+  // Calculate total using the currentPrice property
+  const total = cartItems.reduce((sum, item) => sum + item.currentPrice, 0);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border sticky top-8">
@@ -18,7 +21,7 @@ export const CartSummary = ({ items, onCheckout }: CartSummaryProps) => {
         {cartItems.map((item) => (
           <div key={item.id} className="flex justify-between text-sm">
             <span>{item.name}</span>
-            <span>₹{(item.currentPrice || item.price).toLocaleString()}</span>
+            <span>₹{item.currentPrice.toLocaleString()}</span>
           </div>
         ))}
       </div>

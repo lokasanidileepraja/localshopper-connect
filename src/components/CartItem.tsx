@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/shop";
 import { ShopComparison } from "./ShopComparison";
@@ -13,8 +14,9 @@ interface CartItemProps {
 
 export const CartItem = ({ item, shops, onRemove }: CartItemProps) => {
   const [currentShop, setCurrentShop] = useState(item.shopName);
-  const [currentPrice, setCurrentPrice] = useState(item.price);
   const { updateItemPrice } = useCart();
+  // Get the correct price from the cart item
+  const [currentPrice, setCurrentPrice] = useState(item.currentPrice || item.price);
 
   const otherShops = shops.filter((shop) => shop.name !== currentShop);
 

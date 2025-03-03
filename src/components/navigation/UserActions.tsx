@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const UserActions = () => {
-  const { items } = useCart();
+  const { totalItems } = useCart();
 
   return (
     <div className="flex items-center gap-2">
@@ -37,9 +38,9 @@ export const UserActions = () => {
           className="relative text-neutral-dark hover:text-primary hover:bg-primary-100 rounded-xl transition-colors duration-300"
         >
           <ShoppingCart className="h-5 w-5" />
-          {items.length > 0 && (
+          {totalItems > 0 && (
             <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full w-5 h-5 text-xs flex items-center justify-center animate-fadeIn">
-              {items.length}
+              {totalItems}
             </span>
           )}
         </Button>

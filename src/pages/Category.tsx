@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +14,7 @@ const Category = () => {
   const { categoryName } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, totalItems } = useCart();
   
   useEffect(() => {
     if (categoryName) {
@@ -52,7 +53,7 @@ const Category = () => {
         <h1 className="text-3xl font-bold capitalize">{categoryName}</h1>
         <Button onClick={handleCheckout} className="flex items-center gap-2">
           <ShoppingCart className="h-5 w-5" />
-          View Cart
+          View Cart {totalItems > 0 && `(${totalItems})`}
         </Button>
       </div>
       

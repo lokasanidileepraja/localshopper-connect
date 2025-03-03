@@ -8,11 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-  const { items } = useCart();
+  const { items, cartTotal } = useCart();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,9 @@ const Checkout = () => {
         title: "Order placed successfully!",
         description: "Thank you for your purchase.",
       });
+      
+      // Redirect to home page or order confirmation page
+      navigate("/");
     } catch (error) {
       toast({
         title: "Error processing order",
@@ -37,7 +42,15 @@ const Checkout = () => {
     }
   };
 
-  const total = items.reduce((sum, item) => sum + item.price, 0);
+  if (items.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+        <p className="text-gray-600 mb-8">Add items to your cart before checkout</p>
+        <Button onClick={() => navigate("/")}>Continue Shopping</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -55,13 +68,13 @@ const Checkout = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span>{item.name}</span>
-                    <span>₹{item.price.toLocaleString()}</span>
+                    <span>₹{item.currentPrice.toLocaleString()}</span>
                   </div>
                 ))}
                 <Separator />
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
-                  <span>₹{total.toLocaleString()}</span>
+                  <span>₹{cartTotal.toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>

@@ -6,11 +6,21 @@ import { CartHeader } from "@/components/cart/CartHeader";
 import { CartContent } from "@/components/cart/CartContent";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Cart = () => {
-  const { items, removeFromCart } = useCart();
+  const { items, removeFromCart, totalItems } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Check if cart is empty when component mounts
+  useEffect(() => {
+    if (items.length === 0) {
+      console.log("Cart is empty");
+    } else {
+      console.log(`Cart has ${items.length} items`);
+    }
+  }, [items]);
 
   const handleCheckout = () => {
     if (items.length === 0) {
@@ -26,13 +36,22 @@ const Cart = () => {
     navigate("/checkout");
   };
 
+  const handleRemoveItem = (id: string) => {
+    removeFromCart(id);
+    
+    toast({
+      title: "Item removed",
+      description: "The item has been removed from your cart.",
+    });
+  };
+
   return (
     <CartLayout>
       <CartHeader />
       <CartContent 
         items={items}
         shops={ELECTRONICS_SHOPS}
-        onRemove={removeFromCart}
+        onRemove={handleRemoveItem}
         onCheckout={handleCheckout}
       />
     </CartLayout>
