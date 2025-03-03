@@ -12,7 +12,7 @@ interface CartListProps {
 export const CartList = ({ items, shops, onRemove }: CartListProps) => {
   const { items: cartItems } = useCart();
   
-  if (items.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="text-center py-8">
         <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>

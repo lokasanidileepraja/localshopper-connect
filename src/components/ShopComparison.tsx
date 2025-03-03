@@ -5,8 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ShoppingCart, Star, MapPin, Clock, Check, TrendingDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
 interface ShopComparisonProps {
@@ -31,9 +29,8 @@ export const ShopComparison = ({
   productModel,
   onShopSelect,
 }: ShopComparisonProps) => {
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedShops, setSelectedShops] = useState<string[]>([]);
+  const [isComparing, setIsComparing] = useState(false);
 
   // Generate a random price within ±5% of the current price
   const getRandomPrice = (basePrice: number) => {
@@ -59,15 +56,14 @@ export const ShopComparison = ({
   const lowestPrice = allShops[0]?.price || 0;
 
   const handleStoreSelect = (shopName: string, shopPrice: number) => {
+    // Call the onShopSelect callback passed from the parent
     onShopSelect(shopName, shopPrice);
+    
+    // Show toast notification
     toast({
       title: "Store Selected",
       description: `You've selected ${shopName} with price ₹${shopPrice.toLocaleString()}`,
     });
-    // Navigate to cart after a brief delay
-    setTimeout(() => {
-      navigate("/cart");
-    }, 1500);
   };
 
   return (
