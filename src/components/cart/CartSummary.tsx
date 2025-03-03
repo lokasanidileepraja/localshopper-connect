@@ -4,14 +4,14 @@ import { Product } from "@/types/shop";
 import { useCart } from "@/contexts/CartContext";
 
 interface CartSummaryProps {
-  items: (Product & { shopName: string })[];
+  items: (Product & { shopName: string; currentPrice?: number })[];
   onCheckout: () => void;
 }
 
 export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
   const { items: cartItems } = useCart();
   
-  // Calculate total using the currentPrice property
+  // Calculate total using the currentPrice property from cartItems
   const total = cartItems.reduce((sum, item) => sum + item.currentPrice, 0);
 
   return (

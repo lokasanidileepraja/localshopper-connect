@@ -6,8 +6,14 @@ import { Shop } from "@/types/shop";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 
+// Extended type to include the currentPrice property
+interface CartItemWithShop extends Product {
+  shopName: string;
+  currentPrice: number;
+}
+
 interface CartItemProps {
-  item: Product & { shopName: string };
+  item: CartItemWithShop;
   shops: Shop[];
   onRemove: (id: string) => void;
 }
@@ -15,8 +21,7 @@ interface CartItemProps {
 export const CartItem = ({ item, shops, onRemove }: CartItemProps) => {
   const [currentShop, setCurrentShop] = useState(item.shopName);
   const { updateItemPrice } = useCart();
-  // Get the correct price from the cart item
-  const [currentPrice, setCurrentPrice] = useState(item.currentPrice || item.price);
+  const [currentPrice, setCurrentPrice] = useState(item.currentPrice);
 
   const otherShops = shops.filter((shop) => shop.name !== currentShop);
 
