@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ExternalLink } from "lucide-react";
 
 const Category = () => {
   const { categoryName } = useParams();
@@ -43,6 +43,10 @@ const Category = () => {
     });
   };
 
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
+
   const handleCheckout = () => {
     navigate("/cart");
   };
@@ -65,15 +69,20 @@ const Category = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card className="h-full flex flex-col">
+            <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
               <CardContent className="p-4 flex-1 flex flex-col">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
-                <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                <p className="text-gray-600 mb-2 flex-1">{product.description}</p>
+                <div 
+                  className="cursor-pointer"
+                  onClick={() => handleProductClick(product.id)}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-48 object-cover rounded-md mb-4 transition-transform hover:scale-105 duration-300"
+                  />
+                  <h3 className="font-semibold text-lg mb-2 hover:text-primary">{product.name}</h3>
+                  <p className="text-gray-600 mb-2 flex-1">{product.description}</p>
+                </div>
                 <div className="space-y-4">
                   <p className="text-2xl font-bold text-primary">
                     ₹{product.price.toLocaleString()}
@@ -82,13 +91,24 @@ const Category = () => {
                     <span className={`text-sm ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
                       {product.inStock ? 'In Stock' : 'Out of Stock'}
                     </span>
-                    <Button 
-                      onClick={() => handleAddToCart(product)}
-                      disabled={!product.inStock}
-                      className="w-full mt-2"
-                    >
-                      Add to Cart
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline"
+                        onClick={() => handleProductClick(product.id)}
+                        className="px-3"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-1" />
+                        Details
+                      </Button>
+                      <Button 
+                        onClick={() => handleAddToCart(product)}
+                        disabled={!product.inStock}
+                        className="px-3"
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-1" />
+                        Add
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
