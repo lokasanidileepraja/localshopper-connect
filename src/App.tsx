@@ -9,6 +9,7 @@ import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import Stores from "@/pages/Stores";
 import PriceCompare from "@/pages/PriceCompare";
+import RetailerProfile from "@/pages/RetailerProfile";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/stores" element={<Stores />} />
       <Route path="/price-compare" element={<PriceCompare />} />
+      <Route path="/retailer" element={<RetailerProfile />} />
     </Routes>
   );
 }
