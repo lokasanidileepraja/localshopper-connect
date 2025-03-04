@@ -1,8 +1,45 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare, PhoneCall, HelpCircle, Video, FileText } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const RetailerSupport = () => {
+  const { toast } = useToast();
+
+  const handleSupportAction = (action: string) => {
+    switch(action) {
+      case "Start Chat":
+        toast({
+          title: "Starting chat",
+          description: "Connecting you with our support team...",
+        });
+        break;
+      case "Call Now":
+        toast({
+          title: "Support Call",
+          description: "Calling support line: +1-800-NEARMART",
+        });
+        break;
+      case "View Articles":
+        toast({
+          title: "Help Center",
+          description: "Opening knowledge base articles...",
+        });
+        break;
+      case "Watch Videos":
+        toast({
+          title: "Video Tutorials",
+          description: "Loading video tutorials library...",
+        });
+        break;
+      case "Create Ticket":
+        toast({
+          title: "Support Ticket",
+          description: "Opening ticket creation form...",
+        });
+        break;
+    }
+  };
+
   const supportOptions = [
     {
       title: "Chat with Support",
@@ -54,7 +91,10 @@ export const RetailerSupport = () => {
                   </div>
                   <h3 className="font-medium mb-2">{option.title}</h3>
                   <p className="text-sm text-gray-500 mb-4">{option.description}</p>
-                  <button className="mt-auto bg-primary/10 hover:bg-primary/20 text-primary font-medium px-4 py-2 rounded-md transition-colors">
+                  <button 
+                    onClick={() => handleSupportAction(option.action)}
+                    className="mt-auto bg-primary/10 hover:bg-primary/20 text-primary font-medium px-4 py-2 rounded-md transition-colors"
+                  >
                     {option.action}
                   </button>
                 </CardContent>
@@ -93,7 +133,15 @@ export const RetailerSupport = () => {
                   }`}>
                     {interaction.status}
                   </span>
-                  <button className="text-primary text-sm">View</button>
+                  <button 
+                    onClick={() => toast({
+                      title: "View Interaction",
+                      description: `Viewing details for ${interaction.type.toLowerCase()}: ${interaction.title}`
+                    })}
+                    className="text-primary text-sm"
+                  >
+                    View
+                  </button>
                 </div>
               </div>
             ))}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,34 @@ import { useToast } from "@/hooks/use-toast";
 export const InventoryTracking = () => {
   const { toast } = useToast();
   
+  const handleUpdateStock = (id: string) => {
+    toast({
+      title: "Update Stock",
+      description: `Opening stock update form for product ID: ${id}`,
+    });
+  };
+
+  const handleSyncInventory = () => {
+    toast({
+      title: "Sync Inventory",
+      description: "Synchronizing inventory with distributor systems...",
+    });
+  };
+
+  const handleAIRecommendation = () => {
+    toast({
+      title: "AI Stock Recommendations",
+      description: "Generating AI-powered inventory insights...",
+    });
+  };
+
+  const handleWhatsAppUpdate = () => {
+    toast({
+      title: "WhatsApp Updates",
+      description: "Configuring WhatsApp for inventory notifications...",
+    });
+  };
+
   // Sample inventory data
   const inventory = [
     { 
@@ -57,34 +84,6 @@ export const InventoryTracking = () => {
       status: "critical"
     }
   ];
-
-  const handleUpdateStock = (id: string) => {
-    toast({
-      title: "Update Stock",
-      description: `Updating stock for product ID: ${id}`,
-    });
-  };
-
-  const handleSyncInventory = () => {
-    toast({
-      title: "Sync Inventory",
-      description: "Syncing inventory with distributor systems...",
-    });
-  };
-
-  const handleAIRecommendation = () => {
-    toast({
-      title: "AI Stock Recommendations",
-      description: "Generating AI-powered stock recommendations...",
-    });
-  };
-
-  const handleWhatsAppUpdate = () => {
-    toast({
-      title: "WhatsApp Updates",
-      description: "Setting up WhatsApp for inventory updates...",
-    });
-  };
 
   return (
     <div className="space-y-6">

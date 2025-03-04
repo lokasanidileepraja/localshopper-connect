@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,10 +15,24 @@ export const UserAccessControl = () => {
   const handleAddUser = () => {
     toast({
       title: "Add Team Member",
-      description: "Opening form to add a new team member",
+      description: "Opening team member invitation form...",
     });
   };
-  
+
+  const handleConfigureAccess = (userId: string) => {
+    toast({
+      title: "Configure Access",
+      description: `Opening access settings for team member ${userId}...`,
+    });
+  };
+
+  const handleCustomizeAccess = () => {
+    toast({
+      title: "Customize Access",
+      description: "Opening access level customization settings...",
+    });
+  };
+
   // Sample team members data
   const teamMembers = [
     { 
@@ -93,7 +106,7 @@ export const UserAccessControl = () => {
                   </Badge>
                 </div>
                 <div className="col-span-1 text-right">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => handleConfigureAccess(member.id)}>
                     <Settings className="h-4 w-4" />
                   </Button>
                 </div>
@@ -139,7 +152,7 @@ export const UserAccessControl = () => {
             </div>
           </div>
           
-          <Button className="mt-4" variant="outline">
+          <Button className="mt-4" variant="outline" onClick={handleCustomizeAccess}>
             <Settings className="h-4 w-4 mr-1" />
             Customize Access Levels
           </Button>

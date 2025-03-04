@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,14 +22,28 @@ export const PaymentManagement = () => {
   const handleDownloadStatement = () => {
     toast({
       title: "Download Statement",
-      description: "Preparing your payment statement for download",
+      description: "Your statement is being generated and will download shortly.",
     });
   };
 
   const handleSetupPaymentMethod = () => {
     toast({
-      title: "Payment Setup",
-      description: "Setting up new payment methods for your store",
+      title: "Add Payment Method",
+      description: "Opening payment method setup wizard...",
+    });
+  };
+
+  const handleConfigurePayment = (type: string) => {
+    toast({
+      title: "Configure Payment",
+      description: `Configuring ${type} payment settings...`,
+    });
+  };
+
+  const handleScheduleChange = () => {
+    toast({
+      title: "Payout Schedule",
+      description: "Opening payout schedule settings...",
     });
   };
 
@@ -192,7 +205,7 @@ export const PaymentManagement = () => {
                     <Badge variant="outline" className="justify-center">NetBanking</Badge>
                   </div>
                   <div className="mt-3">
-                    <Button size="sm" variant="outline" className="w-full">
+                    <Button size="sm" variant="outline" className="w-full" onClick={() => handleConfigurePayment("online")}>
                       Configure
                     </Button>
                   </div>
@@ -212,7 +225,7 @@ export const PaymentManagement = () => {
                     <Badge className="w-full justify-center py-1">Enabled</Badge>
                   </div>
                   <div className="mt-3">
-                    <Button size="sm" variant="outline" className="w-full">
+                    <Button size="sm" variant="outline" className="w-full" onClick={() => handleConfigurePayment("cod")}>
                       Configure
                     </Button>
                   </div>
@@ -269,7 +282,7 @@ export const PaymentManagement = () => {
                     <Badge>Weekly</Badge>
                   </div>
                   <p className="text-sm text-gray-600">Payouts are processed every Monday for the previous week</p>
-                  <Button variant="outline" size="sm" className="mt-3">
+                  <Button variant="outline" size="sm" className="mt-3" onClick={handleScheduleChange}>
                     Change Schedule
                   </Button>
                 </div>

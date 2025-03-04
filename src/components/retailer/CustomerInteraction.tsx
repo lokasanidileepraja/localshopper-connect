@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 export const CustomerInteraction = () => {
   const { toast } = useToast();
   const [selectedChat, setSelectedChat] = useState<string | null>("1");
+  const [messageInput, setMessageInput] = useState("");
   
   // Sample customer chat data
   const chatList = [
@@ -60,23 +60,33 @@ export const CustomerInteraction = () => {
   const selectedCustomer = chatList.find(chat => chat.id === selectedChat);
 
   const handleSendMessage = () => {
+    if (!messageInput.trim()) return;
+    
     toast({
       title: "Message Sent",
       description: "Your message has been sent to the customer.",
     });
+    setMessageInput("");
   };
 
   const handleSetupWhatsApp = () => {
     toast({
       title: "WhatsApp Integration",
-      description: "Setting up WhatsApp integration for customer communication.",
+      description: "Setting up WhatsApp Business integration...",
     });
   };
 
   const handleSetupAutoReplies = () => {
     toast({
       title: "Auto-Replies",
-      description: "Setting up automated responses for common customer queries.",
+      description: "Opening auto-reply configuration...",
+    });
+  };
+
+  const handleConfigureNotifications = (type: string) => {
+    toast({
+      title: "Configure Notifications",
+      description: `Opening ${type} notification settings...`,
     });
   };
 
@@ -210,7 +220,11 @@ export const CustomerInteraction = () => {
                   
                   <div className="p-3 border-t mt-auto">
                     <div className="flex gap-2">
-                      <Input placeholder="Type your message..." />
+                      <Input 
+                        placeholder="Type your message..." 
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                      />
                       <Button onClick={handleSendMessage}>
                         <Send className="h-4 w-4" />
                       </Button>
@@ -282,7 +296,7 @@ export const CustomerInteraction = () => {
                       <p className="text-sm text-gray-600">Get notified when you receive new messages</p>
                     </div>
                     <div>
-                      <Button variant="outline" size="sm">Configure</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleConfigureNotifications("message")}>Configure</Button>
                     </div>
                   </div>
                   
@@ -292,7 +306,7 @@ export const CustomerInteraction = () => {
                       <p className="text-sm text-gray-600">Get daily summaries of customer interactions</p>
                     </div>
                     <div>
-                      <Button variant="outline" size="sm">Configure</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleConfigureNotifications("email")}>Configure</Button>
                     </div>
                   </div>
                   
@@ -302,7 +316,7 @@ export const CustomerInteraction = () => {
                       <p className="text-sm text-gray-600">Set your availability for customer inquiries</p>
                     </div>
                     <div>
-                      <Button variant="outline" size="sm">Configure</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleConfigureNotifications("hours")}>Configure</Button>
                     </div>
                   </div>
                 </div>
