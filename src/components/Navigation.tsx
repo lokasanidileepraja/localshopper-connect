@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
 import { UserActions } from "./navigation/UserActions";
 import { CategoryNav } from "./navigation/CategoryNav";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Home } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
 
 export const Navigation = () => {
   return (
@@ -21,6 +22,16 @@ export const Navigation = () => {
             <span className="font-semibold text-lg hidden sm:block">TechLocator</span>
           </Link>
           <NavigationSearchBar />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            asChild
+            className="rounded-full text-foreground hover:text-primary hover:bg-secondary"
+          >
+            <Link to="/">
+              <Home className="h-5 w-5" />
+            </Link>
+          </Button>
           <UserActions />
         </div>
         <CategoryNav />
