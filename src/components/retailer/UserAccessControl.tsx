@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,22 +10,21 @@ import {
   Settings
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { TeamMemberModal } from "./modals/TeamMemberModal";
 
 export const UserAccessControl = () => {
   const { toast } = useToast();
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+  const [editMemberOpen, setEditMemberOpen] = useState(false);
+  const [currentMember, setCurrentMember] = useState<any>(null);
   
   const handleAddUser = () => {
-    toast({
-      title: "Add Team Member",
-      description: "Opening team member invitation form...",
-    });
+    setAddMemberOpen(true);
   };
 
-  const handleConfigureAccess = (userId: string) => {
-    toast({
-      title: "Configure Access",
-      description: `Opening access settings for team member ${userId}...`,
-    });
+  const handleConfigureAccess = (member: any) => {
+    setCurrentMember(member);
+    setEditMemberOpen(true);
   };
 
   const handleCustomizeAccess = () => {
@@ -106,7 +107,7 @@ export const UserAccessControl = () => {
                   </Badge>
                 </div>
                 <div className="col-span-1 text-right">
-                  <Button variant="ghost" size="sm" onClick={() => handleConfigureAccess(member.id)}>
+                  <Button variant="ghost" size="sm" onClick={() => handleConfigureAccess(member)}>
                     <Settings className="h-4 w-4" />
                   </Button>
                 </div>
@@ -158,6 +159,17 @@ export const UserAccessControl = () => {
           </Button>
         </CardContent>
       </Card>
+
+      <TeamMemberModal 
+        open={addMemberOpen} 
+        onOpenChange={setAddMemberOpen} 
+      />
+      
+      <TeamMemberModal 
+        open={editMemberOpen} 
+        onOpenChange={setEditMemberOpen}
+        editMember={currentMember}
+      />
     </div>
   );
 };

@@ -7,7 +7,8 @@ import {
   User, 
   Bell, 
   HelpCircle,
-  MapPin
+  MapPin,
+  Store
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -58,6 +59,16 @@ export const UserActions = () => {
           className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
         >
           <Bell className="h-5 w-5" />
+        </Button>
+      </Link>
+
+      <Link to="/retailer">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+        >
+          <Store className="h-5 w-5" />
         </Button>
       </Link>
 
