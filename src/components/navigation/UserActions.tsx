@@ -17,9 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const UserActions = () => {
   const { totalItems } = useCart();
+  const isMobile = useIsMobile();
 
   return (
     <div className="flex items-center gap-1">
@@ -64,11 +66,12 @@ export const UserActions = () => {
 
       <Link to="/retailer">
         <Button 
-          variant="ghost" 
-          size="icon"
-          className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+          variant={isMobile ? "ghost" : "outline"}
+          size={isMobile ? "icon" : "sm"}
+          className={`relative ${isMobile ? 'rounded-full' : 'rounded-md'} hover:bg-primary hover:text-primary-foreground`}
         >
           <Store className="h-5 w-5" />
+          {!isMobile && <span className="ml-1">Retailer</span>}
         </Button>
       </Link>
 

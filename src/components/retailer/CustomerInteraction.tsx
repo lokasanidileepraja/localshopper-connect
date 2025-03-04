@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,14 +15,28 @@ import {
   Settings,
   ChevronRight,
   Smartphone,
-  Bot
+  Bot,
+  Check,
+  X
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export const CustomerInteraction = () => {
   const { toast } = useToast();
   const [selectedChat, setSelectedChat] = useState<string | null>("1");
   const [messageInput, setMessageInput] = useState("");
+  const [customerDetailsOpen, setCustomerDetailsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [quickRepliesOpen, setQuickRepliesOpen] = useState(false);
   
   // Sample customer chat data
   const chatList = [
@@ -30,21 +45,36 @@ export const CustomerInteraction = () => {
       name: "Rahul Sharma", 
       lastMessage: "Is the iPhone 15 back in stock?", 
       time: "10:30 AM",
-      unread: 2
+      unread: 2,
+      phone: "+91 9876543210",
+      email: "rahul.sharma@example.com",
+      orders: 5,
+      totalSpent: "₹78,450",
+      lastOrderDate: "15 Sep, 2023"
     },
     { 
       id: "2", 
       name: "Priya Singh", 
       lastMessage: "When will my order be delivered?", 
       time: "Yesterday",
-      unread: 0
+      unread: 0,
+      phone: "+91 9876543211",
+      email: "priya.singh@example.com",
+      orders: 3,
+      totalSpent: "₹32,150",
+      lastOrderDate: "10 Sep, 2023"
     },
     { 
       id: "3", 
       name: "Ajay Patel", 
       lastMessage: "Thank you for the quick response!", 
       time: "Yesterday",
-      unread: 0
+      unread: 0,
+      phone: "+91 9876543212",
+      email: "ajay.patel@example.com",
+      orders: 8,
+      totalSpent: "₹1,28,750",
+      lastOrderDate: "12 Sep, 2023"
     },
   ];
 
@@ -55,6 +85,16 @@ export const CustomerInteraction = () => {
     { id: "3", text: "Yes, please. That would be great!", sender: "customer", time: "10:28 AM" },
     { id: "4", text: "Sure, I've added a notification for you. Also, would you prefer the 128GB or 256GB model?", sender: "store", time: "10:29 AM" },
     { id: "5", text: "Is the iPhone 15 back in stock?", sender: "customer", time: "10:30 AM" },
+  ];
+
+  // Quick reply templates
+  const quickReplies = [
+    { id: "1", text: "Thank you for your message. How can I assist you today?" },
+    { id: "2", text: "Your order has been processed and will be shipped within 24 hours." },
+    { id: "3", text: "We're checking our inventory and will get back to you shortly." },
+    { id: "4", text: "Would you like me to suggest some alternatives that are currently in stock?" },
+    { id: "5", text: "Is there anything else you'd like to know about this product?" },
+    { id: "6", text: "We apologize for the inconvenience. Let me help resolve this issue for you." }
   ];
 
   const selectedCustomer = chatList.find(chat => chat.id === selectedChat);
@@ -88,6 +128,18 @@ export const CustomerInteraction = () => {
       title: "Configure Notifications",
       description: `Opening ${type} notification settings...`,
     });
+  };
+
+  const handleCustomerCall = () => {
+    toast({
+      title: "Initiating Call",
+      description: `Calling ${selectedCustomer?.name} at ${selectedCustomer?.phone}`,
+    });
+  };
+
+  const useQuickReply = (text: string) => {
+    setMessageInput(text);
+    setQuickRepliesOpen(false);
   };
 
   return (
@@ -180,12 +232,15 @@ export const CustomerInteraction = () => {
                       <div className="font-medium">{selectedCustomer?.name}</div>
                       <div className="text-xs text-gray-500">Online</div>
                     </div>
-                    <div>
-                      <Button variant="ghost" size="sm">
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="sm" onClick={handleCustomerCall}>
                         <Phone className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => setCustomerDetailsOpen(true)}>
                         <Info className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => setQuickRepliesOpen(true)}>
+                        <MessageSquare className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -321,10 +376,168 @@ export const CustomerInteraction = () => {
                   </div>
                 </div>
               </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold">Quick Replies</h3>
+                <Button onClick={() => setSettingsOpen(true)}>
+                  Manage Quick Replies
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Customer Details Dialog */}
+      {selectedCustomer && (
+        <Dialog open={customerDetailsOpen} onOpenChange={setCustomerDetailsOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Customer Details</DialogTitle>
+              <DialogDescription>
+                View detailed information about this customer
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Name</p>
+                  <p className="font-medium">{selectedCustomer.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-medium">{selectedCustomer.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Phone</p>
+                  <p className="font-medium">{selectedCustomer.phone}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Total Orders</p>
+                  <p className="font-medium">{selectedCustomer.orders}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Total Spent</p>
+                  <p className="font-medium">{selectedCustomer.totalSpent}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Last Order</p>
+                  <p className="font-medium">{selectedCustomer.lastOrderDate}</p>
+                </div>
+              </div>
+              
+              <div className="pt-3 space-y-2">
+                <p className="font-medium">Recent Orders</p>
+                <div className="border rounded-md p-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">Order #10045</p>
+                      <p className="text-sm text-gray-500">15 Sep, 2023</p>
+                    </div>
+                    <Badge>Delivered</Badge>
+                  </div>
+                </div>
+                <div className="border rounded-md p-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">Order #10032</p>
+                      <p className="text-sm text-gray-500">2 Sep, 2023</p>
+                    </div>
+                    <Badge>Delivered</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter className="flex justify-between">
+              <Button variant="outline" onClick={() => setCustomerDetailsOpen(false)}>
+                Close
+              </Button>
+              <Button onClick={() => {
+                toast({
+                  title: "View Profile",
+                  description: `Opening full profile for ${selectedCustomer.name}`,
+                });
+                setCustomerDetailsOpen(false);
+              }}>
+                View Full Profile
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Quick Reply Settings Dialog */}
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Quick Reply Templates</DialogTitle>
+            <DialogDescription>
+              Manage your quick replies to common customer inquiries
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 max-h-[400px] overflow-y-auto">
+            {quickReplies.map((reply) => (
+              <div key={reply.id} className="flex items-start justify-between border-b pb-3">
+                <p className="text-sm flex-1 pr-4">{reply.text}</p>
+                <div className="flex gap-1 shrink-0">
+                  <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="pt-4 border-t">
+            <div className="space-y-2">
+              <label htmlFor="newReply" className="text-sm font-medium">
+                Add New Quick Reply
+              </label>
+              <Textarea
+                id="newReply"
+                placeholder="Enter a new quick reply template..."
+                className="min-h-[80px]"
+              />
+            </div>
+            <Button className="mt-2">
+              Add Template
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Replies Dialog */}
+      <Dialog open={quickRepliesOpen} onOpenChange={setQuickRepliesOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Quick Replies</DialogTitle>
+            <DialogDescription>
+              Choose a pre-written response or customize it
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            {quickReplies.map((reply) => (
+              <Button
+                key={reply.id}
+                variant="outline"
+                className="w-full justify-start h-auto py-3 px-4 text-left"
+                onClick={() => useQuickReply(reply.text)}
+              >
+                {reply.text}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -13,28 +13,36 @@ import { PaymentManagement } from "@/components/retailer/PaymentManagement";
 import { UserAccessControl } from "@/components/retailer/UserAccessControl";
 import { RetailerSupport } from "@/components/retailer/RetailerSupport";
 import { RetailerDashboard } from "@/components/retailer/RetailerDashboard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const RetailerProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const isMobile = useIsMobile();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Retailer Dashboard</h1>
+    <div className="container mx-auto px-4 py-4 md:py-8 bg-background">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+        <h1 className="text-xl md:text-2xl font-bold">Retailer Dashboard</h1>
+      </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="w-full overflow-x-auto flex justify-start p-1 mb-2">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="promotions">Promotions</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="delivery">Delivery</TabsTrigger>
-          <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="users">Team</TabsTrigger>
-          <TabsTrigger value="support">Support</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-1">
+            <TabsList className="w-full overflow-x-auto flex justify-start bg-transparent h-auto p-1">
+              <TabsTrigger value="dashboard" className="rounded-md px-3 py-2 text-sm">Dashboard</TabsTrigger>
+              <TabsTrigger value="products" className="rounded-md px-3 py-2 text-sm">Products</TabsTrigger>
+              <TabsTrigger value="inventory" className="rounded-md px-3 py-2 text-sm">Inventory</TabsTrigger>
+              <TabsTrigger value="orders" className="rounded-md px-3 py-2 text-sm">Orders</TabsTrigger>
+              <TabsTrigger value="customers" className="rounded-md px-3 py-2 text-sm">Customers</TabsTrigger>
+              <TabsTrigger value="promotions" className="rounded-md px-3 py-2 text-sm">Promotions</TabsTrigger>
+              <TabsTrigger value="analytics" className="rounded-md px-3 py-2 text-sm">Analytics</TabsTrigger>
+              <TabsTrigger value="delivery" className="rounded-md px-3 py-2 text-sm">Delivery</TabsTrigger>
+              <TabsTrigger value="payments" className="rounded-md px-3 py-2 text-sm">Payments</TabsTrigger>
+              <TabsTrigger value="users" className="rounded-md px-3 py-2 text-sm">Team</TabsTrigger>
+              <TabsTrigger value="support" className="rounded-md px-3 py-2 text-sm">Support</TabsTrigger>
+            </TabsList>
+          </CardContent>
+        </Card>
 
         <TabsContent value="dashboard">
           <RetailerDashboard />
