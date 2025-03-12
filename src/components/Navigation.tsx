@@ -38,7 +38,7 @@ export const Navigation = memo(() => {
         <CategoryNav />
       </div>
     </motion.nav>
-  ));
+  );
 });
 
 Navigation.displayName = "Navigation";
