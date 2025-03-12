@@ -1,16 +1,17 @@
-import { useVirtualizer } from "@tanstack/react-virtual";
+
 import { useSearchParams } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
-import { ShoppingCart, ExternalLink } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ShoppingCart, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
@@ -19,6 +20,8 @@ const SearchResults = () => {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     // Simulate search API call
@@ -37,6 +40,7 @@ const SearchResults = () => {
       });
       
       setSearchResults(results);
+      setCurrentPage(1); // Reset to first page on new search
       setIsLoading(false);
     }, 800);
   }, [query]);
@@ -53,13 +57,16 @@ const SearchResults = () => {
     navigate(`/product/${productId}`);
   };
 
-  const parentRef = useRef<HTMLDivElement>(null);
-  const rowVirtualizer = useVirtualizer({
-    count: searchResults.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 350,
-    overscan: 5,
-  });
+  // Pagination logic
+  const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber: number) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <motion.div 
@@ -91,29 +98,17 @@ const SearchResults = () => {
             ))}
           </div>
         ) : searchResults.length > 0 ? (
-        <div ref={parentRef} className="h-[800px] overflow-auto">
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const product = searchResults[virtualRow.index];
-              return (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentItems.map((product) => (
                 <motion.div
                   key={product.id}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: virtualRow.size,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <Card className="m-2">
+                  <Card className="h-full">
                     <CardContent className="p-4">
                       <OptimizedImage
                         src={product.image}
@@ -122,43 +117,75 @@ const SearchResults = () => {
                       />
                       <h3 className="font-semibold text-lg mb-2 hover:text-primary">{product.name}</h3>
                       <p className="text-gray-600 mb-2 flex-1">{product.description || "Product description"}</p>
-                    
-                    <div className="space-y-4 mt-auto">
-                      <p className="text-2xl font-bold text-primary">
-                        ₹{product.price.toLocaleString()}
-                      </p>
-                      <div className="flex justify-between items-center">
-                        <span className={`text-sm ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
-                          {product.inStock ? 'In Stock' : 'Out of Stock'}
-                        </span>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="outline"
-                            onClick={() => handleProductClick(product.id)}
-                            className="px-3"
-                          >
-                            <ExternalLink className="h-4 w-4 mr-1" />
-                            Details
-                          </Button>
-                          <Button 
-                            onClick={() => handleAddToCart(product)}
-                            disabled={!product.inStock}
-                            className="px-3"
-                          >
-                            <ShoppingCart className="h-4 w-4 mr-1" />
-                            Add
-                          </Button>
+                      
+                      <div className="space-y-4 mt-auto">
+                        <p className="text-2xl font-bold text-primary">
+                          ₹{product.price.toLocaleString()}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <span className={`text-sm ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
+                            {product.inStock ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline"
+                              onClick={() => handleProductClick(product.id)}
+                              className="px-3"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-1" />
+                              Details
+                            </Button>
+                            <Button 
+                              onClick={() => handleAddToCart(product)}
+                              disabled={!product.inStock}
+                              className="px-3"
+                            >
+                              <ShoppingCart className="h-4 w-4 mr-1" />
+                              Add
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
                     </CardContent>
                   </Card>
                 </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      ) : (
+              ))}
+            </div>
+            
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8 gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                {Array.from({ length: totalPages }).map((_, index) => (
+                  <Button
+                    key={index}
+                    variant={currentPage === index + 1 ? "default" : "outline"}
+                    onClick={() => paginate(index + 1)}
+                    className="px-4 py-2"
+                  >
+                    {index + 1}
+                  </Button>
+                ))}
+                
+                <Button 
+                  variant="outline" 
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        ) : (
           <div className="bg-muted/50 rounded-lg p-8 text-center">
             <p className="text-xl font-semibold mb-2">No results found</p>
             <p className="text-muted-foreground">We couldn't find any products matching "{query}".</p>
