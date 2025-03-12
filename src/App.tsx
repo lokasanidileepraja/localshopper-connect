@@ -2,6 +2,15 @@
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Index from "@/pages/Index";
+import Brand from "@/pages/Brand";
+import Category from "@/pages/Category";
+import ProductDetails from "@/pages/ProductDetails";
+import SearchResults from "@/pages/SearchResults";
+import Cart from "@/pages/Cart";
+import Checkout from "@/pages/Checkout";
+import Stores from "@/pages/Stores";
+import PriceCompare from "@/pages/PriceCompare";
+import RetailerProfile from "@/pages/RetailerProfile";
 
 function App() {
   return (
