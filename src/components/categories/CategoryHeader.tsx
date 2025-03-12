@@ -1,7 +1,13 @@
 
 import { motion } from "framer-motion";
+import { Dispatch, SetStateAction } from "react";
 
-export const CategoryHeader = () => {
+interface CategoryHeaderProps {
+  filter: string;
+  setFilter: Dispatch<SetStateAction<string>>;
+}
+
+export const CategoryHeader = ({ filter, setFilter }: CategoryHeaderProps) => {
   const containerVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {

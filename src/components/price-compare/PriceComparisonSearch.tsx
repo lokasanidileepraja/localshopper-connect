@@ -12,11 +12,13 @@ interface PriceComparisonSearchProps {
     inStock: boolean;
   };
   onFilterChange: (filters: PriceComparisonSearchProps["filters"]) => void;
+  onSearch: (query: string) => void;
 }
 
 export const PriceComparisonSearch = ({
   filters,
   onFilterChange,
+  onSearch,
 }: PriceComparisonSearchProps) => {
   // Count active filters
   const activeFilterCount = (
