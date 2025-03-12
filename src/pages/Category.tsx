@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart, ExternalLink } from "lucide-react";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const Category = () => {
   const { categoryName } = useParams();
@@ -35,21 +36,21 @@ const Category = () => {
 
   const categoryProducts = products[categoryName.toLowerCase()] || [];
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = useCallback((product: any) => {
     addToCart(product, "Default Store");
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart`,
     });
-  };
+  }, [addToCart, toast]);
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
-  };
+  }, [navigate]);
 
-  const handleCheckout = () => {
+  const handleCheckout = useCallback(() => {
     navigate("/cart");
-  };
+  }, [navigate]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -75,10 +76,12 @@ const Category = () => {
                   className="cursor-pointer"
                   onClick={() => handleProductClick(product.id)}
                 >
-                  <img
+                  <OptimizedImage
                     src={product.image}
                     alt={product.name}
                     className="w-full h-48 object-cover rounded-md mb-4 transition-transform hover:scale-105 duration-300"
+                    width={400}
+                    height={300}
                   />
                   <h3 className="font-semibold text-lg mb-2 hover:text-primary">{product.name}</h3>
                   <p className="text-gray-600 mb-2 flex-1">{product.description}</p>

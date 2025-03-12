@@ -1,10 +1,12 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-export const useImagePreload = (src: string) => {
+export const useImagePreload = (src: string, options?: { priority?: boolean }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  const { priority = false } = options || {};
 
-  useEffect(() => {
+  const preloadImage = useCallback(() => {
     if (!src) {
       setIsLoaded(true);
       return;
@@ -12,14 +14,37 @@ export const useImagePreload = (src: string) => {
 
     const img = new Image();
     img.src = src;
-    img.onload = () => setIsLoaded(true);
-    img.onerror = () => setIsLoaded(true);
+    
+    if (priority) {
+      // Set fetchPriority if supported by browser
+      try {
+        // @ts-ignore - fetchPriority is experimental but useful
+        img.fetchPriority = 'high';
+      } catch (e) {
+        // Ignore if not supported
+      }
+    }
+    
+    img.onload = () => {
+      setIsLoaded(true);
+      setError(false);
+    };
+    
+    img.onerror = () => {
+      setIsLoaded(true);
+      setError(true);
+    };
 
     return () => {
       img.onload = null;
       img.onerror = null;
     };
-  }, [src]);
+  }, [src, priority]);
 
-  return isLoaded;
+  useEffect(() => {
+    const cleanup = preloadImage();
+    return cleanup;
+  }, [preloadImage]);
+
+  return { isLoaded, hasError: error };
 };

@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useImagePreload } from "@/hooks/useImagePreload";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 export const Hero = () => {
   const navigate = useNavigate();
-  const isLoaded = useImagePreload("https://images.unsplash.com/photo-1488590528505-98d2b5aba04b");
+  const { isLoaded } = useImagePreload("https://images.unsplash.com/photo-1488590528505-98d2b5aba04b", { priority: true });
 
   return (
     <div className="relative overflow-hidden py-16 sm:py-24">
@@ -21,7 +22,14 @@ export const Hero = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background/80"
-          />
+          >
+            <OptimizedImage 
+              src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
+              alt="Hero background"
+              className="w-full h-full object-cover"
+              priority={true}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
 

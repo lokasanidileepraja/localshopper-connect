@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,9 @@ import { useCart } from "@/contexts/CartContext";
 import { products } from "@/data/products";
 import { Product } from "@/types/shop";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
+import { useImagePreload } from "@/hooks/use-image-preload";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const DUMMY_REVIEWS = [
   {
@@ -46,6 +48,7 @@ const DUMMY_REVIEWS = [
 
 const ProductImages = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
+  const { isLoaded } = useImagePreload(selectedImage, { priority: true });
 
   return (
     <div className="space-y-4">
@@ -54,10 +57,12 @@ const ProductImages = ({ images }: { images: string[] }) => {
         animate={{ opacity: 1 }}
         className="aspect-square overflow-hidden rounded-lg bg-muted"
       >
-        <img 
+        {!isLoaded && <Skeleton className="w-full h-full" />}
+        <OptimizedImage 
           src={selectedImage} 
           alt="Product" 
           className="h-full w-full object-cover object-center"
+          priority={true}
         />
       </motion.div>
       <div className="flex gap-2 overflow-x-auto pb-2">
@@ -67,10 +72,12 @@ const ProductImages = ({ images }: { images: string[] }) => {
             className={`cursor-pointer border-2 rounded-md overflow-hidden ${selectedImage === image ? 'border-primary' : 'border-transparent'}`}
             onClick={() => setSelectedImage(image)}
           >
-            <img 
+            <OptimizedImage 
               src={image} 
               alt={`Product thumbnail ${i+1}`} 
               className="h-20 w-20 object-cover"
+              width={80}
+              height={80}
             />
           </div>
         ))}

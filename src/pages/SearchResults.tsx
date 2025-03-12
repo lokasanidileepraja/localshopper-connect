@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 import { ShoppingCart, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -22,11 +22,12 @@ const SearchResults = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Simulate search API call
     setIsLoading(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const results: any[] = [];
       
       // Search across all product categories
@@ -43,19 +44,21 @@ const SearchResults = () => {
       setCurrentPage(1); // Reset to first page on new search
       setIsLoading(false);
     }, 800);
+
+    return () => clearTimeout(timer);
   }, [query]);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = useCallback((product: any) => {
     addToCart(product, "Default Store");
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart`,
     });
-  };
+  }, [addToCart, toast]);
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
-  };
+  }, [navigate]);
 
   // Pagination logic
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
@@ -63,16 +66,19 @@ const SearchResults = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
 
-  const paginate = (pageNumber: number) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const paginate = useCallback((pageNumber: number) => {
+    if (listRef.current) {
+      listRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     setCurrentPage(pageNumber);
-  };
+  }, []);
 
   return (
     <motion.div 
       className="container mx-auto px-4 py-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      ref={listRef}
     >
       <Breadcrumbs />
       <div className="space-y-6">
@@ -114,8 +120,15 @@ const SearchResults = () => {
                         src={product.image}
                         alt={product.name}
                         className="w-full h-48 object-cover rounded-md mb-4"
+                        width={400}
+                        height={300}
                       />
-                      <h3 className="font-semibold text-lg mb-2 hover:text-primary">{product.name}</h3>
+                      <h3 
+                        className="font-semibold text-lg mb-2 hover:text-primary cursor-pointer" 
+                        onClick={() => handleProductClick(product.id)}
+                      >
+                        {product.name}
+                      </h3>
                       <p className="text-gray-600 mb-2 flex-1">{product.description || "Product description"}</p>
                       
                       <div className="space-y-4 mt-auto">
@@ -163,16 +176,30 @@ const SearchResults = () => {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 
-                {Array.from({ length: totalPages }).map((_, index) => (
-                  <Button
-                    key={index}
-                    variant={currentPage === index + 1 ? "default" : "outline"}
-                    onClick={() => paginate(index + 1)}
-                    className="px-4 py-2"
-                  >
-                    {index + 1}
-                  </Button>
-                ))}
+                {Array.from({ length: Math.min(totalPages, 5) }).map((_, index) => {
+                  // Show pagination numbers logically
+                  let pageNumber;
+                  if (totalPages <= 5) {
+                    pageNumber = index + 1;
+                  } else if (currentPage <= 3) {
+                    pageNumber = index + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNumber = totalPages - 4 + index;
+                  } else {
+                    pageNumber = currentPage - 2 + index;
+                  }
+                  
+                  return (
+                    <Button
+                      key={pageNumber}
+                      variant={currentPage === pageNumber ? "default" : "outline"}
+                      onClick={() => paginate(pageNumber)}
+                      className="px-4 py-2"
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
                 
                 <Button 
                   variant="outline" 
