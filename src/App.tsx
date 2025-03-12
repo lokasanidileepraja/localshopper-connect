@@ -11,6 +11,7 @@ import Checkout from "@/pages/Checkout";
 import Stores from "@/pages/Stores";
 import PriceCompare from "@/pages/PriceCompare";
 import RetailerProfile from "@/pages/RetailerProfile";
+import Notifications from "@/pages/Notifications";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/stores" element={<Stores />} />
         <Route path="/price-compare" element={<PriceCompare />} />
         <Route path="/retailer" element={<RetailerProfile />} />
+        <Route path="/notifications" element={<Notifications />} />
       </Route>
     </Routes>
   );

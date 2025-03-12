@@ -1,14 +1,21 @@
 
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const NavigationSearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Update search input when URL parameter changes
+    setSearchQuery(initialQuery);
+  }, [initialQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +25,12 @@ export const NavigationSearchBar = () => {
         description: `Looking for "${searchQuery}"...`,
       });
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      toast({
+        title: "Search error",
+        description: "Please enter a search term",
+        variant: "destructive",
+      });
     }
   };
 
