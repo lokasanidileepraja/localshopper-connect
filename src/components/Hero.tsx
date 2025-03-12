@@ -2,19 +2,34 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useImagePreload } from "@/hooks/useImagePreload";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Hero = () => {
   const navigate = useNavigate();
+  const isLoaded = useImagePreload("https://images.unsplash.com/photo-1488590528505-98d2b5aba04b");
 
   return (
     <div className="relative overflow-hidden py-16 sm:py-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background/80" />
+      <AnimatePresence>
+        {!isLoaded ? (
+          <Skeleton className="absolute inset-0" />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background/80"
+          />
+        )}
+      </AnimatePresence>
+
       <div className="container relative mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="max-w-3xl mx-auto text-center"
         >
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">

@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useToast } from "@/hooks/use-toast";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
-// Extended product data
 const ALL_PRODUCTS = [
   {
     id: "1",
@@ -52,27 +52,26 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
   const [hasMore, setHasMore] = useState(true);
   const { toast } = useToast();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  const fetchMoreData = () => {
+  const fetchMoreData = useCallback(() => {
     if (products.length >= ALL_PRODUCTS.length) {
       setHasMore(false);
       return;
     }
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       setProducts(prevProducts => [
         ...prevProducts,
         ...ALL_PRODUCTS.slice(prevProducts.length, prevProducts.length + 3)
       ]);
-    }, 1500);
-  };
+    });
+  }, [products.length]);
 
   useKeyboardNav(
     () => setSelectedIndex(prev => Math.max(0, prev - 1)),
@@ -80,9 +79,9 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
     () => navigate(`/product/${products[selectedIndex].id}`)
   );
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = useCallback((productId: string) => {
     onProductClick(productId);
-  };
+  }, [onProductClick]);
 
   if (isLoading) {
     return (
@@ -106,7 +105,7 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
   }
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gray-50" ref={scrollRef}>
       <div className="container">
         <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
         <InfiniteScroll
@@ -114,9 +113,10 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
           next={fetchMoreData}
           hasMore={hasMore}
           loader={<LoadingSpinner />}
+          scrollThreshold={0.8}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {products.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -125,29 +125,31 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
                   opacity: 1, 
                   y: 0,
                   scale: selectedIndex === index ? 1.02 : 1,
-                  boxShadow: selectedIndex === index ? "0 8px 30px rgba(0,0,0,0.12)" : "none"
                 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.3 }}
                 className="focus-within:ring-2 focus-within:ring-primary rounded-lg"
                 tabIndex={0}
                 role="button"
                 aria-label={`View details for ${product.name}`}
               >
-                <Card className="group overflow-hidden h-full">
+                <Card className="group h-full">
                   <CardContent className="p-0">
                     <div className="relative">
-                      <img
+                      <OptimizedImage
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
+                        className="w-full h-48 object-cover"
+                        width={400}
+                        height={300}
                       />
-                      <Badge className="absolute top-2 right-2">{product.badge}</Badge>
+                      {product.badge && (
+                        <Badge className="absolute top-2 right-2">{product.badge}</Badge>
+                      )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{product.description}</p>
+                      <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-2xl font-bold text-primary">
                           ₹{product.price.toLocaleString()}
@@ -161,7 +163,7 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
                   </CardContent>
                   <CardFooter className="p-4 pt-0">
                     <Button 
-                      className="w-full group"
+                      className="w-full"
                       onClick={() => handleProductClick(product.id)}
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />

@@ -1,4 +1,4 @@
-
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useSearchParams } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-
+import { OptimizedImage } from "@/components/ui/optimized-image";
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
@@ -53,12 +53,19 @@ const SearchResults = () => {
     navigate(`/product/${productId}`);
   };
 
+  const parentRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: searchResults.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 350,
+    overscan: 5,
+  });
+
   return (
     <motion.div 
       className="container mx-auto px-4 py-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
     >
       <Breadcrumbs />
       <div className="space-y-6">
@@ -84,28 +91,38 @@ const SearchResults = () => {
             ))}
           </div>
         ) : searchResults.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((product) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
-                  <CardContent className="p-4 flex-1 flex flex-col">
-                    <div 
-                      className="cursor-pointer"
-                      onClick={() => handleProductClick(product.id)}
-                    >
-                      <img
-                        src={product.image || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"}
+        <div ref={parentRef} className="h-[800px] overflow-auto">
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const product = searchResults[virtualRow.index];
+              return (
+                <motion.div
+                  key={product.id}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: virtualRow.size,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <Card className="m-2">
+                    <CardContent className="p-4">
+                      <OptimizedImage
+                        src={product.image}
                         alt={product.name}
-                        className="w-full h-48 object-cover rounded-md mb-4 transition-transform hover:scale-105 duration-300"
+                        className="w-full h-48 object-cover rounded-md mb-4"
                       />
                       <h3 className="font-semibold text-lg mb-2 hover:text-primary">{product.name}</h3>
                       <p className="text-gray-600 mb-2 flex-1">{product.description || "Product description"}</p>
-                    </div>
+                    
                     <div className="space-y-4 mt-auto">
                       <p className="text-2xl font-bold text-primary">
                         ₹{product.price.toLocaleString()}
@@ -134,12 +151,14 @@ const SearchResults = () => {
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
-        ) : (
+        </div>
+      ) : (
           <div className="bg-muted/50 rounded-lg p-8 text-center">
             <p className="text-xl font-semibold mb-2">No results found</p>
             <p className="text-muted-foreground">We couldn't find any products matching "{query}".</p>
