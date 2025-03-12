@@ -1,4 +1,5 @@
 
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
 import { UserActions } from "./navigation/UserActions";
@@ -7,7 +8,7 @@ import { ShoppingBag, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
-export const Navigation = () => {
+export const Navigation = memo(() => {
   return (
     <motion.nav 
       initial={{ y: -100 }}
@@ -37,5 +38,7 @@ export const Navigation = () => {
         <CategoryNav />
       </div>
     </motion.nav>
-  );
-};
+  ));
+});
+
+Navigation.displayName = "Navigation";
