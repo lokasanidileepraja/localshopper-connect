@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { useCart } from "@/contexts/CartContext";
 import { products } from "@/data/products";
 import { Product } from "@/types/shop";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { useImagePreload } from "@/hooks/use-image-preload";
+import { useImagePreload } from "@/hooks/useImagePreload";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Skeleton } from "@/components/ui/skeleton";
 
