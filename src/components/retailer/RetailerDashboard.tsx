@@ -188,7 +188,7 @@ export const RetailerDashboard = () => {
                       <span className="font-medium">{reservation.product}</span>
                       <Badge variant={
                         reservation.status === "pending" ? "default" :
-                        reservation.status === "completed" ? "success" : "destructive"
+                        reservation.status === "completed" ? "outline" : "destructive"
                       }>
                         {reservation.status}
                       </Badge>

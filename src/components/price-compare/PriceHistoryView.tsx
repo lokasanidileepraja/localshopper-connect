@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LineSeries, LineChart, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line } from "recharts";
 import { Bell, Clock, Save, TrendingDown } from "lucide-react";
 
 interface PriceHistoryViewProps {
@@ -116,7 +116,7 @@ export const PriceHistoryView = ({ searchQuery, filters }: PriceHistoryViewProps
                 <Tooltip 
                   formatter={(value) => [`₹${Number(value).toLocaleString()}`, 'Price']}
                 />
-                <LineSeries 
+                <Line 
                   type="monotone" 
                   dataKey="price" 
                   stroke="#8884d8" 
