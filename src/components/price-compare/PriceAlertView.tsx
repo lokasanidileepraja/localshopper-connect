@@ -1,14 +1,13 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, AlertTriangle, CheckCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Bell, Mail, ShoppingBag, Tag } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 
 interface PriceAlertViewProps {
   searchQuery: string;
@@ -21,200 +20,261 @@ interface PriceAlertViewProps {
 }
 
 export const PriceAlertView = ({ searchQuery, filters }: PriceAlertViewProps) => {
-  const [targetPrice, setTargetPrice] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [notifyAll, setNotifyAll] = useState(true);
-  const [alerts, setAlerts] = useState([]);
   const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [targetPrice, setTargetPrice] = useState("");
+  const [alertThreshold, setAlertThreshold] = useState(10); // Percentage
+  const [isAlertSet, setIsAlertSet] = useState(false);
 
-  // Get products that match the search query
-  const allProducts = ELECTRONICS_SHOPS.flatMap(shop => 
-    shop.products.map(product => ({
-      ...product,
-      shopName: shop.name
-    }))
-  ).filter(product => 
-    !searchQuery || product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
-  // Get unique product names
-  const uniqueProducts = [...new Map(allProducts.map(item => [item.name, item])).values()];
-  
-  useEffect(() => {
-    if (uniqueProducts.length > 0 && !selectedProduct) {
-      setSelectedProduct(uniqueProducts[0].name);
-      // Set default target price slightly below the lowest current price
-      const productPrices = allProducts
-        .filter(p => p.name === uniqueProducts[0].name)
-        .map(p => p.price);
-      const lowestPrice = Math.min(...productPrices);
-      setTargetPrice(Math.round(lowestPrice * 0.95).toString());
-    }
-  }, [uniqueProducts, selectedProduct, allProducts]);
-
-  const handleSetAlert = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedProduct || !targetPrice) {
+  const handleSetPriceAlert = (type: "price" | "availability" | "deal") => {
+    if (!email && !phone) {
       toast({
-        title: "Error",
-        description: "Please select a product and set a target price",
+        title: "Missing information",
+        description: "Please enter either email or phone number",
         variant: "destructive",
       });
       return;
     }
-    
-    const newAlert = {
-      id: Date.now().toString(),
-      product: selectedProduct,
-      targetPrice: parseInt(targetPrice),
-      notifyAllStores: notifyAll,
-      createdAt: new Date().toLocaleString(),
-    };
-    
-    setAlerts(prev => [newAlert, ...prev]);
-    
+
+    if (type === "price" && (!targetPrice || isNaN(Number(targetPrice)) || Number(targetPrice) <= 0)) {
+      toast({
+        title: "Invalid price",
+        description: "Please enter a valid target price",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    let message = "";
+    switch (type) {
+      case "price":
+        message = `We'll notify you when ${searchQuery || "this product"} drops below ₹${parseInt(targetPrice).toLocaleString()}`;
+        break;
+      case "availability":
+        message = `We'll notify you when ${searchQuery || "this product"} becomes available in stock`;
+        break;
+      case "deal":
+        message = `We'll notify you when ${searchQuery || "this product"} has a discount of ${alertThreshold}% or more`;
+        break;
+    }
+
+    setIsAlertSet(true);
     toast({
-      title: "Price Alert Set",
-      description: `We'll notify you when ${selectedProduct} drops below ₹${parseInt(targetPrice).toLocaleString()}`,
-    });
-    
-    // Reset form or prepare for next alert
-    const productPrices = allProducts
-      .filter(p => p.name === selectedProduct)
-      .map(p => p.price);
-    const lowestPrice = Math.min(...productPrices);
-    setTargetPrice(Math.round(lowestPrice * 0.95).toString());
-  };
-  
-  const handleDeleteAlert = (alertId) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== alertId));
-    toast({
-      title: "Alert Deleted",
-      description: "The price alert has been removed",
+      title: "Alert Set",
+      description: message,
     });
   };
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Set Price Alert
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSetAlert} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="product-select">Product</Label>
-              <Select 
-                value={selectedProduct} 
-                onValueChange={setSelectedProduct}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueProducts.map(product => (
-                    <SelectItem key={product.id} value={product.name}>
-                      {product.name} - Current from ₹{Math.min(...allProducts
-                        .filter(p => p.name === product.name)
-                        .map(p => p.price)).toLocaleString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="target-price">Target Price (₹)</Label>
-              <Input
-                id="target-price"
-                type="number"
-                placeholder="Enter your target price"
-                value={targetPrice}
-                onChange={(e) => setTargetPrice(e.target.value)}
-                required
-              />
-              
-              {selectedProduct && (
-                <div className="text-sm text-muted-foreground mt-1">
-                  Current lowest: ₹{Math.min(...allProducts
-                    .filter(p => p.name === selectedProduct)
-                    .map(p => p.price)).toLocaleString()}
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="notify-all" 
-                checked={notifyAll}
-                onCheckedChange={setNotifyAll}
-              />
-              <Label htmlFor="notify-all">Notify me for any store with this price</Label>
-            </div>
-            
-            <Button type="submit" className="w-full">
-              Create Alert
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-      
-      {alerts.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Active Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {alerts.map(alert => {
-                const currentLowestPrice = Math.min(...allProducts
-                  .filter(p => p.name === alert.product)
-                  .map(p => p.price));
-                
-                const isAlertActive = currentLowestPrice > alert.targetPrice;
-                
-                return (
-                  <div key={alert.id} className="border rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-semibold">{alert.product}</h4>
-                      {isAlertActive ? (
-                        <div className="flex items-center text-amber-500">
-                          <AlertTriangle className="h-4 w-4 mr-1" />
-                          Waiting for price drop
-                        </div>
-                      ) : (
-                        <div className="flex items-center text-green-500">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Target price reached!
-                        </div>
-                      )}
+      <Tabs defaultValue="price">
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="price">Price Drop</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="deals">Deals & Offers</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="price" className="pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Tag className="h-5 w-5" />
+                Price Drop Alert
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!isAlertSet ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-primary/10">
+                    <h3 className="font-medium mb-2">
+                      {searchQuery ? `Alert for "${searchQuery}"` : "Set a Price Alert"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      We'll notify you when the price drops below your target
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <Label>Target Price</Label>
+                      <Input
+                        type="number"
+                        placeholder="Enter your target price"
+                        value={targetPrice}
+                        onChange={(e) => setTargetPrice(e.target.value)}
+                      />
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Target: ₹{alert.targetPrice.toLocaleString()}</span>
-                      <span>Current: ₹{currentLowestPrice.toLocaleString()}</span>
+                    
+                    <div className="space-y-1">
+                      <Label>Email (optional)</Label>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-500">Created: {alert.createdAt}</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-red-500 h-6 px-2"
-                        onClick={() => handleDeleteAlert(alert.id)}
-                      >
-                        Delete
-                      </Button>
+                    
+                    <div className="space-y-1">
+                      <Label>WhatsApp Number (optional)</Label>
+                      <Input
+                        type="tel"
+                        placeholder="Enter your WhatsApp number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        We'll send you a WhatsApp notification when price drops
+                      </p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
+                  <Button onClick={() => handleSetPriceAlert("price")} className="w-full">
+                    <Bell className="mr-2 h-4 w-4" />
+                    Set Price Alert
+                  </Button>
+                </div>
+              ) : (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center space-y-2">
+                  <div className="inline-flex items-center justify-center bg-green-100 rounded-full p-2 mb-2">
+                    <Bell className="h-5 w-5 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold text-green-800">Price Alert Set!</h3>
+                  <p className="text-sm text-green-700">
+                    We'll notify you when {searchQuery || "this product"} drops below ₹{parseInt(targetPrice).toLocaleString()}
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => setIsAlertSet(false)}
+                  >
+                    Modify Alert
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="availability" className="pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ShoppingBag className="h-5 w-5" />
+                Stock Alert
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-primary/10">
+                  <h3 className="font-medium mb-2">
+                    {searchQuery ? `Availability Alert for "${searchQuery}"` : "Get In-Stock Notifications"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    We'll notify you when this product becomes available
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label>Email (optional)</Label>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label>WhatsApp Number (optional)</Label>
+                    <Input
+                      type="tel"
+                      placeholder="Enter your WhatsApp number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <Button onClick={() => handleSetPriceAlert("availability")} className="w-full">
+                  <Bell className="mr-2 h-4 w-4" />
+                  Notify When Available
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="deals" className="pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Tag className="h-5 w-5" />
+                Deal Alert
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-4 rounded-lg bg-primary/10">
+                  <h3 className="font-medium mb-2">
+                    {searchQuery ? `Deal Alert for "${searchQuery}"` : "Get Deal Notifications"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    We'll notify you when this product has a significant discount
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <Label>Minimum Discount</Label>
+                      <span className="text-sm font-medium">{alertThreshold}% off</span>
+                    </div>
+                    <Slider
+                      value={[alertThreshold]}
+                      min={5}
+                      max={50}
+                      step={5}
+                      onValueChange={(value) => setAlertThreshold(value[0])}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      We'll alert you when the discount is {alertThreshold}% or more
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label>Email (optional)</Label>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Label>WhatsApp Number (optional)</Label>
+                    <Input
+                      type="tel"
+                      placeholder="Enter your WhatsApp number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <Button onClick={() => handleSetPriceAlert("deal")} className="w-full">
+                  <Bell className="mr-2 h-4 w-4" />
+                  Set Deal Alert
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

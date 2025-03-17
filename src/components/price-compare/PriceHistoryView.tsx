@@ -1,9 +1,12 @@
-import { Line, LineChart, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { LineSeries, LineChart, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { Bell, Clock, Save, TrendingDown } from "lucide-react";
 
 interface PriceHistoryViewProps {
   searchQuery: string;
@@ -15,163 +18,179 @@ interface PriceHistoryViewProps {
   };
 }
 
-export const PriceHistoryView = ({ searchQuery, filters }: PriceHistoryViewProps) => {
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [priceHistory, setPriceHistory] = useState([]);
+const generatePriceHistory = (product: string, days = 30) => {
+  // Starting price
+  let price = Math.floor(Math.random() * 20000) + 10000;
   
-  // Get products that match the search query
-  const allProducts = ELECTRONICS_SHOPS.flatMap(shop => 
-    shop.products.map(product => ({
-      ...product,
-      shopName: shop.name
-    }))
-  ).filter(product => 
-    !searchQuery || product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
-  // Get unique product names
-  const uniqueProducts = [...new Map(allProducts.map(item => [item.name, item])).values()];
-  
-  useEffect(() => {
-    if (uniqueProducts.length > 0 && !selectedProduct) {
-      setSelectedProduct(uniqueProducts[0].name);
-    }
-  }, [uniqueProducts, selectedProduct]);
-  
-  useEffect(() => {
-    if (selectedProduct) {
-      // Generate mock price history data for the selected product
-      const product = allProducts.find(p => p.name === selectedProduct);
-      if (product) {
-        const basePrice = product.price;
-        const mockData = [
-          { date: "Jan", price: Math.round(basePrice * 1.05) },
-          { date: "Feb", price: Math.round(basePrice * 1.03) },
-          { date: "Mar", price: Math.round(basePrice * 1.02) },
-          { date: "Apr", price: Math.round(basePrice * 1.00) },
-          { date: "May", price: Math.round(basePrice * 0.98) },
-          { date: "Jun", price: basePrice },
-        ];
-        
-        // Generate shop specific data
-        const shopData = ELECTRONICS_SHOPS.map(shop => {
-          const shopProduct = shop.products.find(p => p.name === selectedProduct);
-          if (!shopProduct) return null;
-          
-          // Generate random variation but keep the same trend
-          return {
-            id: shop.id,
-            name: shop.name,
-            data: mockData.map(point => ({
-              date: point.date,
-              price: Math.round(shopProduct.price * (point.price / basePrice))
-            }))
-          };
-        }).filter(Boolean);
-        
-        setPriceHistory(shopData);
-      }
-    }
-  }, [selectedProduct, allProducts]);
+  return Array.from({ length: days }).map((_, index) => {
+    // Random price fluctuations
+    const change = Math.floor(Math.random() * 1000) - 500;
+    price = Math.max(price + change, 5000); // Ensure price doesn't go below 5000
+    
+    // Calculate date
+    const date = new Date();
+    date.setDate(date.getDate() - (days - index - 1));
+    
+    return {
+      date: date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
+      price,
+      timestamp: date.getTime()
+    };
+  });
+};
 
-  if (allProducts.length === 0) {
+export const PriceHistoryView = ({ searchQuery, filters }: PriceHistoryViewProps) => {
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [targetPrice, setTargetPrice] = useState("");
+  const [isAlertSet, setIsAlertSet] = useState(false);
+  
+  // Generate sample price history data based on search query
+  const [priceHistory, setPriceHistory] = useState(() => 
+    searchQuery ? generatePriceHistory(searchQuery) : []
+  );
+
+  const handleSetPriceAlert = () => {
+    if (!email) {
+      toast({
+        title: "Missing information",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!targetPrice || isNaN(Number(targetPrice)) || Number(targetPrice) <= 0) {
+      toast({
+        title: "Invalid price",
+        description: "Please enter a valid target price",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAlertSet(true);
+    toast({
+      title: "Price Alert Set",
+      description: `We'll notify you when ${searchQuery} drops below ₹${parseInt(targetPrice).toLocaleString()}`,
+    });
+  };
+
+  // If no search query, show a placeholder
+  if (!searchQuery) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Price History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">No products found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="text-center py-12">
+        <Bell className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold mb-2">No Product Selected</h3>
+        <p className="text-muted-foreground">
+          Search for a product to see its price history and set price alerts
+        </p>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Price History</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="product-select">Select Product</Label>
-            <Select 
-              value={selectedProduct} 
-              onValueChange={setSelectedProduct}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a product" />
-              </SelectTrigger>
-              <SelectContent>
-                {uniqueProducts.map(product => (
-                  <SelectItem key={product.id} value={product.name}>
-                    {product.name} - From ₹{Math.min(...allProducts
-                      .filter(p => p.name === product.name)
-                      .map(p => p.price)).toLocaleString()}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+    <div className="space-y-6">
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Price History for {searchQuery}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80 w-full">
+            {priceHistory.length > 0 ? (
+              <LineChart 
+                width={800} 
+                height={300} 
+                data={priceHistory}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date" 
-                  allowDuplicatedCategory={false} 
-                  type="category"
-                  domain={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']}
+                <XAxis dataKey="date" />
+                <YAxis 
+                  domain={['dataMin - 1000', 'dataMax + 1000']}
+                  tickFormatter={(value) => `₹${value.toLocaleString()}`}
                 />
-                <YAxis />
                 <Tooltip 
-                  formatter={(value) => [`₹${value.toLocaleString()}`, "Price"]}
-                  labelFormatter={() => selectedProduct}
+                  formatter={(value) => [`₹${Number(value).toLocaleString()}`, 'Price']}
                 />
-                <Legend />
-                {priceHistory.map((shop, index) => (
-                  <Line
-                    key={shop.id}
-                    data={shop.data}
-                    type="monotone"
-                    dataKey="price"
-                    name={shop.name}
-                    stroke={`hsl(${index * 40}, 70%, 50%)`}
-                    strokeWidth={2}
-                    activeDot={{ r: 8 }}
-                  />
-                ))}
+                <LineSeries 
+                  type="monotone" 
+                  dataKey="price" 
+                  stroke="#8884d8" 
+                  activeDot={{ r: 8 }} 
+                />
               </LineChart>
-            </ResponsiveContainer>
-          </div>
-          
-          {priceHistory.length > 0 && (
-            <div className="pt-4 border-t">
-              <h4 className="font-semibold mb-2">Current Prices</h4>
-              <div className="space-y-2">
-                {priceHistory.map(shop => {
-                  const currentPrice = shop.data[shop.data.length - 1].price;
-                  const lowestPrice = Math.min(...priceHistory.map(s => s.data[s.data.length - 1].price));
-                  return (
-                    <div key={shop.id} className="flex justify-between items-center">
-                      <span>{shop.name}</span>
-                      <span className={`font-bold ${currentPrice === lowestPrice ? 'text-green-600' : 'text-primary'}`}>
-                        ₹{currentPrice.toLocaleString()}
-                        {currentPrice === lowestPrice && " (Best Price)"}
-                      </span>
-                    </div>
-                  );
-                })}
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <p className="text-muted-foreground">No price history available</p>
               </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingDown className="h-5 w-5" />
+            Set Price Drop Alert
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!isAlertSet ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="Enter your email address" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="target-price">Target Price</Label>
+                <Input 
+                  id="target-price" 
+                  type="number" 
+                  placeholder="Enter your target price" 
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(e.target.value)}
+                />
+                <p className="text-sm text-muted-foreground">
+                  We'll notify you when the price drops below this amount
+                </p>
+              </div>
+              <Button onClick={handleSetPriceAlert} className="w-full">
+                <Bell className="mr-2 h-4 w-4" />
+                Set Price Alert
+              </Button>
+            </div>
+          ) : (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center space-y-2">
+              <div className="inline-flex items-center justify-center bg-green-100 rounded-full p-2 mb-2">
+                <Bell className="h-5 w-5 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-green-800">Price Alert Set!</h3>
+              <p className="text-sm text-green-700">
+                We'll notify you at {email} when {searchQuery} drops below ₹{parseInt(targetPrice).toLocaleString()}
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="mt-2"
+                onClick={() => setIsAlertSet(false)}
+              >
+                Modify Alert
+              </Button>
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

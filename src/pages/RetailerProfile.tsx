@@ -13,6 +13,7 @@ import { PaymentManagement } from "@/components/retailer/PaymentManagement";
 import { UserAccessControl } from "@/components/retailer/UserAccessControl";
 import { RetailerSupport } from "@/components/retailer/RetailerSupport";
 import { RetailerDashboard } from "@/components/retailer/RetailerDashboard";
+import { WhatsAppUpdates } from "@/components/retailer/WhatsAppUpdates";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const RetailerProfile = () => {
@@ -30,6 +31,7 @@ const RetailerProfile = () => {
           <CardContent className="p-1">
             <TabsList className="w-full overflow-x-auto flex justify-start bg-transparent h-auto p-1">
               <TabsTrigger value="dashboard" className="rounded-md px-3 py-2 text-sm">Dashboard</TabsTrigger>
+              <TabsTrigger value="whatsapp" className="rounded-md px-3 py-2 text-sm">WhatsApp</TabsTrigger>
               <TabsTrigger value="products" className="rounded-md px-3 py-2 text-sm">Products</TabsTrigger>
               <TabsTrigger value="inventory" className="rounded-md px-3 py-2 text-sm">Inventory</TabsTrigger>
               <TabsTrigger value="orders" className="rounded-md px-3 py-2 text-sm">Orders</TabsTrigger>
@@ -48,6 +50,10 @@ const RetailerProfile = () => {
           <RetailerDashboard />
         </TabsContent>
 
+        <TabsContent value="whatsapp">
+          <WhatsAppUpdates />
+        </TabsContent>
+        
         <TabsContent value="products">
           <ProductManagement />
         </TabsContent>
