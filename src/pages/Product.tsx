@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -33,6 +34,7 @@ const Product = () => {
         rating: 4.8,
         reviews: 128,
         store: {
+          id: "store123", // Added id property
           name: "TechHub Electronics",
           address: "123 Tech Street, Digital City",
           phone: "+91 98765 43210",

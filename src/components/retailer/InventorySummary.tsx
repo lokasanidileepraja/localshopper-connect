@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CellSignalFull, AlertTriangle, PackageCheck } from "lucide-react";
+import { BarChart, AlertTriangle, PackageCheck } from "lucide-react";
 
 const mockInventoryData = [
   {
@@ -52,7 +52,7 @@ export const InventorySummary = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Progress value={(item.stock / item.total) * 100} className="h-2" />
-                {item.status === "healthy" && <CellSignalFull className="h-4 w-4 text-green-500" />}
+                {item.status === "healthy" && <BarChart className="h-4 w-4 text-green-500" />}
                 {item.status === "warning" && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
                 {item.status === "critical" && <AlertTriangle className="h-4 w-4 text-red-500" />}
               </div>

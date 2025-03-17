@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { StoreInfo } from "@/components/store/StoreInfo";
@@ -30,6 +31,7 @@ const StoreDetails = () => {
       >
         {/* Store Information */}
         <StoreInfo
+          id={shop.id} // Added id property
           name={shop.name}
           address="123 Tech Street, Digital City" // Dummy address
           phone="+1 (555) 123-4567" // Dummy phone
