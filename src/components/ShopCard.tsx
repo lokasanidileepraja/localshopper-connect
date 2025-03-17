@@ -1,12 +1,31 @@
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Star } from "lucide-react";
+import { MessageCircle, Star, Shield, Calendar } from "lucide-react";
 import { Shop } from "@/types/shop";
 import { useNavigate } from "react-router-dom";
 
-export const ShopCard = ({ name, category, rating, distance, image, isOpen, products }: Shop) => {
+export const ShopCard = ({ 
+  id,
+  name, 
+  category, 
+  rating, 
+  distance, 
+  image, 
+  isOpen, 
+  products,
+  isVerified = false,
+  lastUpdated
+}: Shop) => {
   const navigate = useNavigate();
+
+  const formattedLastUpdated = lastUpdated 
+    ? new Date(lastUpdated).toLocaleString('en-IN', { 
+        day: 'numeric',
+        month: 'short'
+      })
+    : null;
 
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
@@ -23,6 +42,14 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
           >
             {isOpen ? "Open Now" : "Closed"}
           </Badge>
+          {isVerified && (
+            <Badge 
+              variant="outline" 
+              className="absolute left-2 top-2 z-10 bg-green-50 text-green-700 border-green-200"
+            >
+              <Shield className="h-3 w-3 mr-1 fill-green-500" /> Verified
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-4">
@@ -37,6 +64,14 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
           <span className="bg-gray-100 px-2 py-1 rounded-full">{category}</span>
           <span className="text-primary font-medium">{distance}</span>
         </div>
+        
+        {formattedLastUpdated && (
+          <div className="mb-3 flex items-center gap-1 text-xs text-muted-foreground">
+            <Calendar className="h-3 w-3" />
+            <span>Updated: {formattedLastUpdated}</span>
+          </div>
+        )}
+        
         <div className="mb-4 space-y-3">
           <h4 className="font-medium text-gray-900">Available Products</h4>
           <ul className="space-y-2">
@@ -55,7 +90,7 @@ export const ShopCard = ({ name, category, rating, distance, image, isOpen, prod
         <div className="flex gap-2">
           <Button 
             className="flex-1 bg-primary hover:bg-primary/90"
-            onClick={() => navigate(`/shop/${name}`)}
+            onClick={() => navigate(`/shop/${id}`)}
           >
             Visit Store
           </Button>

@@ -12,6 +12,18 @@ export interface Product {
   model: string;
   inStock: boolean;
   quantity?: number;  // Added quantity as optional property
+  emiOptions?: EmiOption[];  // Added EMI options
+}
+
+export interface EmiOption {
+  provider: string;
+  tenures: Tenure[];
+}
+
+export interface Tenure {
+  months: number;
+  interestRate: number;
+  monthlyAmount: number;
 }
 
 export interface Shop {
@@ -25,4 +37,13 @@ export interface Shop {
   address: string;
   phone: string;
   products: Product[];
+  isVerified?: boolean;   // Added verification badge
+  lastUpdated?: string;   // Added last updated timestamp
+  deliveryOptions?: DeliveryOption[]; // Added delivery options
+}
+
+export interface DeliveryOption {
+  provider: string;
+  estimatedTime: string;
+  fee: number;
 }
