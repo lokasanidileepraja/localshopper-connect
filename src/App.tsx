@@ -1,6 +1,7 @@
 
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
+import Welcome from "@/pages/Welcome";
 import Index from "@/pages/Index";
 import Brand from "@/pages/Brand";
 import Category from "@/pages/Category";
@@ -12,12 +13,14 @@ import Stores from "@/pages/Stores";
 import PriceCompare from "@/pages/PriceCompare";
 import RetailerProfile from "@/pages/RetailerProfile";
 import Notifications from "@/pages/Notifications";
+import StoreDetails from "@/pages/StoreDetails";
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Welcome />} />
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Index />} />
+        <Route path="/home" element={<Index />} />
         <Route path="/brands/:brandName" element={<Brand />} />
         <Route path="/category/:categoryName" element={<Category />} />
         <Route path="/product/:productId" element={<ProductDetails />} />
@@ -25,6 +28,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/stores" element={<Stores />} />
+        <Route path="/store/:storeName" element={<StoreDetails />} />
         <Route path="/price-compare" element={<PriceCompare />} />
         <Route path="/retailer" element={<RetailerProfile />} />
         <Route path="/notifications" element={<Notifications />} />
