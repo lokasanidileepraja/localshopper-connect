@@ -128,7 +128,7 @@ export const EnhancedPriceComparisonTabs = ({
           <MapView searchQuery={searchQuery} filters={filters} />
         </TabsContent>
         <TabsContent value="price-history" className="pt-4">
-          <PriceHistoryView searchQuery={searchQuery} />
+          <PriceHistoryView searchQuery={searchQuery} filters={filters} />
         </TabsContent>
         <TabsContent value="price-alerts" className="pt-4">
           <PriceAlertView searchQuery={searchQuery} filters={filters} />
