@@ -1,12 +1,28 @@
 
 import { useState, useEffect } from "react";
 
-export function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(false);
+// Standardized breakpoints aligned with Tailwind
+export const BREAKPOINTS = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536
+};
+
+export type BreakpointKey = keyof typeof BREAKPOINTS;
+
+/**
+ * Custom hook to detect if the viewport is at or below a specified breakpoint
+ * @param breakpoint - The breakpoint to check against (default: "md")
+ * @returns Boolean indicating if the viewport is at or below the specified breakpoint
+ */
+export function useIsMobile(breakpoint: BreakpointKey = "md"): boolean {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 640); // Using Tailwind's sm breakpoint
+      setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint]);
     };
 
     // Initial check
@@ -19,7 +35,7 @@ export function useIsMobile(): boolean {
     return () => {
       window.removeEventListener("resize", checkIfMobile);
     };
-  }, []);
+  }, [breakpoint]);
 
   return isMobile;
 }
