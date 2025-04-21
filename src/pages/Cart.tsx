@@ -1,5 +1,4 @@
-
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { CartLayout } from "@/components/cart/CartLayout";
 import { CartHeader } from "@/components/cart/CartHeader";
@@ -9,11 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const Cart = () => {
-  const { items, removeFromCart, totalItems } = useCart();
+  const { items, removeFromCart, totalItems } = useCartStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Check if cart is empty when component mounts
   useEffect(() => {
     if (items.length === 0) {
       console.log("Cart is empty");
@@ -31,14 +29,11 @@ const Cart = () => {
       });
       return;
     }
-    
-    // Navigate to checkout page
     navigate("/checkout");
   };
 
   const handleRemoveItem = (id: string) => {
     removeFromCart(id);
-    
     toast({
       title: "Item removed",
       description: "The item has been removed from your cart.",
