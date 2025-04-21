@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
       description: isWishlisted 
         ? "You can always add it back later."
         : "Product saved to your wishlist. We'll alert you for price drops!",
-      variant: isWishlisted ? "default" : "success"
+      variant: isWishlisted ? "default" : "default"
     });
   };
 
@@ -37,3 +38,4 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
     </Button>
   );
 };
+
