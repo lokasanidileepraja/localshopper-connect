@@ -19,7 +19,8 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
       description: isWishlisted 
         ? "You can always add it back later."
         : "Product saved to your wishlist. We'll alert you for price drops!",
-      variant: isWishlisted ? "default" : "default"
+      // Use only allowed variants
+      variant: "default" // Always valid
     });
   };
 
@@ -38,4 +39,3 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
     </Button>
   );
 };
-

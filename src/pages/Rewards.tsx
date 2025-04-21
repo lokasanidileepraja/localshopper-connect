@@ -27,6 +27,7 @@ export default function Rewards() {
             </Button>
             <p className="text-sm text-muted-foreground">
               Earn rewards for every order, unlock badges, and get bonus deals.
+              <span className="block mt-2 text-accent-foreground font-semibold">Student exclusive: Collect points, win goodies & get surprise deals! 🎁</span>
               Notifications for coupon drops coming soon!
             </p>
           </div>

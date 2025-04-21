@@ -21,6 +21,11 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
     }
   };
 
+  // Student-friendly placeholder examples
+  const studentExamples = [
+    `"gaming laptop"`, `"wireless earbuds"`, `"discount calculator"`, `"store near campus"`, `"student offers"`
+  ];
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <form onSubmit={handleSubmit} className="flex gap-2">
@@ -37,7 +42,7 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           {searchQuery.length === 0 && (
             <span className="absolute left-10 top-full mt-1 text-xs text-muted-foreground bg-background px-2 py-1 rounded shadow-sm">
-              Try: "iPhone 15", "laptop", "TechHub", or "store near me"
+              Try: {studentExamples.join(", ")}
             </span>
           )}
         </div>
