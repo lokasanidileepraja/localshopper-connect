@@ -6,7 +6,7 @@ export function useIsMobile(): boolean {
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 640); // Using Tailwind's sm breakpoint
     };
 
     // Initial check

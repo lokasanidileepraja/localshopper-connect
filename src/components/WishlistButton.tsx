@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WishlistButtonProps {
   productId: string;
@@ -11,6 +12,7 @@ interface WishlistButtonProps {
 export const WishlistButton = ({ productId }: WishlistButtonProps) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleWishlist = () => {
     setIsWishlisted(!isWishlisted);
@@ -27,15 +29,15 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
   return (
     <Button
       variant="outline"
-      size="icon"
+      size={isMobile ? "sm" : "icon"}
       onClick={handleWishlist}
       aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-      className={`transition-colors ${
+      className={`transition-colors h-8 w-8 p-0 ${
         isWishlisted ? "text-red-500 hover:text-red-600" : "hover:text-red-500"
       }`}
       data-active={isWishlisted}
     >
-      <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />
+      <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
     </Button>
   );
 };
