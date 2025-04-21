@@ -1,10 +1,9 @@
-
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
 import { UserActions } from "./navigation/UserActions";
 import { CategoryNav } from "./navigation/CategoryNav";
-import { ShoppingBag, Home, Smartphone, ShoppingCart } from "lucide-react";
+import { ShoppingBag, Home, Smartphone, ShoppingCart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
@@ -51,6 +50,16 @@ export const Navigation = memo(() => {
           >
             <Link to="/stores">
               <ShoppingCart className="h-5 w-5" />
+            </Link>
+          </Button>
+          <Button 
+            variant="ghost"
+            asChild
+            size="icon"
+            className="rounded-full text-accent hover:text-foreground hover:bg-[#ffd70026]"
+          >
+            <Link to="/rewards">
+              <Star className="h-5 w-5" />
             </Link>
           </Button>
           <UserActions />

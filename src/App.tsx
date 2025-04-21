@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Welcome from "@/pages/Welcome";
@@ -14,6 +13,7 @@ import PriceCompare from "@/pages/PriceCompare";
 import RetailerProfile from "@/pages/RetailerProfile";
 import Notifications from "@/pages/Notifications";
 import StoreDetails from "@/pages/StoreDetails";
+import Rewards from "@/pages/Rewards";
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
         <Route path="/price-compare" element={<PriceCompare />} />
         <Route path="/retailer" element={<RetailerProfile />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/rewards" element={<Rewards />} />
       </Route>
     </Routes>
   );

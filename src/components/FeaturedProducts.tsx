@@ -104,10 +104,48 @@ export const FeaturedProducts = ({ onProductClick }: FeaturedProductsProps) => {
     );
   }
 
+  const recommended = [
+    {
+      id: "99",
+      name: "For You: JBL Earbuds",
+      price: 3999,
+      rating: 4.6,
+      image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434",
+      badge: "Suggested",
+      description: "Recommended based on your interest in audio gadgets"
+    }
+  ];
+
   return (
     <section className="py-12 bg-gray-50" ref={scrollRef}>
       <div className="container">
         <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">For You</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recommended.map(product => (
+              <Card key={product.id} className="overflow-hidden shadow">
+                <OptimizedImage src={product.image} alt={product.name} className="w-full h-32 object-cover" width={320} height={180} />
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-primary">
+                      ₹{product.price.toLocaleString()}
+                    </span>
+                    <Badge className="ml-2">{product.badge}</Badge>
+                  </div>
+                </CardContent>
+                <CardFooter className="p-4 pt-0">
+                  <Button className="w-full" onClick={() => handleProductClick(product.id)}>
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    View Details
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
         <InfiniteScroll
           dataLength={products.length}
           next={fetchMoreData}

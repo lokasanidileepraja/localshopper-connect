@@ -27,14 +27,21 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
         <div className="relative flex-1">
           <Input
             type="text"
-            placeholder="Search for products..."
+            placeholder="Search for mobiles, laptops, airpods, shops…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-4 py-2"
+            aria-label="Type to search products, brands or stores"
+            autoFocus
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          {searchQuery.length === 0 && (
+            <span className="absolute left-10 top-full mt-1 text-xs text-muted-foreground bg-background px-2 py-1 rounded shadow-sm">
+              Try: "iPhone 15", "laptop", "TechHub", or "store near me"
+            </span>
+          )}
         </div>
-        <Button type="submit" disabled={isLoading}>
+        <Button type="submit" disabled={isLoading} aria-label="Search">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (

@@ -33,12 +33,18 @@ export const ReserveButton = ({
   inStock,
 }: ReserveButtonProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const handleFastReserve = () => {
+    // Simulate 1-click fast reserve (minimal info, quick confirmation)
+    setIsDialogOpen(false);
+    window.setTimeout(() => {
+      alert("Fast Reserve Complete! We'll text you soon.");
+    }, 500);
+  };
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button 
-          className="w-full" 
+          className="w-full rounded-full shadow-lg" 
           variant="outline"
           disabled={!inStock}
         >
@@ -48,7 +54,9 @@ export const ReserveButton = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Reserve for Pickup</DialogTitle>
+          <DialogTitle>
+            Reserve for Pickup
+          </DialogTitle>
         </DialogHeader>
         <ReservationForm
           productName={productName}
@@ -58,6 +66,19 @@ export const ReserveButton = ({
           productPrice={price}
           productImage={productImage}
         />
+        <div className="flex flex-col gap-2 mt-3">
+          <Button
+            variant="ghost"
+            className="text-xs text-primary"
+            onClick={handleFastReserve}
+            aria-label="1-Click Fast Reserve"
+          >
+            Fast Reserve & Pay (auto-detect info)
+          </Button>
+          <span className="text-xs text-muted-foreground text-center">
+            Fast Reserve uses your saved mobile for quickest pickup, <br/> or fill the form for customized pickup.
+          </span>
+        </div>
       </DialogContent>
     </Dialog>
   );

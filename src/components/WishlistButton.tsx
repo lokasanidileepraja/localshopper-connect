@@ -14,10 +14,11 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
   const handleWishlist = () => {
     setIsWishlisted(!isWishlisted);
     toast({
-      title: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
+      title: isWishlisted ? "Removed from Wishlist" : "Added to Wishlist 🎉",
       description: isWishlisted 
-        ? "The item has been removed from your wishlist"
-        : "The item has been added to your wishlist",
+        ? "You can always add it back later."
+        : "Product saved to your wishlist. We'll alert you for price drops!",
+      variant: isWishlisted ? "default" : "success"
     });
   };
 
@@ -26,9 +27,11 @@ export const WishlistButton = ({ productId }: WishlistButtonProps) => {
       variant="outline"
       size="icon"
       onClick={handleWishlist}
+      aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       className={`transition-colors ${
         isWishlisted ? "text-red-500 hover:text-red-600" : "hover:text-red-500"
       }`}
+      data-active={isWishlisted}
     >
       <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />
     </Button>
