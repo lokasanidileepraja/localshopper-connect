@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -11,69 +11,40 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Message Sent",
+      title: "Message sent",
       description: "We'll get back to you as soon as possible.",
     });
   };
 
   return (
-    <div className="container py-12">
-      <h1 className="text-3xl font-bold mb-8">Contact Us</h1>
-      <div className="grid gap-8 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Send us a message</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Input placeholder="Your Name" />
-              </div>
-              <div>
-                <Input type="email" placeholder="Your Email" />
-              </div>
-              <div>
-                <Textarea placeholder="Your Message" className="min-h-[150px]" />
-              </div>
-              <Button type="submit" className="w-full">Send Message</Button>
-            </form>
-          </CardContent>
+    <div className="container mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold mb-8 text-center">Contact Us</h1>
+      <div className="max-w-xl mx-auto">
+        <Card className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">Name</label>
+              <Input id="name" placeholder="Your name" />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <Input id="email" type="email" placeholder="your.email@example.com" />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="subject" className="text-sm font-medium">Subject</label>
+              <Input id="subject" placeholder="How can we help you?" />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="message" className="text-sm font-medium">Message</label>
+              <Textarea id="message" placeholder="Type your message here" rows={5} />
+            </div>
+            
+            <Button type="submit" className="w-full">Send Message</Button>
+          </form>
         </Card>
-        <div className="space-y-6">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <Mail className="h-5 w-5 text-primary" />
-                <div>
-                  <h3 className="font-semibold">Email</h3>
-                  <p className="text-sm text-muted-foreground">support@example.com</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <Phone className="h-5 w-5 text-primary" />
-                <div>
-                  <h3 className="font-semibold">Phone</h3>
-                  <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <MapPin className="h-5 w-5 text-primary" />
-                <div>
-                  <h3 className="font-semibold">Address</h3>
-                  <p className="text-sm text-muted-foreground">123 Commerce St, Business City, 12345</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
