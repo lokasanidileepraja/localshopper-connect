@@ -6,7 +6,6 @@ import { UserActions } from "./navigation/UserActions";
 import { CategoryNav } from "./navigation/CategoryNav";
 import { 
   ShoppingBag, 
-  Home, 
   Smartphone, 
   ShoppingCart, 
   Star, 
@@ -16,7 +15,7 @@ import {
   User,
   Bell,
   HeartIcon,
-  BookOpen
+  Grid4x4
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -33,11 +32,11 @@ export const Navigation = memo(() => {
 
   // Main navigation items
   const mainNavItems = [
-    { path: "/home", label: "Home", icon: Home },
-    { path: "/category/electronics", label: "Electronics", icon: Smartphone },
+    { path: "/category/electronics", label: "Browse Gadgets", icon: Smartphone },
     { path: "/enhanced-price-compare", label: "Compare Prices", icon: Tags },
     { path: "/stores", label: "Stores", icon: Store },
     { path: "/nearby-stores", label: "Nearby", icon: MapPin },
+    { path: "/categories", label: "All Categories", icon: Grid4x4 },
     { path: "/wishlist", label: "Wishlist", icon: HeartIcon },
     { path: "/rewards", label: "Rewards", icon: Star },
   ];
