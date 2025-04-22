@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { 
   ShoppingCart, 
   User, 
@@ -22,7 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipWrapper } from "@/components/common/TooltipWrapper";
 
 export const UserActions = () => {
-  const { totalItems } = useCart();
+  const { totalItems } = useCartStore();
   const isMobile = useIsMobile();
 
   return (
