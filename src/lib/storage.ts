@@ -1,5 +1,14 @@
+
+/**
+ * A utility for interacting with localStorage with error handling
+ */
 export const storage = {
-  get: (key: string) => {
+  /**
+   * Retrieves an item from localStorage and parses it from JSON
+   * @param key The key to retrieve
+   * @returns The parsed value or null if not found
+   */
+  get: <T>(key: string): T | null => {
     try {
       const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : null;
@@ -9,7 +18,12 @@ export const storage = {
     }
   },
   
-  set: (key: string, value: any) => {
+  /**
+   * Stores an item in localStorage after stringifying it to JSON
+   * @param key The key to store under
+   * @param value The value to store
+   */
+  set: <T>(key: string, value: T): void => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
@@ -17,7 +31,11 @@ export const storage = {
     }
   },
   
-  remove: (key: string) => {
+  /**
+   * Removes an item from localStorage
+   * @param key The key to remove
+   */
+  remove: (key: string): void => {
     try {
       localStorage.removeItem(key);
     } catch (error) {
@@ -25,11 +43,27 @@ export const storage = {
     }
   },
   
-  clear: () => {
+  /**
+   * Clears all items from localStorage
+   */
+  clear: (): void => {
     try {
       localStorage.clear();
     } catch (error) {
       console.error('Error clearing localStorage:', error);
+    }
+  },
+
+  /**
+   * Retrieves all keys from localStorage
+   * @returns Array of keys
+   */
+  keys: (): string[] => {
+    try {
+      return Object.keys(localStorage);
+    } catch (error) {
+      console.error('Error getting localStorage keys:', error);
+      return [];
     }
   }
 };

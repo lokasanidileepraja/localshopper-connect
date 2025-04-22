@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { ShoppingBag, CreditCard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-  const { items, cartTotal } = useCart();
+  const { items, cartTotal, clearCart } = useCartStore();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -23,6 +23,9 @@ const Checkout = () => {
     try {
       // Simulate checkout process
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Clear the cart after successful order
+      clearCart();
       
       toast({
         title: "Order placed successfully!",

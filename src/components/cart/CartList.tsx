@@ -1,7 +1,7 @@
 
 import { CartItem } from "@/components/CartItem";
 import { Product, Shop } from "@/types/shop";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { ShoppingCart, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,11 @@ interface CartListProps {
   onRemove: (id: string) => void;
 }
 
-export const CartList = ({ items, shops, onRemove }: CartListProps) => {
-  const { items: cartItems } = useCart();
+export const CartList = ({ shops, onRemove }: CartListProps) => {
+  const { items } = useCartStore();
   const navigate = useNavigate();
   
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}
@@ -46,7 +46,7 @@ export const CartList = ({ items, shops, onRemove }: CartListProps) => {
       animate={{ opacity: 1 }}
       className="space-y-4"
     >
-      {cartItems.map((item, index) => (
+      {items.map((item, index) => (
         <motion.div
           key={item.id}
           initial={{ opacity: 0, y: 20 }}

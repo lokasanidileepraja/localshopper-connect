@@ -1,18 +1,16 @@
 
 import { Button } from "@/components/ui/button";
-import { Product } from "@/types/shop";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { ShoppingBag, CreditCard, ArrowRight, Tag, Truck } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 
 interface CartSummaryProps {
-  items: (Product & { shopName: string; currentPrice?: number })[];
   onCheckout: () => void;
 }
 
 export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
-  const { items: cartItems, cartTotal } = useCart();
+  const { items, cartTotal } = useCartStore();
   
   // Calculate taxes and shipping
   const tax = Math.round(cartTotal * 0.18); // 18% tax
@@ -31,9 +29,9 @@ export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
         Order Summary
       </h2>
       
-      {cartItems.length > 0 && (
+      {items.length > 0 && (
         <div className="max-h-60 overflow-y-auto scrollbar-hide mb-4">
-          {cartItems.map((item) => (
+          {items.map((item) => (
             <div key={item.id} className="flex justify-between text-sm py-2 border-b border-dashed">
               <div className="flex items-start gap-2">
                 <span className="bg-secondary h-5 w-5 rounded-full flex items-center justify-center text-xs">
@@ -83,14 +81,14 @@ export const CartSummary = ({ onCheckout }: CartSummaryProps) => {
       <Button 
         className="w-full rounded-full py-6" 
         onClick={onCheckout} 
-        disabled={cartItems.length === 0}
+        disabled={items.length === 0}
       >
         <CreditCard className="h-4 w-4 mr-2" />
         Proceed to Checkout
         <ArrowRight className="h-4 w-4 ml-2" />
       </Button>
       
-      {cartItems.length === 0 && (
+      {items.length === 0 && (
         <p className="text-center text-sm text-muted-foreground mt-4">
           Your cart is empty. Add items to proceed.
         </p>
