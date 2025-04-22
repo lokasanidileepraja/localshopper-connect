@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 interface CartListProps {
-  items: (Product & { shopName: string; currentPrice?: number })[];
   shops: Shop[];
   onRemove: (id: string) => void;
 }

@@ -1,3 +1,4 @@
+
 import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { CartLayout } from "@/components/cart/CartLayout";
@@ -44,7 +45,6 @@ const Cart = () => {
     <CartLayout>
       <CartHeader />
       <CartContent 
-        items={items}
         shops={ELECTRONICS_SHOPS}
         onRemove={handleRemoveItem}
         onCheckout={handleCheckout}
