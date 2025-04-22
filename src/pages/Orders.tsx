@@ -1,49 +1,117 @@
+
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Package } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Package, ShoppingBag } from "lucide-react";
+import { storage } from "@/lib/storage";
+import { formatCurrency } from "@/lib/formatters";
+import { OrderStatus } from "@/components/orders/OrderStatus";
+import { EmptyState } from "@/components/common/EmptyState";
+import { Separator } from "@/components/ui/separator";
+
+export interface OrderItem {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  image?: string;
+}
+
+export interface Order {
+  id: string;
+  date: string;
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+  total: number;
+  items: OrderItem[];
+  trackingNumber?: string;
+  address?: string;
+}
 
 const Orders = () => {
   const navigate = useNavigate();
-
-  // Mock orders data
-  const orders = [
-    {
-      id: "1",
-      date: "2024-03-15",
-      status: "Delivered",
-      total: 79999,
-      items: [
+  const [orders, setOrders] = useState<Order[]>([]);
+  
+  useEffect(() => {
+    // Get orders from storage or initialize with mock data
+    const storedOrders = storage.get<Order[]>("orders");
+    if (storedOrders && storedOrders.length > 0) {
+      setOrders(storedOrders);
+    } else {
+      // Mock orders for demo
+      const mockOrders: Order[] = [
         {
-          id: "1",
-          name: "iPhone 15",
-          quantity: 1,
-          price: 79999,
+          id: "ORD-1234",
+          date: "2023-04-15",
+          status: "Delivered",
+          total: 79999,
+          items: [
+            {
+              id: "1",
+              name: "iPhone 15",
+              quantity: 1,
+              price: 79999,
+              image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+            },
+          ],
+          trackingNumber: "TRK123456789",
+          address: "123 Main St, Bangalore, Karnataka, 560001"
         },
-      ],
-    },
-    // Add more mock orders as needed
-  ];
+        {
+          id: "ORD-5678",
+          date: "2023-04-10",
+          status: "Shipped",
+          total: 45000,
+          items: [
+            {
+              id: "2",
+              name: "Samsung Galaxy Watch",
+              quantity: 1,
+              price: 25000,
+              image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12"
+            },
+            {
+              id: "3",
+              name: "Wireless Earbuds",
+              quantity: 1,
+              price: 20000,
+              image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df"
+            }
+          ],
+          trackingNumber: "TRK987654321",
+          address: "456 Market St, Mumbai, Maharashtra, 400001"
+        }
+      ];
+      setOrders(mockOrders);
+      storage.set("orders", mockOrders);
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Button variant="ghost" className="mb-4" onClick={() => navigate(-1)}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
+      <div className="flex justify-between items-center mb-6">
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">My Orders</h1>
+        <div className="w-24"></div> {/* Balance the header */}
+      </div>
 
-      <h1 className="text-2xl font-bold mb-6">Order History</h1>
+      <Separator className="mb-6" />
 
       {orders.length === 0 ? (
-        <div className="text-center py-8">
-          <Package className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h2 className="text-xl font-semibold mb-2">No orders yet</h2>
-          <p className="text-gray-600">Start shopping to see your orders here</p>
-        </div>
+        <EmptyState
+          icon={ShoppingBag}
+          title="No orders yet"
+          description="Start shopping to see your orders here"
+          actionText="Start Shopping"
+          actionHref="/"
+        />
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card key={order.id}>
+            <Card key={order.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -53,21 +121,30 @@ const Orders = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">₹{order.total.toLocaleString()}</p>
-                    <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                      {order.status}
-                    </span>
+                    <p className="font-semibold">{formatCurrency(order.total)}</p>
+                    <OrderStatus status={order.status} />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  {order.items.map((item) => (
+                
+                <div className="space-y-2 mt-4">
+                  {order.items.slice(0, 2).map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.name} × {item.quantity}</span>
-                      <span>₹{item.price.toLocaleString()}</span>
+                      <span>{formatCurrency(item.price * item.quantity)}</span>
                     </div>
                   ))}
+                  {order.items.length > 2 && (
+                    <p className="text-sm text-gray-500">
+                      +{order.items.length - 2} more items
+                    </p>
+                  )}
                 </div>
-                <Button variant="outline" className="w-full mt-4">
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full mt-4"
+                  onClick={() => navigate(`/orders/${order.id}`)}
+                >
                   View Order Details
                 </Button>
               </CardContent>

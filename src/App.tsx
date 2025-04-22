@@ -17,6 +17,10 @@ import StoreDetails from "@/pages/StoreDetails";
 import Rewards from "@/pages/Rewards";
 import Wishlist from "@/pages/Wishlist";
 import Compare from "@/pages/Compare";
+import Orders from "@/pages/Orders";
+import OrderDetails from "@/pages/OrderDetails";
+import ProductReviews from "@/pages/ProductReviews";
+import StoreReviews from "@/pages/StoreReviews";
 import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -36,6 +40,7 @@ function App() {
           <Route path="/brands/:brandName" element={<Brand />} />
           <Route path="/category/:categoryName" element={<Category />} />
           <Route path="/product/:productId" element={<ProductDetails />} />
+          <Route path="/product/:productId/reviews" element={<ProductReviews />} />
           <Route path="/search" element={
             <Suspense fallback={<LoadingSpinner />}>
               <SearchResults />
@@ -43,8 +48,11 @@ function App() {
           } />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:orderId" element={<OrderDetails />} />
           <Route path="/stores" element={<Stores />} />
           <Route path="/store/:storeName" element={<StoreDetails />} />
+          <Route path="/store/:storeName/reviews" element={<StoreReviews />} />
           <Route path="/price-compare" element={<PriceCompare />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/retailer" element={<RetailerProfile />} />
