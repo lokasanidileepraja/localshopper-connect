@@ -7,6 +7,9 @@ import { PaymentManagement } from "@/components/retailer/PaymentManagement";
 import { UserAccessControl } from "@/components/retailer/UserAccessControl";
 
 const RetailerSettings = () => {
+  // Mock store ID for the retailer
+  const mockStoreId = "store123";
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Store Settings</h1>
@@ -18,7 +21,7 @@ const RetailerSettings = () => {
               <CardTitle>Notification Preferences</CardTitle>
             </CardHeader>
             <CardContent>
-              <WhatsAppStockUpdate />
+              <WhatsAppStockUpdate storeId={mockStoreId} />
             </CardContent>
           </Card>
           
