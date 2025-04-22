@@ -1,3 +1,4 @@
+
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Welcome from "@/pages/Welcome";
@@ -20,6 +21,10 @@ import Orders from "@/pages/Orders";
 import OrderDetails from "@/pages/OrderDetails";
 import ProductReviews from "@/pages/ProductReviews";
 import StoreReviews from "@/pages/StoreReviews";
+import Onboarding from "@/pages/Onboarding";
+import Referral from "@/pages/Referral";
+import LocationSettings from "@/pages/LocationSettings";
+import Profile from "@/pages/Profile";
 import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -36,6 +41,7 @@ function App() {
       <CartProvider>
         <Routes>
           <Route path="/" element={<Welcome />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Index />} />
             <Route path="/brands/:brandName" element={<Brand />} />
@@ -60,6 +66,9 @@ function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/referral" element={<Referral />} />
+            <Route path="/location-settings" element={<LocationSettings />} />
             <Route path="/search-advanced" element={
               <Suspense fallback={<LoadingSpinner />}>
                 <Search />

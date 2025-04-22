@@ -9,13 +9,17 @@ import {
   HelpCircle,
   MapPin,
   Store,
-  Heart
+  Heart,
+  Users
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -88,6 +92,19 @@ export const UserActions = () => {
         </Link>
       </TooltipWrapper>
 
+      <TooltipWrapper content="Referral program">
+        <Link to="/referral">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            aria-label="Referral program"
+          >
+            <Users className="h-5 w-5" />
+          </Button>
+        </Link>
+      </TooltipWrapper>
+
       <TooltipWrapper content="Retailer dashboard">
         <Link to="/retailer">
           <Button 
@@ -115,17 +132,40 @@ export const UserActions = () => {
             </Button>
           </DropdownMenuTrigger>
         </TooltipWrapper>
-        <DropdownMenuContent align="end" className="w-48 mt-2">
+        <DropdownMenuContent align="end" className="w-56 mt-2">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild>
+              <Link to="/profile" className="w-full cursor-pointer">
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/orders" className="w-full cursor-pointer">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Orders
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/location-settings" className="w-full cursor-pointer">
+                <MapPin className="h-4 w-4 mr-2" />
+                Location Settings
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link to="/profile" className="w-full">
-              <User className="h-4 w-4 mr-2" />
-              Profile
+            <Link to="/qa" className="w-full cursor-pointer">
+              <HelpCircle className="h-4 w-4 mr-2" />
+              Help & FAQ
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/qa" className="w-full">
-              <HelpCircle className="h-4 w-4 mr-2" />
-              Help & FAQ
+            <Link to="/onboarding" className="w-full cursor-pointer">
+              <Users className="h-4 w-4 mr-2" />
+              App Tour
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>

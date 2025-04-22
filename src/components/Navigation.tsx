@@ -8,6 +8,7 @@ import { ShoppingBag, Home, Smartphone, ShoppingCart, Star, Tags } from "lucide-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { TooltipWrapper } from "./common/TooltipWrapper";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const Navigation = memo(() => {
   const location = useLocation();
@@ -104,6 +105,8 @@ export const Navigation = memo(() => {
               </Link>
             </Button>
           </TooltipWrapper>
+          
+          <ThemeToggle />
           
           <UserActions />
         </div>
