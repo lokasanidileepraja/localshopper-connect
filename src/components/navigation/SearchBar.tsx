@@ -13,7 +13,6 @@ export const NavigationSearchBar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Update search input when URL parameter changes
     setSearchQuery(initialQuery);
   }, [initialQuery]);
 
@@ -35,22 +34,41 @@ export const NavigationSearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex-1 max-w-xl">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <form
+      onSubmit={handleSearch}
+      className="flex flex-1 items-center max-w-xl min-w-0 mx-2"
+      role="search"
+      aria-label="Main site search"
+    >
+      <div className="relative w-full">
         <Input
           type="search"
-          placeholder="Search products, brands, stores..."
-          className="w-full pl-10 pr-4 py-2 bg-secondary border-0 rounded-full focus:ring-2 focus:ring-primary/20 transition-all duration-300"
+          placeholder="Search products, brands, stores…"
+          className={`
+            w-full pl-10 pr-14 py-2 rounded-full
+            bg-white border border-input shadow
+            text-base text-neutral-900
+            placeholder:text-neutral-400
+            focus:border-primary focus:ring-2 focus:ring-primary/30 
+            transition-all duration-200
+            outline-none
+            hover:bg-neutral-100
+            disabled:bg-muted
+          `}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button 
-          type="submit" 
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-3 py-1 rounded-full text-xs font-medium"
-        >
-          Search
-        </button>
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 pointer-events-none" />
+        <button
+          type="submit"
+          aria-label="Search"
+          className={`
+            absolute right-2 top-1/2 -translate-y-1/2
+            bg-primary text-white px-4 py-1.5 rounded-full
+            shadow hover:bg-primary/90 transition active:bg-primary/70
+            text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary
+          `}
+        >Search</button>
       </div>
     </form>
   );
