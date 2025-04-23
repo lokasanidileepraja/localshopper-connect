@@ -11,19 +11,18 @@ const buttonVariants = cva(
     transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
     disabled:pointer-events-none disabled:opacity-50
     [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0
-    hover:bg-primary/90 active:bg-primary/70
     focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60
   `,
   {
     variants: {
       variant: {
-        default: "bg-primary text-white hover:bg-primary/90 active:bg-primary/70",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/70",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background text-primary hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "bg-transparent hover:bg-accent hover:text-accent-foreground",
+        ghost: "bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

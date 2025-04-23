@@ -44,31 +44,18 @@ export const NavigationSearchBar = () => {
         <Input
           type="search"
           placeholder="Search products, brands, stores…"
-          className={`
-            w-full pl-10 pr-14 py-2 rounded-full
-            bg-white border border-input shadow
-            text-base text-neutral-900
-            placeholder:text-neutral-400
-            focus:border-primary focus:ring-2 focus:ring-primary/30 
-            transition-all duration-200
-            outline-none
-            hover:bg-neutral-100
-            disabled:bg-muted
-          `}
+          className="w-full pl-10 pr-14 py-2 rounded-full shadow-sm"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 pointer-events-none" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
         <button
           type="submit"
           aria-label="Search"
-          className={`
-            absolute right-2 top-1/2 -translate-y-1/2
-            bg-primary text-white px-4 py-1.5 rounded-full
-            shadow hover:bg-primary/90 transition active:bg-primary/70
-            text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary
-          `}
-        >Search</button>
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full shadow hover:bg-primary/90 transition active:bg-primary/70 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Search
+        </button>
       </div>
     </form>
   );

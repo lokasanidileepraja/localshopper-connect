@@ -37,7 +37,7 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
             placeholder={isMobile ? "Search..." : "Search for mobiles, laptops, airpods, shops…"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-2 sm:pr-4 py-2 text-sm sm:text-base"
+            className="pl-10 pr-2 sm:pr-4 py-2 text-sm sm:text-base bg-background text-foreground"
             aria-label="Type to search products, brands or stores"
             autoFocus={!isMobile}
           />
@@ -48,7 +48,7 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
             </span>
           )}
         </div>
-        <Button type="submit" disabled={isLoading} aria-label="Search" className="px-3 sm:px-4">
+        <Button type="submit" disabled={isLoading} aria-label="Search" className="px-3 sm:px-4 text-primary-foreground">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (

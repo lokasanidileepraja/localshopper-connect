@@ -5,9 +5,9 @@
 
 @layer base {
   :root {
-    /* High contrast light theme */
+    /* High contrast light theme for better visibility */
     --background: 0 0% 100%;
-    --foreground: 222 14% 14%;     /* Strong neutral for high contrast */
+    --foreground: 222 14% 14%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
@@ -15,17 +15,8 @@
 
     --primary: 222 14% 14%;
     --primary-foreground: 0 0% 100%;
-    --primary-100: 220 14% 96%;
-    --primary-200: 220 13% 91%;
-    --primary-300: 216 12% 84%;
-    --primary-400: 217 11% 65%;
-    --primary-500: 220 9% 46%;
-    --primary-600: 215 14% 34%;
-    --primary-700: 215 19% 29%;
-    --primary-800: 215 28% 17%;
-    --primary-900: 221 39% 11%;
 
-    --secondary: 220 14% 97%;
+    --secondary: 220 14% 95%;
     --secondary-foreground: 222 14% 14%;
 
     --accent: 216 12% 84%;
@@ -35,7 +26,7 @@
     --destructive-foreground: 0 0% 100%;
 
     --muted: 220 14% 96%;
-    --muted-foreground: 220 8% 60%;   /* #7e869b soft gray */
+    --muted-foreground: 220 8% 46%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222 14% 14%;
@@ -49,18 +40,34 @@
   }
 
   .dark {
-    /* For users switching to dark theme */
+    /* Improved dark theme with better text visibility */
     --background: 222 15% 13%;
-    --foreground: 0 0% 100%;
+    --foreground: 210 20% 98%;
+
     --border: 215 27% 20%;
     --input: 215 27% 20%;
     --ring: 220 24% 80%;
-    --primary: 0 0% 100%;          /* white text on dark */
+
+    --primary: 210 20% 98%;
     --primary-foreground: 222 14% 14%;
-    --secondary: 222 16% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted-foreground: 216 12% 84%;
-    /* ... keep as above ... */
+
+    --secondary: 222 16% 22%;
+    --secondary-foreground: 210 20% 98%;
+
+    --accent: 217 19% 27%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 98%;
+
+    --muted: 217 19% 22%;
+    --muted-foreground: 215 20% 75%;
+
+    --popover: 222 15% 13%;
+    --popover-foreground: 210 20% 98%;
+
+    --card: 222 15% 13%;
+    --card-foreground: 210 20% 98%;
   }
 }
 
@@ -78,10 +85,10 @@
 
 @layer utilities {
   .glass-card {
-    @apply bg-background/60 backdrop-blur-sm border border-border shadow-sm;
+    @apply bg-background/80 backdrop-blur-sm border border-border shadow-sm;
   }
   .glass-nav {
-    @apply bg-background/80 backdrop-blur-md border-b shadow-sm;
+    @apply bg-background/90 backdrop-blur-md border-b shadow-sm;
   }
 }
 
@@ -141,6 +148,25 @@ button:hover, a:hover, input:hover, textarea:hover {
   color: #1e293b !important;
 }
 
+/* Mobile-friendly improvements */
+@media (max-width: 640px) {
+  #root { padding: 0; }
+  
+  /* Increase touch targets for mobile */
+  button, 
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Increase text size for readability on mobile */
+  body {
+    font-size: 16px;
+  }
+}
+
 /* Animation for fade in */
 .animate-fade-in {
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -148,9 +174,6 @@ button:hover, a:hover, input:hover, textarea:hover {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px);}
   to { opacity: 1; transform: translateY(0);}
-}
-@media (max-width: 640px) {
-  #root { padding: 0; }
 }
 
 .hover-lift { transition: transform 0.2s; }
