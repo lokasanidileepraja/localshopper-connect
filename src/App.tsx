@@ -75,7 +75,7 @@ function App() {
           {/* Main layout routes */}
           <Route element={<MainLayout />}>
             {/* General Discovery & Navigation */}
-            <Route path="/home" element={<Index />} />
+            {/* Removed /home route */}
             <Route path="/search" element={
               <Suspense fallback={<LoadingSpinner />}>
                 <SearchResults />
@@ -156,3 +156,4 @@ function App() {
 }
 
 export default App;
+

@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
@@ -15,7 +14,7 @@ import {
   User,
   Bell,
   HeartIcon,
-  Grid2x2  // Changed from Grid4x4 to Grid2x2
+  Grid2x2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -32,11 +31,11 @@ export const Navigation = memo(() => {
 
   // Main navigation items
   const mainNavItems = [
-    { path: "/category/electronics", label: "Browse Gadgets", icon: Smartphone },
+    { path: "/categories", label: "Browse Gadgets", icon: Smartphone },
     { path: "/enhanced-price-compare", label: "Compare Prices", icon: Tags },
     { path: "/stores", label: "Stores", icon: Store },
     { path: "/nearby-stores", label: "Nearby", icon: MapPin },
-    { path: "/categories", label: "All Categories", icon: Grid2x2 },  // Updated icon
+    { path: "/categories", label: "All Categories", icon: Grid2x2 },
     { path: "/wishlist", label: "Wishlist", icon: HeartIcon },
     { path: "/rewards", label: "Rewards", icon: Star },
   ];
@@ -60,7 +59,7 @@ export const Navigation = memo(() => {
           <NavigationSearchBar />
           
           {mainNavItems.map(({ path, label, icon: Icon }) => (
-            <TooltipWrapper key={path} content={label}>
+            <TooltipWrapper key={label} content={label}>
               <Button 
                 variant={isActive(path) ? "default" : "ghost"} 
                 size="icon" 

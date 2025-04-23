@@ -5,19 +5,18 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 14% 14%;
-    
+    --background: 0 0% 100%;         /* White background */
+    --foreground: 222 14% 14%;       /* Deep gray for good contrast */
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222 14% 14%;
-    
     --neutral: 222 14% 14%;
     --neutral-light: 220 14% 96%;
     --neutral-dark: 222 14% 14%;
-    
-    --primary: 222 14% 14%;
-    --primary-foreground: 0 0% 100%;
+
+    --primary: 222 14% 14%;          /* Deep neutral for text */
+    --primary-foreground: 0 0% 100%; /* White text for buttons on primary */
     --primary-100: 220 14% 96%;
     --primary-200: 220 13% 91%;
     --primary-300: 216 12% 84%;
@@ -27,25 +26,25 @@
     --primary-700: 215 19% 29%;
     --primary-800: 215 28% 17%;
     --primary-900: 221 39% 11%;
-    
-    --secondary: 222 14% 14%;
-    --secondary-foreground: 0 0% 100%;
-    
-    --accent: 222 14% 14%;
-    --accent-foreground: 0 0% 100%;
-    
+
+    --secondary: 220 14% 96%;        /* Softer secondary background */
+    --secondary-foreground: 222 14% 14%;
+
+    --accent: 216 12% 84%;           /* Subtle accent */
+    --accent-foreground: 222 14% 14%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
-    
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 14% 14%;
-    
+
     --card: 0 0% 100%;
     --card-foreground: 222 14% 14%;
-    
+
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
     --radius-lg: 1rem;
@@ -54,15 +53,12 @@
   .dark {
     --background: 224 20% 8%;
     --foreground: 240 10% 94%;
-    
     --border: 215 27% 20%;
     --input: 215 27% 20%;
     --ring: 240 10% 94%;
-    
     --neutral: 240 10% 94%;
     --neutral-light: 215 28% 17%;
     --neutral-dark: 240 10% 94%;
-    
     --primary: 240 10% 94%;
     --primary-foreground: 224 20% 8%;
     --primary-100: 215 28% 17%;
@@ -74,22 +70,16 @@
     --primary-700: 220 13% 91%;
     --primary-800: 220 14% 96%;
     --primary-900: 0 0% 100%;
-    
     --secondary: 215 28% 17%;
     --secondary-foreground: 240 10% 94%;
-    
     --accent: 215 28% 17%;
     --accent-foreground: 240 10% 94%;
-    
     --destructive: 0 62% 40%;
     --destructive-foreground: 240 10% 94%;
-    
     --muted: 215 28% 17%;
     --muted-foreground: 216 12% 84%;
-    
     --popover: 224 20% 8%;
     --popover-foreground: 240 10% 94%;
-    
     --card: 224 20% 8%;
     --card-foreground: 240 10% 94%;
   }
@@ -113,4 +103,72 @@
   .glass-nav {
     @apply bg-background/80 backdrop-blur-md border-b shadow-sm;
   }
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+:focus {
+  outline: 2px solid #222222;
+  outline-offset: 2px;
+}
+
+button, 
+a {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  #root {
+    padding: 0;
+  }
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.focus-ring {
+  transition: box-shadow 0.2s ease;
+}
+
+.focus-ring:focus {
+  box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.1);
 }
