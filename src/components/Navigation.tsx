@@ -15,7 +15,7 @@ import {
   User,
   Bell,
   HeartIcon,
-  Grid4x4
+  Grid2x2  // Changed from Grid4x4 to Grid2x2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -36,7 +36,7 @@ export const Navigation = memo(() => {
     { path: "/enhanced-price-compare", label: "Compare Prices", icon: Tags },
     { path: "/stores", label: "Stores", icon: Store },
     { path: "/nearby-stores", label: "Nearby", icon: MapPin },
-    { path: "/categories", label: "All Categories", icon: Grid4x4 },
+    { path: "/categories", label: "All Categories", icon: Grid2x2 },  // Updated icon
     { path: "/wishlist", label: "Wishlist", icon: HeartIcon },
     { path: "/rewards", label: "Rewards", icon: Star },
   ];
