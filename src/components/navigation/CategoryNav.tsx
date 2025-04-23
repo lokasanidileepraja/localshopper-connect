@@ -52,9 +52,9 @@ export const CategoryNav = () => {
           <Link
             key={path}
             to={path}
-            className={`px-3 py-1.5 text-sm whitespace-nowrap transition-colors duration-300 rounded-full ${
+            className={`px-3 py-2 text-sm whitespace-nowrap transition-colors duration-300 rounded-md ${
               activeCategory === name 
-                ? "bg-primary text-white font-medium" 
+                ? "bg-primary text-primary-foreground font-medium shadow-sm" 
                 : "text-foreground hover:bg-secondary"
             }`}
             onClick={() => setActiveCategory(name)}

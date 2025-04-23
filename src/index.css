@@ -5,15 +5,15 @@
 
 @layer base {
   :root {
-    /* High contrast light theme for better visibility */
+    /* Light theme with better contrast and readability */
     --background: 0 0% 100%;
     --foreground: 222 14% 14%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 220 12% 35%;
+    --ring: 222 14% 40%;
 
-    --primary: 222 14% 14%;
+    --primary: 222 47% 40%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 95%;
@@ -34,13 +34,13 @@
     --card: 0 0% 100%;
     --card-foreground: 222 14% 14%;
 
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
   }
 
   .dark {
-    /* Improved dark theme with better text visibility */
+    /* Dark theme with improved readability and contrast */
     --background: 222 15% 13%;
     --foreground: 210 20% 98%;
 
@@ -48,13 +48,13 @@
     --input: 215 27% 20%;
     --ring: 220 24% 80%;
 
-    --primary: 210 20% 98%;
-    --primary-foreground: 222 14% 14%;
+    --primary: 210 80% 60%;
+    --primary-foreground: 210 20% 98%;
 
     --secondary: 222 16% 22%;
     --secondary-foreground: 210 20% 98%;
 
-    --accent: 217 19% 27%;
+    --accent: 217 19% 32%;
     --accent-foreground: 210 20% 98%;
 
     --destructive: 0 84% 60%;
@@ -81,14 +81,21 @@
     /* Improved global font for clarity: */
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
   }
+  
+  input::placeholder {
+    @apply text-muted-foreground/70;
+  }
 }
 
 @layer utilities {
   .glass-card {
-    @apply bg-background/80 backdrop-blur-sm border border-border shadow-sm;
+    @apply bg-background/95 backdrop-blur-sm border border-border shadow-sm;
   }
   .glass-nav {
-    @apply bg-background/90 backdrop-blur-md border-b shadow-sm;
+    @apply bg-background/95 backdrop-blur-md border-b shadow-sm;
+  }
+  .input-focus {
+    @apply focus:ring-2 focus:ring-primary/50 focus:border-primary;
   }
 }
 
@@ -112,9 +119,9 @@
 }
 
 :focus {
-  outline: 3px solid #2563eb;
+  outline: 3px solid hsl(var(--primary));
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px #60a5fa44;
+  box-shadow: 0 0 0 3px hsla(var(--primary)/30%);
 }
 
 button, 
@@ -128,24 +135,26 @@ a {
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
-  background-color: #f5f8ff;
 }
 
 button:focus,
 button:active,
 a:focus,
 a:active {
-  outline: 2px solid #2563eb !important;
+  outline: 2px solid hsl(var(--primary)) !important;
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px #60a5fa33;
+  box-shadow: 0 0 0 3px hsla(var(--primary)/30%);
 }
 
-/* Improved hover and active feedback */
-button:hover, a:hover, input:hover, textarea:hover {
-  background-color: #f3f4f6 !important;
-  color: #1e293b !important;
+/* Improved hover and active feedback that doesn't override text colors */
+button:hover, a:hover {
+  filter: brightness(0.95);
+}
+
+input:hover, textarea:hover {
+  border-color: hsl(var(--ring));
 }
 
 /* Mobile-friendly improvements */
@@ -165,6 +174,11 @@ button:hover, a:hover, input:hover, textarea:hover {
   body {
     font-size: 16px;
   }
+
+  /* Better tap targets on mobile */
+  .nav-item {
+    @apply p-3;
+  }
 }
 
 /* Animation for fade in */
@@ -179,4 +193,4 @@ button:hover, a:hover, input:hover, textarea:hover {
 .hover-lift { transition: transform 0.2s; }
 .hover-lift:hover { transform: translateY(-2px);}
 .focus-ring { transition: box-shadow 0.2s;}
-.focus-ring:focus { box-shadow: 0 0 0 2px #2563eb33; }
+.focus-ring:focus { box-shadow: 0 0 0 2px hsla(var(--primary)/30%); }

@@ -12,17 +12,17 @@ export function ThemeToggle() {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={toggleTheme}
-            className="h-9 w-9 rounded-full"
+            className="h-9 w-9 rounded-md border-input bg-background"
           >
             {theme === 'dark' ? (
-              <Moon className="h-4 w-4" />
+              <Moon className="h-[1.2rem] w-[1.2rem] text-foreground" />
             ) : theme === 'light' ? (
-              <Sun className="h-4 w-4" />
+              <Sun className="h-[1.2rem] w-[1.2rem] text-foreground" />
             ) : (
-              <Sun className="h-4 w-4" />
+              <Sun className="h-[1.2rem] w-[1.2rem] text-foreground" />
             )}
             <span className="sr-only">Toggle theme</span>
           </Button>

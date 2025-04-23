@@ -29,15 +29,15 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
-      <form onSubmit={handleSubmit} className="flex gap-1 sm:gap-2">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+      <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3">
         <div className="relative flex-1">
           <Input
             type="text"
             placeholder={isMobile ? "Search..." : "Search for mobiles, laptops, airpods, shops…"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-2 sm:pr-4 py-2 text-sm sm:text-base bg-background text-foreground"
+            className="pl-10 pr-2 sm:pr-4 py-2 text-sm sm:text-base shadow-sm"
             aria-label="Type to search products, brands or stores"
             autoFocus={!isMobile}
           />
@@ -48,13 +48,15 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
             </span>
           )}
         </div>
-        <Button type="submit" disabled={isLoading} aria-label="Search" className="px-3 sm:px-4 text-primary-foreground">
+        <Button type="submit" disabled={isLoading} aria-label="Search" className="px-3 sm:px-5">
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Search className="h-4 w-4" />
+            <>
+              <Search className="h-4 w-4" />
+              <span className={`${isMobile ? 'hidden' : 'ml-2'}`}>Search</span>
+            </>
           )}
-          <span className={`${isMobile ? 'hidden' : 'ml-2'}`}>Search</span>
         </Button>
       </form>
     </div>

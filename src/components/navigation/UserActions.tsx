@@ -30,13 +30,13 @@ export const UserActions = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 md:gap-2">
       <TooltipWrapper content="Find nearby stores">
         <Link to="/stores">
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            className="relative rounded-md text-foreground hover:bg-secondary"
             aria-label="Find nearby stores"
           >
             <MapPin className="h-5 w-5" />
@@ -49,7 +49,7 @@ export const UserActions = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            className="relative rounded-md text-foreground hover:bg-secondary"
             aria-label="Shopping cart"
           >
             <ShoppingCart className="h-5 w-5" />
@@ -71,7 +71,7 @@ export const UserActions = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            className="relative rounded-md text-foreground hover:bg-secondary"
             aria-label="Your wishlist"
           >
             <Heart className="h-5 w-5" />
@@ -84,7 +84,7 @@ export const UserActions = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            className="relative rounded-md text-foreground hover:bg-secondary"
             aria-label="Notifications"
           >
             <Bell className="h-5 w-5" />
@@ -97,7 +97,7 @@ export const UserActions = () => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative rounded-full text-foreground hover:text-primary hover:bg-secondary"
+            className="relative rounded-md text-foreground hover:bg-secondary"
             aria-label="Referral program"
           >
             <Users className="h-5 w-5" />
@@ -110,7 +110,7 @@ export const UserActions = () => {
           <Button 
             variant={isMobile ? "ghost" : "outline"}
             size={isMobile ? "icon" : "sm"}
-            className={`relative ${isMobile ? 'rounded-full' : 'rounded-md'} hover:bg-primary hover:text-primary-foreground`}
+            className={`relative ${isMobile ? 'rounded-md' : 'rounded-md'} hover:bg-primary hover:text-primary-foreground`}
             aria-label="Retailer dashboard"
           >
             <Store className="h-5 w-5" />
@@ -123,16 +123,16 @@ export const UserActions = () => {
         <TooltipWrapper content="Account menu">
           <DropdownMenuTrigger asChild>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="icon"
-              className="rounded-full text-foreground hover:text-primary hover:bg-secondary"
+              className="rounded-md text-foreground hover:bg-secondary"
               aria-label="Account menu"
             >
               <User className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipWrapper>
-        <DropdownMenuContent align="end" className="w-56 mt-2">
+        <DropdownMenuContent align="end" className="w-56 mt-2 bg-popover text-popover-foreground border border-border shadow-lg">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -172,4 +172,4 @@ export const UserActions = () => {
       </DropdownMenu>
     </div>
   );
-};
+}
