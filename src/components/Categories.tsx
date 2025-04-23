@@ -40,10 +40,10 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="py-8 sm:py-12 bg-gradient-to-b from-white to-gray-50"
+      className="py-4 sm:py-8 bg-gradient-to-b from-white to-gray-50"
       id="categories"
     >
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="mx-auto max-w-7xl">
         <CategoryHeader filter={filter} setFilter={setFilter} />
         <CategoryGrid 
           categories={filtered} 

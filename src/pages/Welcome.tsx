@@ -53,7 +53,7 @@ const Welcome = () => {
                   <h2 className="text-2xl font-bold mb-2">Browse Gadgets</h2>
                   <p className="text-white/80 text-center mb-4">Find electronics by category, brand, or features</p>
                   <Button 
-                    onClick={() => navigate("/category/electronics")}
+                    onClick={() => navigate("/categories")}
                     className="bg-white text-primary hover:bg-white/90"
                   >
                     Explore Gadgets
