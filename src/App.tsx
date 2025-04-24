@@ -54,6 +54,11 @@ import RetailerAnalytics from "@/pages/retailer/RetailerAnalytics";
 import RetailerSettings from "@/pages/retailer/RetailerSettings";
 import RetailerRegister from "@/pages/retailer/RetailerRegister";
 
+// Admin routes
+import AdminUserFeedback from "@/pages/admin/AdminUserFeedback";
+import AdminCatalogHealth from "@/pages/admin/AdminCatalogHealth";
+import AdminStorePerformance from "@/pages/admin/AdminStorePerformance";
+
 // Lazy load non-critical pages for performance optimization
 const PriceComparePage = lazy(() => import("@/pages/PriceComparePage"));
 const Search = lazy(() => import("@/pages/Search"));
@@ -65,17 +70,19 @@ function App() {
       <CartProvider>
         <Routes>
           <Route path="/" element={<Welcome />} />
+          <Route path="/home" element={<Index />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
           {/* Retailer registration - outside main layout */}
           <Route path="/retailer/register" element={<RetailerRegister />} />
+          <Route path="/retailer/login" element={<Login />} />
+          <Route path="/retailer/start" element={<RetailerRegister />} />
 
           {/* Main layout routes */}
           <Route element={<MainLayout />}>
             {/* General Discovery & Navigation */}
-            {/* Removed /home route */}
             <Route path="/search" element={
               <Suspense fallback={<LoadingSpinner />}>
                 <SearchResults />
@@ -105,12 +112,13 @@ function App() {
             
             {/* Retailer Dashboard & Management */}
             <Route path="/retailer" element={<RetailerDashboard />} />
+            <Route path="/retailer/home" element={<RetailerDashboard />} />
             <Route path="/retailer/products" element={<RetailerProducts />} />
             <Route path="/retailer/inventory" element={<RetailerInventory />} />
             <Route path="/retailer/orders" element={<RetailerOrders />} />
             <Route path="/retailer/customers" element={<RetailerCustomers />} />
             <Route path="/retailer/promotions" element={<RetailerPromotions />} />
-            <Route path="/retailer/analytics" element={<RetailerAnalytics />} />
+            <Route path="/retailer/reports" element={<RetailerAnalytics />} />
             <Route path="/retailer/settings" element={<RetailerSettings />} />
             
             {/* User Tools & Account */}
@@ -128,8 +136,12 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/support/ticket/:id" element={<SupportTicket />} />
             
-            {/* Admin (Optional for later) */}
+            {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/user-feedback" element={<AdminUserFeedback />} />
+            <Route path="/admin/catalog-health" element={<AdminCatalogHealth />} />
+            <Route path="/admin/store-performance" element={<AdminStorePerformance />} />
             <Route path="/reports" element={<Reports />} />
             
             {/* Advanced features with lazy loading */}
@@ -156,4 +168,3 @@ function App() {
 }
 
 export default App;
-

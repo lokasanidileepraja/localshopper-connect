@@ -5,12 +5,17 @@ import { Sparkles, MapPin, Smartphone, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Helmet } from "react-helmet";
 
 const Welcome = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
+      <Helmet>
+        <meta name="description" content="Your local electronics shopping companion. Find what you need nearby and get the best deals." />
+      </Helmet>
+      
       <div className="container mx-auto px-4 py-16 md:py-24">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -98,8 +103,15 @@ const Welcome = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex justify-center mt-10"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10"
         >
+          <Button 
+            size="lg"
+            className="rounded-full"
+            onClick={() => navigate("/home")}
+          >
+            Continue to Main Page
+          </Button>
           <Button 
             variant="outline" 
             size="lg"

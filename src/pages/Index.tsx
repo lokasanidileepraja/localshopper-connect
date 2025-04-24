@@ -11,6 +11,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Index = () => {
   const { toast } = useToast();
@@ -59,6 +60,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <Helmet>
+        <meta name="description" content="Explore the best deals, categories, and products." />
+      </Helmet>
+      
       <Navigation />
       <main>
         <Hero />

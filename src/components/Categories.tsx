@@ -22,13 +22,27 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
   const handleCategorySelect = (categoryName: string) => {
     console.log(`Selected category: ${categoryName}`);
     onCategorySelect(categoryName);
-    navigate(`/category/${categoryName.toLowerCase()}`);
+    
+    // Explicitly navigate to the category page with the correct path
+    const categoryPath = `/category/${categoryName.toLowerCase()}`;
+    console.log(`Navigating to: ${categoryPath}`);
+    navigate(categoryPath);
+    
+    toast({
+      title: "Category Selected",
+      description: `Browsing ${categoryName} products`,
+    });
   };
 
   useKeyboardNav(
     () => setSelectedIndex(prev => Math.max(0, prev - 1)),
     () => setSelectedIndex(prev => Math.min(filteredCategories().length - 1, prev + 1)),
-    () => handleCategorySelect(filteredCategories()[selectedIndex]?.name)
+    () => {
+      const selected = filteredCategories()[selectedIndex];
+      if (selected) {
+        handleCategorySelect(selected.name);
+      }
+    }
   );
 
   useEffect(() => {
@@ -36,6 +50,7 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
   }, [filter]);
 
   const filtered = filteredCategories();
+  console.log("Filtered categories:", filtered);
 
   return (
     <motion.section 

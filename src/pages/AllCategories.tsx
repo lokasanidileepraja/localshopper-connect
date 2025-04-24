@@ -3,13 +3,16 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Categories } from "@/components/Categories";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Helmet } from "react-helmet";
 
 const AllCategories = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const handleCategorySelect = (category: string) => {
-    navigate(`/category/${category.toLowerCase()}`);
+    const categoryPath = `/category/${category.toLowerCase()}`;
+    console.log(`Navigating to category: ${categoryPath}`);
+    navigate(categoryPath);
     toast({
       title: "Category Selected",
       description: `Browsing ${category} products`,
@@ -18,6 +21,10 @@ const AllCategories = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Helmet>
+        <meta name="description" content="Browse through a wide range of categories." />
+      </Helmet>
+      
       <Breadcrumbs />
       
       <div className="mb-8">

@@ -7,6 +7,7 @@ import { Product } from "@/types/shop";
 interface CartItem extends Product {
   shopName: string;
   currentPrice: number;
+  quantity: number;
 }
 
 interface CartStore {
@@ -16,6 +17,7 @@ interface CartStore {
   addToCart: (product: Product, shopName: string) => void;
   removeFromCart: (productId: string) => void;
   updateItemPrice: (productId: string, newPrice: number) => void;
+  updateItemQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
 }
 
@@ -28,24 +30,39 @@ export const useCartStore = create<CartStore>()(
       addToCart: (product, shopName) => {
         console.log("Adding to cart in store:", product);
         set((state) => {
-          const exists = state.items.some((item) => item.id === product.id);
-          if (exists) {
-            console.log("Product already exists in cart");
-            return state;
-          }
+          // Check if product already exists in cart
+          const existingItemIndex = state.items.findIndex((item) => item.id === product.id);
           
-          const updated = [
-            ...state.items,
-            { ...product, shopName, currentPrice: product.price },
-          ];
+          let updated = [...state.items];
+          
+          if (existingItemIndex >= 0) {
+            // Update quantity of existing item
+            console.log("Product already exists in cart, updating quantity");
+            updated[existingItemIndex] = {
+              ...updated[existingItemIndex],
+              quantity: (updated[existingItemIndex].quantity || 1) + 1
+            };
+          } else {
+            // Add new item
+            console.log("Adding new product to cart");
+            updated.push({ 
+              ...product, 
+              shopName, 
+              currentPrice: product.price,
+              quantity: 1 
+            });
+          }
           
           console.log("Updated cart:", updated);
           console.log("Updated cart length:", updated.length);
           
+          // Calculate total items (including quantities)
+          const totalItems = updated.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          
           return {
             items: updated,
-            totalItems: updated.length,
-            cartTotal: updated.reduce((sum, i) => sum + i.currentPrice, 0),
+            totalItems,
+            cartTotal: updated.reduce((sum, item) => sum + (item.currentPrice * (item.quantity || 1)), 0),
           };
         });
       },
@@ -53,10 +70,12 @@ export const useCartStore = create<CartStore>()(
         console.log("Removing from cart:", productId);
         set((state) => {
           const updated = state.items.filter((item) => item.id !== productId);
+          const totalItems = updated.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          
           return {
             items: updated,
-            totalItems: updated.length,
-            cartTotal: updated.reduce((sum, i) => sum + i.currentPrice, 0),
+            totalItems,
+            cartTotal: updated.reduce((sum, item) => sum + (item.currentPrice * (item.quantity || 1)), 0),
           };
         });
       },
@@ -68,7 +87,25 @@ export const useCartStore = create<CartStore>()(
           );
           return {
             items: updated,
-            cartTotal: updated.reduce((sum, i) => sum + i.currentPrice, 0),
+            cartTotal: updated.reduce((sum, item) => sum + (item.currentPrice * (item.quantity || 1)), 0),
+          };
+        });
+      },
+      updateItemQuantity: (productId, quantity) => {
+        console.log("Updating quantity:", productId, quantity);
+        if (quantity < 1) return;
+        
+        set((state) => {
+          const updated = state.items.map((item) =>
+            item.id === productId ? { ...item, quantity } : item
+          );
+          
+          const totalItems = updated.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          
+          return {
+            items: updated,
+            totalItems,
+            cartTotal: updated.reduce((sum, item) => sum + (item.currentPrice * (item.quantity || 1)), 0),
           };
         });
       },
