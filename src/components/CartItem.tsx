@@ -1,8 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/shop";
 import { ShopComparison } from "./ShopComparison";
 import { Shop } from "@/types/shop";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cartStore";
 
 interface CartItemWithShop extends Product {
@@ -22,6 +23,10 @@ export const CartItem = ({ item, shops, onRemove }: CartItemProps) => {
   const [currentPrice, setCurrentPrice] = useState(item.currentPrice);
 
   const otherShops = shops.filter((shop) => shop.name !== currentShop);
+
+  useEffect(() => {
+    console.log("CartItem rendered with:", item);
+  }, [item]);
 
   const handleShopSelect = (shopName: string, price: number) => {
     setCurrentShop(shopName);

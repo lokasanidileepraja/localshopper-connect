@@ -1,5 +1,4 @@
 
-import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { CartLayout } from "@/components/cart/CartLayout";
 import { CartHeader } from "@/components/cart/CartHeader";
@@ -7,6 +6,7 @@ import { CartContent } from "@/components/cart/CartContent";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useCartStore } from "@/store/cartStore";
 
 const Cart = () => {
   const { items, removeFromCart, totalItems } = useCartStore();
@@ -14,12 +14,9 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (items.length === 0) {
-      console.log("Cart is empty");
-    } else {
-      console.log(`Cart has ${items.length} items`);
-    }
-  }, [items]);
+    console.log("Cart items:", items);
+    console.log("Total items in cart:", totalItems);
+  }, [items, totalItems]);
 
   const handleCheckout = () => {
     if (items.length === 0) {

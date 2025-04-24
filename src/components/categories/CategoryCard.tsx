@@ -1,15 +1,19 @@
+
 import { motion } from "framer-motion";
 import { CategoryCardProps } from "@/types/categories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const CategoryCard = ({ category, onSelect, isSelected, index }: CategoryCardProps) => {
   const isMobile = useIsMobile();
   const Icon = category.icon;
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleInteraction = () => {
     onSelect(category.name);
+    navigate(`/category/${category.name.toLowerCase()}`);
     toast({
       title: `Selected ${category.name}`,
       description: "Loading category details...",

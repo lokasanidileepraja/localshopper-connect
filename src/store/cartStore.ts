@@ -26,13 +26,22 @@ export const useCartStore = create<CartStore>()(
       totalItems: 0,
       cartTotal: 0,
       addToCart: (product, shopName) => {
+        console.log("Adding to cart in store:", product);
         set((state) => {
           const exists = state.items.some((item) => item.id === product.id);
-          if (exists) return state;
+          if (exists) {
+            console.log("Product already exists in cart");
+            return state;
+          }
+          
           const updated = [
             ...state.items,
             { ...product, shopName, currentPrice: product.price },
           ];
+          
+          console.log("Updated cart:", updated);
+          console.log("Updated cart length:", updated.length);
+          
           return {
             items: updated,
             totalItems: updated.length,
@@ -41,6 +50,7 @@ export const useCartStore = create<CartStore>()(
         });
       },
       removeFromCart: (productId) => {
+        console.log("Removing from cart:", productId);
         set((state) => {
           const updated = state.items.filter((item) => item.id !== productId);
           return {
@@ -51,6 +61,7 @@ export const useCartStore = create<CartStore>()(
         });
       },
       updateItemPrice: (productId, newPrice) => {
+        console.log("Updating price:", productId, newPrice);
         set((state) => {
           const updated = state.items.map((item) =>
             item.id === productId ? { ...item, currentPrice: newPrice } : item
@@ -65,6 +76,16 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "cart-storage",
+      onRehydrateStorage: (state) => {
+        console.log("Hydrating cart from storage:", state);
+        return (rehydratedState, error) => {
+          if (error) {
+            console.error("Error rehydrating cart:", error);
+          } else if (rehydratedState) {
+            console.log("Cart rehydrated:", rehydratedState);
+          }
+        };
+      }
     }
   )
 );

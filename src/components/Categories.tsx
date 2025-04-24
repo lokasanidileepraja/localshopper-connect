@@ -20,7 +20,9 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
   const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
   const handleCategorySelect = (categoryName: string) => {
+    console.log(`Selected category: ${categoryName}`);
     onCategorySelect(categoryName);
+    navigate(`/category/${categoryName.toLowerCase()}`);
   };
 
   useKeyboardNav(

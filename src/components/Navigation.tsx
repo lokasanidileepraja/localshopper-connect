@@ -20,9 +20,11 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { TooltipWrapper } from "./common/TooltipWrapper";
 import { ThemeToggle } from "./ThemeToggle";
+import { useCartStore } from "@/store/cartStore";
 
 export const Navigation = memo(() => {
   const location = useLocation();
+  const { totalItems } = useCartStore();
 
   // Determine if a link is active
   const isActive = (path: string) => {
@@ -84,9 +86,11 @@ export const Navigation = memo(() => {
             >
               <Link to="/cart">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">
-                  0
-                </span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
               </Link>
             </Button>
           </TooltipWrapper>

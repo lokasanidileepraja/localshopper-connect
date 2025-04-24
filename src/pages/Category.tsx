@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { motion } from "framer-motion";
 import { useEffect, useCallback } from "react";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { ShoppingCart, ExternalLink } from "lucide-react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -17,7 +17,7 @@ const Category = () => {
   const { categoryName } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { addToCart, totalItems } = useCart();
+  const { addToCart, totalItems } = useCartStore();
   const isMobile = useIsMobile();
   
   useEffect(() => {
@@ -40,6 +40,7 @@ const Category = () => {
   const categoryProducts = products[categoryName.toLowerCase()] || [];
 
   const handleAddToCart = useCallback((product: any) => {
+    console.log("Adding to cart:", product);
     addToCart(product, "Default Store");
     toast({
       title: "Added to Cart",
@@ -54,6 +55,10 @@ const Category = () => {
   const handleCheckout = useCallback(() => {
     navigate("/cart");
   }, [navigate]);
+
+  console.log("CategoryName:", categoryName);
+  console.log("Products in category:", categoryProducts);
+  console.log("Total items in cart:", totalItems);
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
