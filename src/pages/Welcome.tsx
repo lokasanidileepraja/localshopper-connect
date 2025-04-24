@@ -5,7 +5,7 @@ import { Sparkles, MapPin, Smartphone, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/ui/optimized-image";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const Welcome = () => {
   const navigate = useNavigate();

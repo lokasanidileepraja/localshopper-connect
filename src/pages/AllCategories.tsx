@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Categories } from "@/components/Categories";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const AllCategories = () => {
   const navigate = useNavigate();

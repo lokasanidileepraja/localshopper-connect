@@ -11,7 +11,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const Index = () => {
   const { toast } = useToast();
