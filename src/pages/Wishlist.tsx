@@ -1,11 +1,10 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, ShoppingCart, Trash2, Bell, TrendingDown, CalendarClock, Filter, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { Product } from "@/types/shop";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -16,12 +15,10 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TooltipWrapper } from "@/components/common/TooltipWrapper";
 
-// Define wishlist categories
 const WISHLIST_CATEGORIES = [
   "All", "Electronics", "Mobiles", "Laptops", "Accessories", "Priority"
 ];
 
-// Define priority levels
 const PRIORITY_LEVELS = [
   { value: "high", label: "High", color: "destructive" },
   { value: "medium", label: "Medium", color: "default" },
@@ -31,14 +28,13 @@ const PRIORITY_LEVELS = [
 const Wishlist = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart } = useCartStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [alertPrice, setAlertPrice] = useState("");
   const [alertEmail, setAlertEmail] = useState("");
   const [selectedTab, setSelectedTab] = useState("All");
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
   
-  // Mock wishlist data with category and priority properties
   const [wishlistItems, setWishlistItems] = useState([
     {
       id: "1",
@@ -163,7 +159,6 @@ const Wishlist = () => {
     });
   };
 
-  // Filter wishlist items based on selected tab and priority
   const filteredItems = wishlistItems.filter(item => {
     const matchesCategory = selectedTab === "All" 
       || item.category === selectedTab 
@@ -183,7 +178,6 @@ const Wishlist = () => {
       </div>
       
       <div className="flex flex-col md:flex-row gap-4 mb-6">
-        {/* Tabs for categories */}
         <div className="w-full md:w-auto">
           <Tabs 
             defaultValue="All" 
@@ -205,7 +199,6 @@ const Wishlist = () => {
           </Tabs>
         </div>
         
-        {/* Filter by priority */}
         <div className="flex items-center gap-2">
           <TooltipWrapper content="Filter by priority">
             <Filter className="h-4 w-4 text-muted-foreground" />

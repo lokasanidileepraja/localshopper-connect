@@ -1,4 +1,3 @@
-
 import { useSearchParams } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { motion } from "framer-motion";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { products } from "@/data/products";
 import { ShoppingCart, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { OptimizedImage } from "@/components/ui/optimized-image";
@@ -17,7 +16,7 @@ const SearchResults = () => {
   const query = searchParams.get("q") || "";
   const [isLoading, setIsLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const { addToCart } = useCart();
+  const { addToCart } = useCartStore();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);

@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 
 interface ComparisonTableViewProps {
@@ -25,7 +25,7 @@ interface ComparisonTableViewProps {
 }
 
 export const ComparisonTableView = ({ searchQuery, filters }: ComparisonTableViewProps) => {
-  const { addToCart } = useCart();
+  const { addToCart } = useCartStore();
   const { toast } = useToast();
 
   // Filter shops based on search query and filters

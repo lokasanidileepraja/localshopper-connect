@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { useCart } from "@/contexts/CartContext";
+import { useCartStore } from "@/store/cartStore";
 import { products } from "@/data/products";
 import { Product } from "@/types/shop";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
@@ -114,9 +113,7 @@ const ProductDetails = () => {
   
   useEffect(() => {
     if (product) {
-      // Generate alternate images (in a real app, these would come from the API)
       const baseImage = product.image;
-      // Create alternative angles by using similar images
       const alternatives = [
         baseImage,
         `${baseImage}?angle=side`,
@@ -168,12 +165,10 @@ const ProductDetails = () => {
     });
   };
 
-  // Find best price across shops
   const shopInstances = ELECTRONICS_SHOPS.filter(shop => 
     shop.products.some(p => p.name === product.name)
   );
 
-  // Get lowest price
   const bestPrice = shopInstances.reduce((min, shop) => {
     const shopProduct = shop.products.find(p => p.name === product.name);
     return shopProduct && shopProduct.price < min ? shopProduct.price : min;
@@ -186,12 +181,10 @@ const ProductDetails = () => {
       <Breadcrumbs />
       
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {/* Product Images */}
         <div className="md:col-span-1">
           <ProductImages images={alternativeImages} />
         </div>
         
-        {/* Product Info */}
         <div className="md:col-span-1 lg:col-span-2">
           <div className="space-y-4">
             <div>
@@ -215,7 +208,6 @@ const ProductDetails = () => {
             
             <Separator />
             
-            {/* Price section */}
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-3xl font-bold text-primary">
@@ -238,10 +230,8 @@ const ProductDetails = () => {
               </p>
             </div>
             
-            {/* Description */}
             <p className="text-gray-700">{product.description}</p>
             
-            {/* Quantity selector */}
             <div className="flex items-center gap-4">
               <span className="font-medium">Quantity:</span>
               <div className="flex items-center border rounded-md">
@@ -264,7 +254,6 @@ const ProductDetails = () => {
               </div>
             </div>
             
-            {/* Actions */}
             <div className="flex flex-wrap gap-4 pt-2">
               <Button 
                 className="flex-1 min-w-[120px]"
@@ -295,7 +284,6 @@ const ProductDetails = () => {
               </Button>
             </div>
             
-            {/* Delivery Info */}
             <div className="bg-secondary/30 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Delivery Information</h3>
               <div className="flex items-center gap-2 text-sm">
@@ -311,7 +299,6 @@ const ProductDetails = () => {
         </div>
       </div>
       
-      {/* Tabs section */}
       <div className="mt-12">
         <Tabs defaultValue="description">
           <TabsList className="w-full justify-start border-b mb-0 rounded-none">
@@ -448,7 +435,6 @@ const ProductDetails = () => {
               
               <Separator />
               
-              {/* Review List */}
               <div className="space-y-6">
                 {DUMMY_REVIEWS.map((review) => (
                   <div key={review.id} className="space-y-2">
