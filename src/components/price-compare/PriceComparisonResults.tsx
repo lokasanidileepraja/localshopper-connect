@@ -27,7 +27,7 @@ export const PriceComparisonResults = ({
   searchQuery,
   filters,
 }: PriceComparisonResultsProps) => {
-  const { addToCart } = useCart();
+  const { addToCart } = useCartStore();
   const { toast } = useToast();
   const [selectedProduct, setSelectedProduct] = useState("");
 
@@ -222,4 +222,22 @@ export const PriceComparisonResults = ({
       )}
     </div>
   );
+};
+
+const formatLastUpdated = (dateString) => {
+  if (!dateString) return null;
+  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return 'Today';
+  } else if (diffDays === 1) {
+    return 'Yesterday';
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  } else {
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
 };
