@@ -40,22 +40,22 @@ export const CategoryNav = () => {
   return (
     <div className="relative mt-2">
       {showLeftShadow && (
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-gray-900 to-transparent pointer-events-none z-10" />
       )}
       
       <div 
         ref={scrollRef}
-        className="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4"
+        className="flex items-center gap-2 overflow-x-auto py-2 scrollbar-hide -mx-4 px-4"
         onScroll={handleScroll}
       >
         {categories.map(([name, path]) => (
           <Link
             key={path}
             to={path}
-            className={`px-3 py-2 text-sm whitespace-nowrap transition-colors duration-300 rounded-md ${
+            className={`py-1 px-3 text-sm whitespace-nowrap transition-colors duration-300 rounded-full ${
               activeCategory === name 
-                ? "bg-primary text-primary-foreground font-medium shadow-sm" 
-                : "text-foreground hover:bg-secondary"
+                ? "bg-primary/10 text-primary font-medium border border-primary/20" 
+                : "bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 text-foreground hover:bg-gray-100 dark:hover:bg-gray-800"
             }`}
             onClick={() => setActiveCategory(name)}
           >
@@ -65,7 +65,7 @@ export const CategoryNav = () => {
       </div>
       
       {showRightShadow && (
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-gray-900 to-transparent pointer-events-none" />
       )}
     </div>
   );
