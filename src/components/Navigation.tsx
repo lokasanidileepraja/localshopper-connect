@@ -1,3 +1,4 @@
+
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
@@ -10,10 +11,8 @@ import {
   Star, 
   Tags, 
   Store,
-  MapPin,
   User,
   Bell,
-  HeartIcon,
   Grid2x2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -26,19 +25,16 @@ export const Navigation = memo(() => {
   const location = useLocation();
   const { totalItems } = useCartStore();
 
-  // Determine if a link is active
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
-  // Main navigation items
+  // Updated main navigation items - removed duplicate/unnecessary items
   const mainNavItems = [
     { path: "/categories", label: "Browse Gadgets", icon: Smartphone },
     { path: "/enhanced-price-compare", label: "Compare Prices", icon: Tags },
     { path: "/stores", label: "Stores", icon: Store },
-    { path: "/nearby-stores", label: "Nearby", icon: MapPin },
     { path: "/categories", label: "All Categories", icon: Grid2x2 },
-    { path: "/wishlist", label: "Wishlist", icon: HeartIcon },
     { path: "/rewards", label: "Rewards", icon: Star },
   ];
 
@@ -57,9 +53,9 @@ export const Navigation = memo(() => {
               <span className="font-semibold text-lg hidden sm:block">TechLocator</span>
             </Link>
           </TooltipWrapper>
-          
+
           <NavigationSearchBar />
-          
+
           {mainNavItems.map(({ path, label, icon: Icon }) => (
             <TooltipWrapper key={label} content={label}>
               <Button 
@@ -75,7 +71,7 @@ export const Navigation = memo(() => {
               </Button>
             </TooltipWrapper>
           ))}
-          
+
           <TooltipWrapper content="Cart">
             <Button 
               variant={isActive("/cart") ? "default" : "ghost"}
@@ -94,7 +90,7 @@ export const Navigation = memo(() => {
               </Link>
             </Button>
           </TooltipWrapper>
-          
+
           <TooltipWrapper content="Notifications">
             <Button 
               variant={isActive("/notifications") ? "default" : "ghost"}
@@ -108,7 +104,7 @@ export const Navigation = memo(() => {
               </Link>
             </Button>
           </TooltipWrapper>
-          
+
           <TooltipWrapper content="Profile">
             <Button 
               variant={isActive("/profile") ? "default" : "ghost"}
@@ -122,7 +118,7 @@ export const Navigation = memo(() => {
               </Link>
             </Button>
           </TooltipWrapper>
-          
+
           <ThemeToggle />
           
           <UserActions />
