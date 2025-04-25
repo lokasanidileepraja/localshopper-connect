@@ -38,6 +38,12 @@ const SearchResultsPage = () => {
       description: `${product.name} added to your cart`,
     });
   };
+
+  // Create a function to handle search for SearchBar component
+  const handleSearch = (searchQuery: string) => {
+    // Here you could navigate to a new URL with the search query
+    console.log("Search for:", searchQuery);
+  };
   
   return (
     <div className="min-h-screen bg-background">
@@ -55,23 +61,21 @@ const SearchResultsPage = () => {
           </h1>
           
           <div className="mb-6">
-            <SearchBar initialQuery={query} />
+            <SearchBar onSearch={handleSearch} />
           </div>
         </motion.div>
         
         <div className="grid gap-6 md:grid-cols-4">
           <aside className="md:col-span-1">
             <SearchFilters 
-              activeFilters={activeFilters}
-              onUpdateFilters={handleUpdateFilters}
+              onFilterChange={handleUpdateFilters}
             />
           </aside>
           
           <div className="md:col-span-3">
             <SearchResults 
-              query={query}
-              filters={activeFilters}
-              onAddToCart={handleAddToCart}
+              recentSearches={[query].filter(q => q !== "")}
+              onSelectSearch={(selected) => console.log("Selected search:", selected)}
             />
           </div>
         </div>

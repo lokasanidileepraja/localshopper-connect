@@ -47,7 +47,9 @@ const ProductDetails = () => {
     showComparison: false,
   });
   
-  const product = products.find(p => p.id === productId);
+  // Find product by ID from all available products
+  const allProducts = Object.values(products).flat();
+  const product = allProducts.find(p => p.id === productId);
   
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
@@ -299,7 +301,11 @@ const ProductDetails = () => {
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Add to Cart
                 </Button>
-                <WishlistButton product={product} />
+                <WishlistButton 
+                  productId={product.id}
+                  productName={product.name}
+                  category={product.category}
+                />
               </div>
               
               <div className="flex gap-2">
@@ -350,12 +356,16 @@ const ProductDetails = () => {
             )}
             
             <div className="mt-8">
-              <ProductRecommendations category={product.category} currentProductId={product.id} />
+              <ProductRecommendations currentProductId={product.id} />
             </div>
           </TabsContent>
           
           <TabsContent value="specifications" className="pt-6">
-            <ProductSpecifications productId={product.id} />
+            <ProductSpecifications specifications={[
+              { name: "Brand", value: product.brand || "N/A" },
+              { name: "Model", value: product.model || "N/A" },
+              { name: "Category", value: product.category || "N/A" },
+            ]} />
           </TabsContent>
           
           <TabsContent value="reviews" className="pt-6">
@@ -364,13 +374,19 @@ const ProductDetails = () => {
           
           <TabsContent value="shipping" className="pt-6">
             <div className="grid md:grid-cols-2 gap-8">
-              <ShippingInfo />
+              <ShippingInfo 
+                estimatedDelivery="3-5 business days" 
+                shippingCost={0}
+              />
               <ReturnPolicy />
             </div>
           </TabsContent>
           
           <TabsContent value="videos" className="pt-6">
-            <ProductVideo productId={product.id} />
+            <ProductVideo 
+              videoUrl="https://example.com/product-video.mp4"
+              thumbnail="https://example.com/thumbnail.jpg"
+            />
           </TabsContent>
         </Tabs>
       </div>
