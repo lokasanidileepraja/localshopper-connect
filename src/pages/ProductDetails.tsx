@@ -117,8 +117,8 @@ const ProductDetails = () => {
     shop.products.some(p => p.model === product.model)
   );
   
-  const selectedVariantInfo = product.variants 
-    ? product.variantsInfo?.find(v => v.name === state.selectedVariant)
+  const selectedVariantInfo = product.variants && product.variantsInfo 
+    ? product.variantsInfo.find(v => v.name === state.selectedVariant)
     : null;
   
   return (
@@ -234,7 +234,7 @@ const ProductDetails = () => {
               </div>
             </div>
             
-            {product.variants && (
+            {product.variants && product.variants.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium mb-3">Variants</h3>
                 <div className="flex flex-wrap gap-2">

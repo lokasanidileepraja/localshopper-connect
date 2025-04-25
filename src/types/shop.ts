@@ -13,6 +13,16 @@ export interface Product {
   inStock: boolean;
   quantity?: number;  // Added quantity as optional property
   emiOptions?: EmiOption[];  // Added EMI options
+  // Add missing properties causing TypeScript errors
+  variants?: string[];
+  variantsInfo?: VariantInfo[];
+  reviewCount?: number;
+  originalPrice?: number;
+}
+
+export interface VariantInfo {
+  name: string;
+  image: string;
 }
 
 export interface EmiOption {
