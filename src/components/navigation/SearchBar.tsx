@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
 
 export const NavigationSearchBar = () => {
   const [searchParams] = useSearchParams();
@@ -35,25 +34,29 @@ export const NavigationSearchBar = () => {
   };
 
   return (
-    <motion.form
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
+    <form
       onSubmit={handleSearch}
-      className="flex flex-1 items-center w-full"
+      className="flex flex-1 items-center max-w-xl min-w-0 mx-2"
       role="search"
       aria-label="Main site search"
     >
       <div className="relative w-full">
         <Input
           type="search"
-          placeholder="Search products, brands..."
-          className="w-full pl-9 pr-3 py-2 h-10 rounded-full shadow-sm bg-white/70 dark:bg-gray-800/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 text-foreground text-sm"
+          placeholder="Search products, brands, stores…"
+          className="w-full pl-10 pr-14 py-2 rounded-md shadow-sm bg-white dark:bg-gray-800 text-foreground"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+        <button
+          type="submit"
+          aria-label="Search"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1.5 rounded-md shadow hover:bg-primary/90 transition active:bg-primary/80 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Search
+        </button>
       </div>
-    </motion.form>
+    </form>
   );
 };

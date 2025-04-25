@@ -24,19 +24,20 @@ export const UserActions = () => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 md:gap-2">
       <motion.div
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Retailer Dashboard">
           <Link to="/retailer">
             <Button 
-              variant="ghost"
-              size="icon"
-              className="rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:bg-primary/20 hover:text-primary transition-all duration-300"
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
-              <Store className="h-[18px] w-[18px]" />
+              <Store className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Retailer</span>}
             </Button>
           </Link>
         </TooltipWrapper>
@@ -44,16 +45,17 @@ export const UserActions = () => {
 
       <motion.div
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Admin Dashboard">
           <Link to="/admin">
             <Button 
-              variant="ghost"
-              size="icon"
-              className="rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:bg-primary/20 hover:text-primary transition-all duration-300"
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
-              <Shield className="h-[18px] w-[18px]" />
+              <Shield className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Admin</span>}
             </Button>
           </Link>
         </TooltipWrapper>
@@ -61,16 +63,17 @@ export const UserActions = () => {
 
       <motion.div
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Help & FAQ">
           <Link to="/qa">
             <Button 
-              variant="ghost"
-              size="icon"
-              className="rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:bg-primary/20 hover:text-primary transition-all duration-300"
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
-              <HelpCircle className="h-[18px] w-[18px]" />
+              <HelpCircle className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Help</span>}
             </Button>
           </Link>
         </TooltipWrapper>
@@ -78,35 +81,35 @@ export const UserActions = () => {
 
       <motion.div
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.95 }}
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
-              variant="ghost" 
+              variant="outline" 
               size="icon"
-              className="rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm hover:bg-primary/20 hover:text-primary transition-all duration-300"
+              className="rounded-md text-foreground hover:bg-secondary transition-all duration-300"
             >
-              <Users className="h-[18px] w-[18px]" />
+              <Users className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
             align="end" 
-            className="w-56 mt-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/30 shadow-lg rounded-xl animate-in fade-in-80 slide-in-from-top-2"
+            className="w-56 mt-2 bg-popover text-popover-foreground border border-border shadow-lg animate-in fade-in-80 slide-in-from-top-2"
           >
-            <DropdownMenuLabel className="font-medium text-sm">Quick Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-gray-200/50 dark:bg-gray-700/50" />
+            <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild className="focus:bg-gray-100/50 dark:focus:bg-gray-700/50 rounded-lg my-0.5 cursor-pointer transition-colors">
-                <Link to="/qa" className="w-full cursor-pointer flex items-center">
-                  <HelpCircle className="h-4 w-4 mr-2 opacity-70" />
-                  <span>Help & FAQ</span>
+              <DropdownMenuItem asChild>
+                <Link to="/qa" className="w-full cursor-pointer">
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Help & FAQ
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild className="focus:bg-gray-100/50 dark:focus:bg-gray-700/50 rounded-lg my-0.5 cursor-pointer transition-colors">
-                <Link to="/onboarding" className="w-full cursor-pointer flex items-center">
-                  <Users className="h-4 w-4 mr-2 opacity-70" />
-                  <span>App Tour</span>
+              <DropdownMenuItem asChild>
+                <Link to="/onboarding" className="w-full cursor-pointer">
+                  <Users className="h-4 w-4 mr-2" />
+                  App Tour
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
