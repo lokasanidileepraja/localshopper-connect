@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { 
   HelpCircle,
   Store,
-  Users
+  Users,
+  Shield
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,6 +25,42 @@ export const UserActions = () => {
 
   return (
     <div className="flex items-center gap-1 md:gap-2">
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <TooltipWrapper content="Retailer Dashboard">
+          <Link to="/retailer">
+            <Button 
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              <Store className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Retailer</span>}
+            </Button>
+          </Link>
+        </TooltipWrapper>
+      </motion.div>
+
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <TooltipWrapper content="Admin Dashboard">
+          <Link to="/admin">
+            <Button 
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              <Shield className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Admin</span>}
+            </Button>
+          </Link>
+        </TooltipWrapper>
+      </motion.div>
+
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
