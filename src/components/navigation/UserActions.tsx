@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  User, 
   HelpCircle,
   Store,
   Users
@@ -25,59 +24,61 @@ export const UserActions = () => {
 
   return (
     <div className="flex items-center gap-1 md:gap-2">
-      <TooltipWrapper content="Retailer dashboard">
-        <Link to="/retailer">
-          <Button 
-            variant={isMobile ? "ghost" : "outline"}
-            size={isMobile ? "icon" : "sm"}
-            className={`relative ${isMobile ? 'rounded-md' : 'rounded-md'} hover:bg-primary hover:text-primary-foreground`}
-            aria-label="Retailer dashboard"
-          >
-            <Store className="h-5 w-5" />
-            {!isMobile && <span className="ml-1">Retailer</span>}
-          </Button>
-        </Link>
-      </TooltipWrapper>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <TooltipWrapper content="Help & FAQ">
+          <Link to="/qa">
+            <Button 
+              variant={isMobile ? "ghost" : "outline"}
+              size={isMobile ? "icon" : "sm"}
+              className="rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              <HelpCircle className="h-5 w-5" />
+              {!isMobile && <span className="ml-1">Help</span>}
+            </Button>
+          </Link>
+        </TooltipWrapper>
+      </motion.div>
 
-      <DropdownMenu>
-        <TooltipWrapper content="Account menu">
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
               size="icon"
-              className="rounded-md text-foreground hover:bg-secondary"
-              aria-label="Account menu"
+              className="rounded-md text-foreground hover:bg-secondary transition-all duration-300"
             >
-              <User className="h-5 w-5" />
+              <Users className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-        </TooltipWrapper>
-        <DropdownMenuContent align="end" className="w-56 mt-2 bg-popover text-popover-foreground border border-border shadow-lg">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="w-full cursor-pointer">
-                <User className="h-4 w-4 mr-2" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link to="/qa" className="w-full cursor-pointer">
-              <HelpCircle className="h-4 w-4 mr-2" />
-              Help & FAQ
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/onboarding" className="w-full cursor-pointer">
-              <Users className="h-4 w-4 mr-2" />
-              App Tour
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <DropdownMenuContent 
+            align="end" 
+            className="w-56 mt-2 bg-popover text-popover-foreground border border-border shadow-lg animate-in fade-in-80 slide-in-from-top-2"
+          >
+            <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link to="/qa" className="w-full cursor-pointer">
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Help & FAQ
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/onboarding" className="w-full cursor-pointer">
+                  <Users className="h-4 w-4 mr-2" />
+                  App Tour
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </motion.div>
     </div>
   );
-}
+};
