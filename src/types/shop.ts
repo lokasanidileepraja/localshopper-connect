@@ -50,6 +50,7 @@ export interface Shop {
   isVerified?: boolean;   // Added verification badge
   lastUpdated?: string;   // Added last updated timestamp
   deliveryOptions?: DeliveryOption[]; // Added delivery options
+  price?: number; // Added price for store comparison feature
 }
 
 export interface DeliveryOption {
