@@ -28,6 +28,7 @@ import { WishlistAlertPrompt } from "@/components/onboarding/WishlistAlertPrompt
 import { usePointsStore } from "@/store/pointsStore";
 import { trackAddToCart, trackSetPriceAlert, trackAddToWishlist } from "@/lib/analytics";
 import { Helmet } from "react-helmet-async";
+import { Shop } from "@/types/shop";
 
 interface ProductDetailsState {
   quantity: number;
@@ -141,12 +142,51 @@ const ProductDetails = () => {
     }
   };
   
-  // Find other shops that sell this product model
-  const otherShops = product.model ? 
+  // Find other shops that sell this product model - properly typed as Shop[]
+  const otherShops: Shop[] = product.model ? 
     [
-      { name: "Tech Corner", price: product.price * 1.05, inStock: true },
-      { name: "Digital Plaza", price: product.price * 0.95, inStock: true },
-      { name: "Gadget World", price: product.price * 1.02, inStock: false }
+      { 
+        id: "shop-1", 
+        name: "Tech Corner", 
+        price: product.price * 1.05, 
+        inStock: true,
+        category: "Electronics",
+        rating: 4.2,
+        distance: "2.5km",
+        image: "/placeholder.svg",
+        isOpen: true,
+        address: "123 Tech Street",
+        phone: "123-456-7890",
+        products: []
+      },
+      { 
+        id: "shop-2", 
+        name: "Digital Plaza", 
+        price: product.price * 0.95, 
+        inStock: true,
+        category: "Electronics",
+        rating: 4.0,
+        distance: "3.2km",
+        image: "/placeholder.svg",
+        isOpen: true,
+        address: "456 Digital Avenue",
+        phone: "987-654-3210",
+        products: []
+      },
+      { 
+        id: "shop-3", 
+        name: "Gadget World", 
+        price: product.price * 1.02, 
+        inStock: false,
+        category: "Electronics",
+        rating: 3.8,
+        distance: "4.7km",
+        image: "/placeholder.svg",
+        isOpen: false,
+        address: "789 Gadget Road",
+        phone: "555-123-4567",
+        products: []
+      }
     ] : [];
   
   const selectedVariantInfo = product.variants && product.variantsInfo 

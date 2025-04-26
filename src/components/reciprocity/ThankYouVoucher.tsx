@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Gift, Confetti, X, Copy, Check } from "lucide-react";
+import { Gift, PartyPopper, X, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -76,7 +76,7 @@ export const ThankYouVoucher = ({
       >
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Confetti className="h-5 w-5 text-white" />
+            <PartyPopper className="h-5 w-5 text-white" />
             <h3 className="font-semibold text-white">Surprise Gift!</h3>
           </div>
           <button
