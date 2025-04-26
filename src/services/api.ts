@@ -20,13 +20,16 @@ import { products as mockProducts } from "@/data/products";
 class ApiService {
   // USER RELATED METHODS
   async getCurrentUser(): Promise<User | null> {
+    // For demo purposes, check if we have a temporarily set role
+    const tempRole = localStorage.getItem('tempUserRole') as "user" | "retailer" | "admin" | null;
+
     // Mock implementation - will be replaced with actual auth logic
     return Promise.resolve({
       uid: "user123",
       name: "Demo User",
       email: "demo@example.com",
       avatarURL: "https://i.pravatar.cc/150?u=demo@example.com",
-      role: "user",
+      role: tempRole || "user", // Use temp role if available
       points: 250,
       wishlist: ["m1", "l1"],
       alerts: ["alert1"],

@@ -124,18 +124,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Check if user has a specific role
   const hasRole = (role: 'guest' | 'user' | 'retailer' | 'admin') => {
-    if (!user) return role === 'guest';
+    if (role === 'guest') return true; // Everyone has guest access
+    
+    if (!user) return false; // Not logged in
     
     // Role hierarchy: admin > retailer > user > guest
     switch (user.role) {
       case 'admin':
         return true; // Admin has access to everything
       case 'retailer':
-        return role !== 'admin'; // Retailer can access retailer, user and guest
+        return role === 'retailer' || role === 'user'; // Retailer can access retailer, user and guest
       case 'user':
-        return role !== 'admin' && role !== 'retailer'; // User can access user and guest
+        return role === 'user'; // User can access user and guest
       default:
-        return role === 'guest'; // Guest can only access guest
+        return false; // Unknown role
     }
   };
   

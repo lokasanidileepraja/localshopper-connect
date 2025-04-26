@@ -1,9 +1,12 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { initializeMap } from "@/utils/mapUtils";
 import { Shop } from "@/types/shop";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface StoreMapProps {
   shops: Shop[];
@@ -13,40 +16,72 @@ interface StoreMapProps {
 export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const [mapboxToken, setMapboxToken] = useState<string>("");
+  const [showInput, setShowInput] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (!mapContainer.current) return;
+  // Function to initialize the map
+  const initMap = () => {
+    if (!mapContainer.current || !mapboxToken) return;
 
     // Initialize map
-    const mapboxToken = "pk.eyJ1IjoiZXhhbXBsZXVzZXIiLCJhIjoiY2xnZzBjNXF6MDJxdzNlbnVkaW81aWN3MyJ9.G0SLRIqOM3aPsGtxixaErA";
     map.current = initializeMap(mapContainer.current, mapboxToken, shops);
 
-    // Cleanup
-    return () => {
-      map.current?.remove();
-    };
-  }, [shops]);
+    // Hide the input form
+    setShowInput(false);
+  };
 
   // Highlight selected shop on the map when selectedShopId changes
   useEffect(() => {
     if (!map.current || !selectedShopId) return;
     
-    // This would be where you'd add logic to highlight the selected shop on the map
-    // For example, you might change the marker color or show a popup
-    console.log(`Shop selected: ${selectedShopId}`);
-    
     // Find the selected shop
     const selectedShop = shops.find(shop => shop.id === selectedShopId);
     if (selectedShop) {
-      // For demo purposes, we'll just log the shop name
       console.log(`Selected shop: ${selectedShop.name}`);
+      
+      // For demo purposes, we'll just center the map on a random location
+      // In a real app, you would have the actual coordinates
+      const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
+      const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
+      
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: 14,
+        essential: true
+      });
     }
   }, [selectedShopId, shops]);
 
   return (
     <div className="relative w-full h-full">
+      {showInput ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+          <div className="w-full max-w-md space-y-4">
+            <Alert>
+              <AlertTitle>Mapbox API Key Required</AlertTitle>
+              <AlertDescription>
+                To display the map, please enter your Mapbox public token. 
+                You can get one for free at <a href="https://www.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">mapbox.com</a>.
+              </AlertDescription>
+            </Alert>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Enter your Mapbox public token"
+                value={mapboxToken}
+                onChange={(e) => setMapboxToken(e.target.value)}
+              />
+              <Button onClick={initMap} disabled={!mapboxToken}>
+                Load Map
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      
       <div ref={mapContainer} className="absolute inset-0 rounded-lg" />
-      {!map.current && (
+      
+      {!map.current && !showInput && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
           <p className="text-gray-500">Loading map...</p>
         </div>
