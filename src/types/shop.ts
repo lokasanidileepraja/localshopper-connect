@@ -51,6 +51,7 @@ export interface Shop {
   lastUpdated?: string;   // Added last updated timestamp
   deliveryOptions?: DeliveryOption[]; // Added delivery options
   price?: number; // Added price for store comparison feature
+  inStock?: boolean; // Added inStock property for product availability in the shop
 }
 
 export interface DeliveryOption {
