@@ -8,14 +8,16 @@ import { Testimonials } from "@/components/Testimonials";
 import { BrandsShowcase } from "@/components/BrandsShowcase";
 import { Categories } from "@/components/Categories";
 import { BackToTop } from "@/components/BackToTop";
-import { Navigation } from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserPoints } from "@/components/gamification/UserPoints";
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const handleSearch = (query: string) => {
     if (query.trim()) {
@@ -64,12 +66,19 @@ const Index = () => {
         <meta name="description" content="Explore the best deals, categories, and products." />
       </Helmet>
       
-      <Navigation />
       <main>
         <Hero />
         <SearchErrorBoundary>
           <SearchBar onSearch={handleSearch} />
         </SearchErrorBoundary>
+        
+        {/* Show user points and gamification for authenticated users */}
+        {isAuthenticated && (
+          <div className="container mx-auto px-4 mt-6">
+            <UserPoints />
+          </div>
+        )}
+        
         <Categories onCategorySelect={handleCategorySelect} />
         <FeaturedProducts onProductClick={handleProductClick} />
         <BrandsShowcase onBrandClick={handleBrandClick} />

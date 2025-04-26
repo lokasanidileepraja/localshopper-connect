@@ -27,7 +27,7 @@ import LocationSettings from "@/pages/LocationSettings";
 import Profile from "@/pages/Profile";
 import Alerts from "@/pages/Alerts";
 import FAQ from "@/pages/FAQ";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import AllCategories from "@/pages/AllCategories";
@@ -42,6 +42,7 @@ import Reports from "@/pages/admin/Reports";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Leaderboard from "@/pages/community/Leaderboard";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 // Retailer pages
 import RetailerDashboard from "@/pages/retailer/RetailerDashboard";
@@ -72,13 +73,8 @@ const EnhancedPriceCompare = lazy(() => import("@/pages/EnhancedPriceCompare"));
 function App() {
   const location = useLocation();
   
-  // Initialize analytics
-  useEffect(() => {
-    analytics.init({ debugMode: true });
-  }, []);
-  
   // Track page views
-  useEffect(() => {
+  React.useEffect(() => {
     analytics.trackPageView(location.pathname);
   }, [location]);
 
@@ -99,7 +95,7 @@ function App() {
 
           {/* Main layout routes */}
           <Route element={<MainLayout />}>
-            {/* General Discovery & Navigation */}
+            {/* General Discovery & Navigation - Public Routes */}
             <Route path="/search" element={
               <Suspense fallback={<LoadingSpinner />}>
                 <SearchResults />
@@ -109,60 +105,170 @@ function App() {
             <Route path="/category/:categoryName" element={<Category />} />
             <Route path="/brands" element={<AllBrands />} />
             <Route path="/brands/:brandName" element={<Brand />} />
-            
-            {/* Product & Shopping Flow */}
             <Route path="/product/:productId" element={<ProductDetails />} />
             <Route path="/product/:productId/reviews" element={<ProductReviews />} />
-            <Route path="/compare" element={<Compare />} />
             <Route path="/price-compare" element={<PriceCompare />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/orders/:orderId" element={<OrderDetails />} />
-            
-            {/* Store Discovery & Local Search */}
             <Route path="/stores" element={<Stores />} />
             <Route path="/store/:storeName" element={<StoreDetails />} />
             <Route path="/store/:storeName/reviews" element={<StoreReviews />} />
             <Route path="/nearby-stores" element={<NearbyStores />} />
             
-            {/* Community Features */}
-            <Route path="/community/leaderboard" element={<Leaderboard />} />
-            
-            {/* Retailer Dashboard & Management */}
-            <Route path="/retailer" element={<RetailerDashboard />} />
-            <Route path="/retailer/home" element={<RetailerDashboard />} />
-            <Route path="/retailer/products" element={<RetailerProducts />} />
-            <Route path="/retailer/inventory" element={<RetailerInventory />} />
-            <Route path="/retailer/orders" element={<RetailerOrders />} />
-            <Route path="/retailer/customers" element={<RetailerCustomers />} />
-            <Route path="/retailer/promotions" element={<RetailerPromotions />} />
-            <Route path="/retailer/reports" element={<RetailerAnalytics />} />
-            <Route path="/retailer/settings" element={<RetailerSettings />} />
-            
-            {/* User Tools & Account */}
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/rewards" element={<Rewards />} />
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/referral" element={<Referral />} />
-            <Route path="/location-settings" element={<LocationSettings />} />
-            
-            {/* Support, Legal & Help */}
+            {/* Support, Legal & Help - Public Routes */}
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/support/ticket/:id" element={<SupportTicket />} />
             
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/user-feedback" element={<AdminUserFeedback />} />
-            <Route path="/admin/catalog-health" element={<AdminCatalogHealth />} />
-            <Route path="/admin/store-performance" element={<AdminStorePerformance />} />
-            <Route path="/reports" element={<Reports />} />
+            {/* Protected Routes for Authenticated Users */}
+            <Route path="/compare" element={
+              <ProtectedRoute requiredRole="user">
+                <Compare />
+              </ProtectedRoute>
+            } />
+            <Route path="/wishlist" element={
+              <ProtectedRoute requiredRole="user">
+                <Wishlist />
+              </ProtectedRoute>
+            } />
+            <Route path="/cart" element={
+              <ProtectedRoute requiredRole="user">
+                <Cart />
+              </ProtectedRoute>
+            } />
+            <Route path="/checkout" element={
+              <ProtectedRoute requiredRole="user">
+                <Checkout />
+              </ProtectedRoute>
+            } />
+            <Route path="/orders" element={
+              <ProtectedRoute requiredRole="user">
+                <Orders />
+              </ProtectedRoute>
+            } />
+            <Route path="/orders/:orderId" element={
+              <ProtectedRoute requiredRole="user">
+                <OrderDetails />
+              </ProtectedRoute>
+            } />
+            
+            {/* Community Features */}
+            <Route path="/community/leaderboard" element={<Leaderboard />} />
+            
+            {/* User Tools & Account - Protected Routes */}
+            <Route path="/profile" element={
+              <ProtectedRoute requiredRole="user">
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/notifications" element={
+              <ProtectedRoute requiredRole="user">
+                <Notifications />
+              </ProtectedRoute>
+            } />
+            <Route path="/rewards" element={
+              <ProtectedRoute requiredRole="user">
+                <Rewards />
+              </ProtectedRoute>
+            } />
+            <Route path="/alerts" element={
+              <ProtectedRoute requiredRole="user">
+                <Alerts />
+              </ProtectedRoute>
+            } />
+            <Route path="/referral" element={
+              <ProtectedRoute requiredRole="user">
+                <Referral />
+              </ProtectedRoute>
+            } />
+            <Route path="/location-settings" element={
+              <ProtectedRoute requiredRole="user">
+                <LocationSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/support/ticket/:id" element={
+              <ProtectedRoute requiredRole="user">
+                <SupportTicket />
+              </ProtectedRoute>
+            } />
+            
+            {/* Retailer Routes - Protected with Retailer Role */}
+            <Route path="/retailer" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/home" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/products" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerProducts />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/inventory" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerInventory />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/orders" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerOrders />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/customers" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerCustomers />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/promotions" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerPromotions />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/reports" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerAnalytics />
+              </ProtectedRoute>
+            } />
+            <Route path="/retailer/settings" element={
+              <ProtectedRoute requiredRole="retailer">
+                <RetailerSettings />
+              </ProtectedRoute>
+            } />
+            
+            {/* Admin Routes - Protected with Admin Role */}
+            <Route path="/admin" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/user-feedback" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminUserFeedback />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/catalog-health" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminCatalogHealth />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/store-performance" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminStorePerformance />
+              </ProtectedRoute>
+            } />
+            <Route path="/reports" element={
+              <ProtectedRoute requiredRole="admin">
+                <Reports />
+              </ProtectedRoute>
+            } />
             
             {/* Advanced features with lazy loading */}
             <Route path="/search-advanced" element={
