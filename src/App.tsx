@@ -1,4 +1,5 @@
 
+import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Welcome from "@/pages/Welcome";
@@ -27,7 +28,6 @@ import LocationSettings from "@/pages/LocationSettings";
 import Profile from "@/pages/Profile";
 import Alerts from "@/pages/Alerts";
 import FAQ from "@/pages/FAQ";
-import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import AllCategories from "@/pages/AllCategories";

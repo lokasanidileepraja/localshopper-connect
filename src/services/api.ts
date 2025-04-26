@@ -9,7 +9,8 @@ import {
   Price,
   PointsLog,
   Badge,
-  UserBadge
+  UserBadge,
+  BaseProduct
 } from "@/types/models";
 import { products as mockProducts } from "@/data/products";
 
@@ -65,12 +66,36 @@ class ApiService {
     const allProducts = Object.values(mockProducts).flat();
     
     if (category) {
+      // Convert mock products to our Product type with type assertion
       return Promise.resolve(
-        allProducts.filter(p => p.category === category) as Product[]
+        allProducts.filter(p => p.category === category).map(p => this.convertToModelProduct(p))
       );
     }
     
-    return Promise.resolve(allProducts as unknown as Product[]);
+    // Convert all mock products to our Product type with type assertion
+    return Promise.resolve(allProducts.map(p => this.convertToModelProduct(p)));
+  }
+
+  // Helper method to convert shop.Product to models.Product
+  private convertToModelProduct(product: any): Product {
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock || 0,
+      inStock: product.inStock || false,
+      specs: {
+        "Display": "Standard Display",
+        "Processor": "Standard Processor",
+        "Storage": "Standard Storage"
+      },
+      images: [product.image || ''],
+      MSRP: product.originalPrice || product.price * 1.2,
+      category: product.category || 'Uncategorized',
+      brand: product.brand || 'Unknown Brand',
+      createdAt: new Date().toISOString()
+    };
   }
 
   async getProductById(productId: string): Promise<Product | null> {
