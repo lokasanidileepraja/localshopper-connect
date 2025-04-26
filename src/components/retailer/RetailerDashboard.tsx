@@ -21,9 +21,9 @@ export const RetailerDashboard = () => {
         { name: "OnePlus 12", qty: 6, revenue: 41994 },
       ],
       recentReservations: [
-        { id: "RES-1234", product: "iPhone 15", customer: "Amit S.", time: "2 hours ago", status: "pending" },
-        { id: "RES-1233", product: "Samsung S23", customer: "Priya M.", time: "5 hours ago", status: "completed" },
-        { id: "RES-1232", product: "OnePlus 12", customer: "Raj K.", time: "1 day ago", status: "cancelled" },
+        { id: "RES-1234", product: "iPhone 15", customer: "Amit S.", time: "2 hours ago", status: "pending" as const },
+        { id: "RES-1233", product: "Samsung S23", customer: "Priya M.", time: "5 hours ago", status: "completed" as const },
+        { id: "RES-1232", product: "OnePlus 12", customer: "Raj K.", time: "1 day ago", status: "cancelled" as const },
       ],
     }),
   });
