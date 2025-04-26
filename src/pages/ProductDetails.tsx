@@ -14,13 +14,20 @@ import { ShoppingCart, Heart, Bell, Share2, Store, Star, ChevronRight, ShieldChe
 import { useCartStore } from "@/store/cartStore";
 import { useToast } from "@/hooks/use-toast";
 import { ShopComparison } from "@/components/ShopComparison";
-import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { motion } from "framer-motion";
 import { Navigation } from "@/components/Navigation";
 import { WishlistButton } from "@/components/WishlistButton";
 import { ShippingInfo } from "@/components/ShippingInfo";
 import { ReturnPolicy } from "@/components/ReturnPolicy";
 import { ProductVideo } from "@/components/ProductVideo";
+import { ReviewSummary } from "@/components/social/ReviewSummary";
+import { VerifiedBadge } from "@/components/social/VerifiedBadge";
+import { LowStockAlert } from "@/components/product/LowStockAlert";
+import { FlashDealTimer } from "@/components/product/FlashDealTimer";
+import { WishlistAlertPrompt } from "@/components/onboarding/WishlistAlertPrompt";
+import { usePointsStore } from "@/store/pointsStore";
+import { trackAddToCart, trackSetPriceAlert, trackAddToWishlist } from "@/lib/analytics";
+import { Helmet } from "react-helmet-async";
 
 interface ProductDetailsState {
   quantity: number;
@@ -36,6 +43,7 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const { addToCart } = useCartStore();
   const { toast } = useToast();
+  const { addPoints, incrementDealsSaved } = usePointsStore();
   
   const [state, setState] = useState<ProductDetailsState>({
     quantity: 1,
@@ -50,6 +58,11 @@ const ProductDetails = () => {
   // Find product by ID from all available products
   const allProducts = Object.values(products).flat();
   const product = allProducts.find(p => p.id === productId);
+  
+  // Calculate if this is a flash deal (for demo purposes - random products get flash deals)
+  const isFlashDeal = product ? product.id.charCodeAt(0) % 3 === 0 : false;
+  const flashDealEndTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+  const flashDealDiscount = 15; // 15% off
   
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
@@ -73,11 +86,14 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     addToCart(product, state.selectedShop);
+    addPoints(5);
     
     toast({
       title: "Added to cart",
       description: `${product.name} added to your cart`,
     });
+    
+    trackAddToCart(product.id, product.name, product.price, state.selectedShop);
   };
   
   const handleQuantityChange = (newQuantity: number) => {
@@ -88,11 +104,19 @@ const ProductDetails = () => {
   
   const handleSetPriceAlert = () => {
     setState(prev => ({ ...prev, isAlertSet: true }));
+    addPoints(15);
     
     toast({
       title: "Price Alert Set",
       description: `We'll notify you when the price drops below ₹${product.price.toLocaleString()}`,
     });
+    
+    trackSetPriceAlert(product.id, product.name, product.price);
+  };
+  
+  const handleAddToWishlist = () => {
+    addPoints(10);
+    trackAddToWishlist(product.id, product.name);
   };
   
   const toggleDescription = () => {
@@ -109,20 +133,36 @@ const ProductDetails = () => {
       selectedShop: shopName,
       showComparison: false
     }));
+    
+    // Calculate savings for gamification
+    const savings = product.originalPrice ? product.originalPrice - price : 0;
+    if (savings > 0) {
+      incrementDealsSaved(savings);
+    }
   };
   
   // Find other shops that sell this product model
-  const otherShops = ELECTRONICS_SHOPS.filter(shop => 
-    shop.name !== state.selectedShop && 
-    shop.products.some(p => p.model === product.model)
-  );
+  const otherShops = product.model ? 
+    [
+      { name: "Tech Corner", price: product.price * 1.05, inStock: true },
+      { name: "Digital Plaza", price: product.price * 0.95, inStock: true },
+      { name: "Gadget World", price: product.price * 1.02, inStock: false }
+    ] : [];
   
   const selectedVariantInfo = product.variants && product.variantsInfo 
     ? product.variantsInfo.find(v => v.name === state.selectedVariant)
     : null;
+    
+  // Determine stock level for low stock alerts - random for demo
+  const stockLevel = product.inStock ? Math.floor(Math.random() * 20) + 1 : 0;
   
   return (
     <div className="min-h-screen pb-16">
+      <Helmet>
+        <title>{product.name} | TechLocator</title>
+        <meta name="description" content={product.description} />
+      </Helmet>
+      
       <Navigation />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-wrap gap-2 text-sm text-muted-foreground mb-6">
@@ -134,6 +174,18 @@ const ProductDetails = () => {
           <ChevronRight className="h-4 w-4" />
           <span className="text-foreground">{product.name}</span>
         </div>
+        
+        {isFlashDeal && (
+          <div className="mb-4">
+            <FlashDealTimer
+              endTime={flashDealEndTime}
+              productId={product.id}
+              productName={product.name}
+              discount={flashDealDiscount}
+              originalPrice={product.price}
+            />
+          </div>
+        )}
         
         <div className="grid md:grid-cols-2 gap-8">
           {/* Product Images */}
@@ -186,7 +238,9 @@ const ProductDetails = () => {
                 <Badge variant="secondary">
                   {product.category}
                 </Badge>
-                {product.inStock ? (
+                {stockLevel <= 5 && product.inStock ? (
+                  <LowStockAlert stock={stockLevel} />
+                ) : product.inStock ? (
                   <Badge variant="default" className="bg-green-500">In Stock</Badge>
                 ) : (
                   <Badge variant="destructive">Out of Stock</Badge>
@@ -199,37 +253,42 @@ const ProductDetails = () => {
                 <p className="text-sm text-muted-foreground mb-2">Model: {product.model}</p>
               )}
               
+              <div className="flex items-center gap-2 mb-2">
+                <ReviewSummary rating={product.rating || 4} reviewCount={product.reviewCount || 10} />
+              </div>
+              
               <div className="flex items-center gap-2 mb-4">
-                <div className="flex">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(product.rating || 0) 
-                          ? "fill-yellow-400 text-yellow-400" 
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm font-medium">{product.rating}/5.0</span>
-                <a href="#reviews" className="text-sm text-primary hover:underline">
-                  ({product.reviewCount || 0} reviews)
-                </a>
+                <VerifiedBadge type="product" />
               </div>
               
               <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-3xl font-bold text-primary">₹{product.price.toLocaleString()}</span>
-                {product.originalPrice && (
-                  <span className="text-lg text-muted-foreground line-through">
-                    ₹{product.originalPrice.toLocaleString()}
-                  </span>
-                )}
-                
-                {product.originalPrice && (
-                  <Badge className="ml-2 bg-green-500" variant="default">
-                    {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% off
-                  </Badge>
+                {isFlashDeal ? (
+                  <>
+                    <span className="text-3xl font-bold text-red-600">
+                      ₹{Math.round(product.price * (1 - flashDealDiscount / 100)).toLocaleString()}
+                    </span>
+                    <span className="text-lg text-muted-foreground line-through">
+                      ₹{product.price.toLocaleString()}
+                    </span>
+                    <Badge className="ml-2 bg-red-500" variant="default">
+                      {flashDealDiscount}% off
+                    </Badge>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-primary">₹{product.price.toLocaleString()}</span>
+                    {product.originalPrice && (
+                      <span className="text-lg text-muted-foreground line-through">
+                        ₹{product.originalPrice.toLocaleString()}
+                      </span>
+                    )}
+                    
+                    {product.originalPrice && (
+                      <Badge className="ml-2 bg-green-500" variant="default">
+                        {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% off
+                      </Badge>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -292,32 +351,22 @@ const ProductDetails = () => {
             </div>
             
             <div className="flex flex-col gap-4">
-              <div className="flex gap-2">
-                <Button 
-                  className="flex-1"
-                  onClick={handleAddToCart}
-                  disabled={!product.inStock}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Add to Cart
-                </Button>
-                <WishlistButton 
-                  productId={product.id}
-                  productName={product.name}
-                  category={product.category}
-                />
-              </div>
+              <WishlistAlertPrompt
+                productId={product.id}
+                productName={product.name}
+                currentPrice={product.price}
+                onWishlistClick={handleAddToWishlist}
+                onAlertClick={handleSetPriceAlert}
+              />
               
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={handleSetPriceAlert}>
-                  <Bell className="mr-2 h-4 w-4" />
-                  Set Price Alert
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share Product
-                </Button>
-              </div>
+              <Button 
+                className="py-6"
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Add to Cart
+              </Button>
             </div>
             
             <div>

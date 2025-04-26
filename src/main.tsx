@@ -1,28 +1,19 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import { Toaster } from '@/components/ui/toaster'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import { HelmetProvider } from 'react-helmet-async'
-import App from './App'
+import App from './App.tsx'
 import './index.css'
-
-// Create a client
-const queryClient = new QueryClient()
+import { BrowserRouter } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
+import { Toaster } from "@/components/ui/toaster"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system">
-          <HelmetProvider>
-            <App />
-            <Toaster />
-          </HelmetProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+    <HelmetProvider>
+      <BrowserRouter>
+        <App />
+        <Toaster />
+      </BrowserRouter>
+    </HelmetProvider>
+  </React.StrictMode>,
 )
