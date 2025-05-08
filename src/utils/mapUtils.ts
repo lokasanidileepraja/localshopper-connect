@@ -12,7 +12,7 @@ export const initializeMap = (
   // Calculate the center of the map based on the shops
   // In a real app, you would use the actual coordinates of the shops
   // For now, we'll use a default location (Delhi)
-  const mapCenter = [77.2090, 28.6139]; // Default to Delhi coordinates
+  const mapCenter: [number, number] = [77.2090, 28.6139]; // Default to Delhi coordinates, explicitly typed as tuple
   
   const map = new mapboxgl.Map({
     container,
@@ -32,6 +32,9 @@ export const initializeMap = (
     // For demo purposes, generating random coordinates around Delhi
     const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
     const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
+    
+    // Create coordinates as proper tuple
+    const coordinates: [number, number] = [lng, lat];
 
     const popup = new mapboxgl.Popup({ offset: 25 })
       .setHTML(`
@@ -61,9 +64,9 @@ export const initializeMap = (
     el.style.cursor = 'pointer';
     el.innerHTML = `${index + 1}`;
     
-    // Add the marker to the map
+    // Add the marker to the map with properly typed coordinates
     new mapboxgl.Marker(el)
-      .setLngLat([lng, lat])
+      .setLngLat(coordinates)
       .setPopup(popup)
       .addTo(map);
   });
