@@ -85,6 +85,25 @@ export class Analytics {
     });
   }
 
+  // Track checkout events
+  public trackCheckout(
+    orderId: string,
+    totalAmount: number,
+    items: Array<{
+      productId: string;
+      productName: string;
+      price: number;
+      quantity: number;
+    }>
+  ): void {
+    this.trackEvent('checkout_complete', {
+      orderId,
+      totalAmount,
+      itemCount: items.length,
+      items
+    });
+  }
+
   // Generic event tracking
   public trackEvent(name: string, properties?: Record<string, any>): void {
     if (!this.initialized) {
@@ -115,3 +134,18 @@ export const analytics = Analytics.getInstance();
 
 // Auto-initialize analytics when imported
 analytics.init();
+
+// Export individual tracking functions for easier usage
+export const trackPageView = (path: string) => analytics.trackPageView(path);
+export const trackProductView = (productId: string, productName: string) => analytics.trackProductView(productId, productName);
+export const trackAddToCart = (productId: string, productName: string, price: number, store: string) => 
+  analytics.trackAddToCart(productId, productName, price, store);
+export const trackSetPriceAlert = (productId: string, productName: string, currentPrice: number) => 
+  analytics.trackSetPriceAlert(productId, productName, currentPrice);
+export const trackAddToWishlist = (productId: string, productName: string) => 
+  analytics.trackAddToWishlist(productId, productName);
+export const trackCheckout = (
+  orderId: string, 
+  totalAmount: number, 
+  items: Array<{ productId: string; productName: string; price: number; quantity: number; }>
+) => analytics.trackCheckout(orderId, totalAmount, items);
