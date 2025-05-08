@@ -7,6 +7,7 @@ import { Shop } from "@/types/shop";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface StoreMapProps {
   shops: Shop[];
@@ -16,18 +17,42 @@ interface StoreMapProps {
 export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>("");
-  const [showInput, setShowInput] = useState<boolean>(true);
+  const [mapboxToken, setMapboxToken] = useState<string>(() => {
+    // Try to retrieve token from localStorage if previously saved
+    return localStorage.getItem("mapbox_token") || "";
+  });
+  const [showInput, setShowInput] = useState<boolean>(() => !localStorage.getItem("mapbox_token"));
+  const { toast } = useToast();
 
   // Function to initialize the map
   const initMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
 
-    // Initialize map
-    map.current = initializeMap(mapContainer.current, mapboxToken, shops);
+    try {
+      // Save token to localStorage for future visits
+      localStorage.setItem("mapbox_token", mapboxToken);
+      
+      // Initialize map
+      map.current = initializeMap(mapContainer.current, mapboxToken, shops);
 
-    // Hide the input form
-    setShowInput(false);
+      // Hide the input form
+      setShowInput(false);
+
+      toast({
+        title: "Map loaded successfully",
+        description: "You can now browse nearby stores on the map.",
+      });
+    } catch (error) {
+      console.error("Map initialization error:", error);
+      toast({
+        title: "Map error",
+        description: "There was an error loading the map. Please check your Mapbox token.",
+        variant: "destructive"
+      });
+      // Clear token if invalid
+      localStorage.removeItem("mapbox_token");
+      setShowInput(true);
+    }
   };
 
   // Highlight selected shop on the map when selectedShopId changes
@@ -45,12 +70,19 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
       const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
       
       map.current.flyTo({
-        center: [lng, lat],
+        center: [lng, lat] as [number, number],
         zoom: 14,
         essential: true
       });
     }
   }, [selectedShopId, shops]);
+
+  // Initialize map on component mount if token exists
+  useEffect(() => {
+    if (mapboxToken && !showInput) {
+      initMap();
+    }
+  }, []);
 
   return (
     <div className="relative w-full h-full">
@@ -70,6 +102,7 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
                 placeholder="Enter your Mapbox public token"
                 value={mapboxToken}
                 onChange={(e) => setMapboxToken(e.target.value)}
+                className="flex-1"
               />
               <Button onClick={initMap} disabled={!mapboxToken}>
                 Load Map

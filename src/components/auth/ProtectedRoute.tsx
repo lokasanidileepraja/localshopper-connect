@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Card } from '@/components/ui/card';
+import { LucideShieldAlert, LucideLogIn, LucideUser, LucideHome, LucideArrowLeft } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -17,12 +19,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   redirectTo = '/login',
 }) => {
-  const { isAuthenticated, isLoading, hasRole, user } = useAuth();
+  const { isAuthenticated, isLoading, hasRole, user, switchRole } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <div className="container mx-auto p-8 flex justify-center items-center min-h-[60vh]">
+      <LoadingSpinner />
+    </div>;
   }
 
   if (!hasRole(requiredRole)) {
@@ -33,67 +37,76 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return <Navigate to={redirectTo} state={{ from: location }} replace />;
     }
     
-    // For demo purposes, allow temporary role switching
-    const switchToRole = (role: 'user' | 'retailer' | 'admin') => {
-      // This is just for demo purposes - in a real app you would check permissions on the server
-      localStorage.setItem('tempUserRole', role);
-      window.location.reload();
-      toast({
-        title: "Role Switched",
-        description: `Temporarily switched to ${role} role for demo purposes.`,
-      });
-    };
-    
-    // If authenticated but wrong role
+    // If authenticated but wrong role, show access denied page
     return (
-      <div className="container mx-auto p-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-        <p className="mb-6">
-          You don't have permission to access this page. Your current role is <strong>{user?.role}</strong> but this page requires the <strong>{requiredRole}</strong> role.
-        </p>
-        
-        {/* Demo purpose only - role switching */}
-        <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h2 className="text-lg font-semibold mb-2">Demo Mode: Switch Roles</h2>
-          <p className="mb-4 text-sm text-gray-600">For demonstration purposes, you can temporarily switch your role:</p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Button 
-              variant="outline" 
-              onClick={() => switchToRole('user')}
-              disabled={user?.role === 'user'}
+      <div className="container mx-auto p-4 sm:p-8">
+        <Card className="max-w-3xl mx-auto p-6 text-center">
+          <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="bg-red-100 dark:bg-red-900/20 p-3 rounded-full">
+              <LucideShieldAlert className="h-8 w-8 text-red-500" />
+            </div>
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              You don't have permission to access this page. Your current role is <strong>{user?.role}</strong> but this page requires the <strong>{requiredRole}</strong> role.
+            </p>
+          </div>
+          
+          {/* Demo purpose only - role switching */}
+          <div className="mb-8 p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/30 rounded-lg max-w-xl mx-auto">
+            <h2 className="text-lg font-semibold mb-2 flex items-center gap-2 justify-center">
+              <LucideUser className="h-4 w-4" />
+              <span>Demo Mode: Switch Roles</span>
+            </h2>
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+              For demonstration purposes, you can temporarily switch your role:
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Button 
+                variant="outline" 
+                onClick={() => switchRole('user')}
+                disabled={user?.role === 'user'}
+                className="min-w-[100px]"
+              >
+                Switch to User
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => switchRole('retailer')}
+                disabled={user?.role === 'retailer'}
+                className="min-w-[100px]"
+              >
+                Switch to Retailer
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => switchRole('admin')}
+                disabled={user?.role === 'admin'}
+                className="min-w-[100px]"
+              >
+                Switch to Admin
+              </Button>
+            </div>
+          </div>
+          
+          <div className="space-x-4">
+            <Button
+              onClick={() => window.history.back()}
+              className="gap-2"
+              variant="outline"
             >
-              Switch to User
+              <LucideArrowLeft className="h-4 w-4" />
+              Go Back
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => switchToRole('retailer')}
-              disabled={user?.role === 'retailer'}
+            
+            <Button
+              onClick={() => window.location.href = "/"}
+              className="gap-2"
             >
-              Switch to Retailer
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => switchToRole('admin')}
-              disabled={user?.role === 'admin'}
-            >
-              Switch to Admin
+              <LucideHome className="h-4 w-4" />
+              Return to Homepage
             </Button>
           </div>
-        </div>
-        
-        <Button
-          onClick={() => window.history.back()}
-          className="mr-4"
-        >
-          Go Back
-        </Button>
-        
-        <Button
-          variant="outline"
-          onClick={() => window.location.href = "/"}
-        >
-          Return to Homepage
-        </Button>
+        </Card>
       </div>
     );
   }

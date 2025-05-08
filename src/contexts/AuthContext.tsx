@@ -13,6 +13,7 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   hasRole: (role: 'guest' | 'user' | 'retailer' | 'admin') => boolean;
+  switchRole: (role: 'user' | 'retailer' | 'admin') => void;
 }
 
 // Create the context
@@ -31,6 +32,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(true);
         // In a real app, this would check for an auth token and verify with backend
         const user = await apiService.getCurrentUser();
+        
+        // Check if a temporary role is set (demo mode)
+        const tempRole = localStorage.getItem('tempUserRole');
+        if (tempRole && ['user', 'retailer', 'admin'].includes(tempRole)) {
+          // Override role for demo purposes
+          user.role = tempRole as 'user' | 'retailer' | 'admin';
+        }
+        
         setUser(user);
       } catch (error) {
         console.error("Error loading user:", error);
@@ -56,6 +65,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const user = await apiService.getCurrentUser();
       
       if (user) {
+        // Check if a temporary role is set (demo mode)
+        const tempRole = localStorage.getItem('tempUserRole');
+        if (tempRole && ['user', 'retailer', 'admin'].includes(tempRole)) {
+          // Override role for demo purposes
+          user.role = tempRole as 'user' | 'retailer' | 'admin';
+        }
+        
         setUser(user);
         toast({
           title: "Welcome back!",
@@ -106,6 +122,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
       // In a real app, this would call a logout API
       setUser(null);
+      // Clear any temporary role
+      localStorage.removeItem('tempUserRole');
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out."
@@ -119,6 +137,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  // Temporary role switching (demo purposes only)
+  const switchRole = (role: 'user' | 'retailer' | 'admin') => {
+    localStorage.setItem('tempUserRole', role);
+    
+    if (user) {
+      setUser({
+        ...user,
+        role
+      });
+      
+      toast({
+        title: "Role Switched",
+        description: `You are now using the ${role} role.`,
+      });
     }
   };
   
@@ -148,7 +183,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     register,
     logout,
-    hasRole
+    hasRole,
+    switchRole
   };
   
   return (
