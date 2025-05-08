@@ -8,6 +8,10 @@ import { HelmetProvider } from 'react-helmet-async'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext.tsx'
+import { analytics } from './lib/analytics.ts'
+
+// Initialize analytics at the app root
+analytics.init();
 
 // Create a client
 const queryClient = new QueryClient({

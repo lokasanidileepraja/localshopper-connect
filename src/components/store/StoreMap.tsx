@@ -2,12 +2,13 @@
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { initializeMap } from "@/utils/mapUtils";
+import { initializeMap, getRandomCoordinates } from "@/utils/mapUtils";
 import { Shop } from "@/types/shop";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface StoreMapProps {
   shops: Shop[];
@@ -22,11 +23,16 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
     return localStorage.getItem("mapbox_token") || "";
   });
   const [showInput, setShowInput] = useState<boolean>(() => !localStorage.getItem("mapbox_token"));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Function to initialize the map
   const initMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
+    
+    setLoading(true);
+    setError(null);
 
     try {
       // Save token to localStorage for future visits
@@ -37,21 +43,20 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
 
       // Hide the input form
       setShowInput(false);
-
+      
       toast({
         title: "Map loaded successfully",
         description: "You can now browse nearby stores on the map.",
       });
     } catch (error) {
       console.error("Map initialization error:", error);
-      toast({
-        title: "Map error",
-        description: "There was an error loading the map. Please check your Mapbox token.",
-        variant: "destructive"
-      });
+      setError("There was an error loading the map. Please check your Mapbox token.");
+      
       // Clear token if invalid
       localStorage.removeItem("mapbox_token");
       setShowInput(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,31 +69,52 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
     if (selectedShop) {
       console.log(`Selected shop: ${selectedShop.name}`);
       
-      // For demo purposes, we'll just center the map on a random location
+      // For demo purposes, we'll use a random location near Delhi
       // In a real app, you would have the actual coordinates
-      const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
-      const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
+      const [lng, lat] = getRandomCoordinates(77.2090, 28.6139, 3);
       
       map.current.flyTo({
         center: [lng, lat] as [number, number],
         zoom: 14,
         essential: true
       });
+      
+      toast({
+        title: selectedShop.name,
+        description: `${selectedShop.isOpen ? "Open" : "Closed"} • ${selectedShop.distance} away`,
+      });
     }
-  }, [selectedShopId, shops]);
+  }, [selectedShopId, shops, toast]);
 
   // Initialize map on component mount if token exists
   useEffect(() => {
-    if (mapboxToken && !showInput) {
+    if (mapboxToken && !showInput && !map.current) {
       initMap();
     }
+    
+    // Cleanup function
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
   }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mapboxToken.trim()) {
+      setError("Please enter a valid Mapbox token");
+      return;
+    }
+    initMap();
+  };
 
   return (
     <div className="relative w-full h-full">
       {showInput ? (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-          <div className="w-full max-w-md space-y-4">
+          <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
             <Alert>
               <AlertTitle>Mapbox API Key Required</AlertTitle>
               <AlertDescription>
@@ -96,6 +122,13 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
                 You can get one for free at <a href="https://www.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">mapbox.com</a>.
               </AlertDescription>
             </Alert>
+            
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
             <div className="flex gap-2">
               <Input
                 type="text"
@@ -104,17 +137,23 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
                 onChange={(e) => setMapboxToken(e.target.value)}
                 className="flex-1"
               />
-              <Button onClick={initMap} disabled={!mapboxToken}>
-                Load Map
+              <Button type="submit" disabled={loading || !mapboxToken.trim()}>
+                {loading ? <LoadingSpinner size="sm" /> : "Load Map"}
               </Button>
             </div>
-          </div>
+          </form>
         </div>
       ) : null}
       
       <div ref={mapContainer} className="absolute inset-0 rounded-lg" />
       
-      {!map.current && !showInput && (
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 rounded-lg">
+          <LoadingSpinner size="lg" />
+        </div>
+      )}
+      
+      {!map.current && !showInput && !loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
           <p className="text-gray-500">Loading map...</p>
         </div>

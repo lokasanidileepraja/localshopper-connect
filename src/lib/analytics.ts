@@ -1,23 +1,18 @@
 
-// This is a placeholder file for actual analytics service
-// In a real implementation, this would be connected to PostHog, Google Analytics, etc.
+// Simple analytics service for tracking user behavior
+type AnalyticsEvent = {
+  name: string;
+  properties?: Record<string, any>;
+  timestamp: number;
+};
 
-interface EventProperties {
-  [key: string]: any;
-}
-
-interface IdentifyProperties {
-  userId: string;
-  properties?: {
-    [key: string]: any;
-  };
-}
-
-class Analytics {
+export class Analytics {
   private static instance: Analytics;
-  private isInitialized = false;
-  private debugMode = false;
+  private initialized: boolean = false;
+  private events: AnalyticsEvent[] = [];
+  private userId: string | null = null;
 
+  // Make constructor private for singleton pattern
   private constructor() {}
 
   public static getInstance(): Analytics {
@@ -27,97 +22,96 @@ class Analytics {
     return Analytics.instance;
   }
 
-  public init(options: { debugMode?: boolean } = {}): void {
-    this.debugMode = options.debugMode || false;
-    this.isInitialized = true;
+  // Initialize analytics with user ID if available
+  public init(userId?: string): void {
+    this.initialized = true;
+    if (userId) {
+      this.userId = userId;
+    }
+    console.log('Analytics initialized', userId ? `for user ${userId}` : 'anonymously');
+  }
+
+  // Track a page view
+  public trackPageView(path: string): void {
+    if (!this.initialized) {
+      // Auto-initialize if not done yet for better developer experience
+      this.init();
+    }
     
-    if (this.debugMode) {
-      console.log('Analytics initialized with debug mode');
-    }
+    this.trackEvent('page_view', { path });
   }
 
-  public trackEvent(eventName: string, properties?: EventProperties): void {
-    if (!this.isInitialized) {
-      console.warn('Analytics not initialized. Call init() first.');
-      return;
-    }
-
-    if (this.debugMode) {
-      console.log(`EVENT: ${eventName}`, properties || {});
-    }
-
-    // In a real implementation, this would call the actual analytics service
-    // Example: posthog.capture(eventName, properties);
+  // Track when a product is viewed
+  public trackProductView(productId: string, productName: string): void {
+    this.trackEvent('product_view', { productId, productName });
   }
 
-  public identify(properties: IdentifyProperties): void {
-    if (!this.isInitialized) {
-      console.warn('Analytics not initialized. Call init() first.');
-      return;
-    }
-
-    if (this.debugMode) {
-      console.log(`IDENTIFY: User ${properties.userId}`, properties.properties || {});
-    }
-
-    // In a real implementation, this would call the actual analytics service
-    // Example: posthog.identify(properties.userId, properties.properties);
+  // Track when an item is added to cart
+  public trackAddToCart(
+    productId: string,
+    productName: string, 
+    price: number,
+    store: string
+  ): void {
+    this.trackEvent('add_to_cart', { 
+      productId, 
+      productName, 
+      price, 
+      store 
+    });
   }
-  
-  public trackPageView(pageName: string, pageProperties?: EventProperties): void {
-    if (!this.isInitialized) {
+
+  // Track when a price alert is set
+  public trackSetPriceAlert(
+    productId: string,
+    productName: string,
+    currentPrice: number
+  ): void {
+    this.trackEvent('set_price_alert', {
+      productId,
+      productName,
+      currentPrice
+    });
+  }
+
+  // Track when an item is added to wishlist
+  public trackAddToWishlist(
+    productId: string,
+    productName: string
+  ): void {
+    this.trackEvent('add_to_wishlist', {
+      productId,
+      productName
+    });
+  }
+
+  // Generic event tracking
+  public trackEvent(name: string, properties?: Record<string, any>): void {
+    if (!this.initialized) {
       console.warn('Analytics not initialized. Call init() first.');
-      return;
+      this.init(); // Auto-initialize
     }
+    
+    const event: AnalyticsEvent = {
+      name,
+      properties,
+      timestamp: Date.now()
+    };
+    
+    this.events.push(event);
+    
+    // In a real app, we would send this to a server
+    console.log(`Analytics event: ${name}`, properties);
+  }
 
-    if (this.debugMode) {
-      console.log(`PAGEVIEW: ${pageName}`, pageProperties || {});
-    }
-
-    // In a real implementation, this would call the actual analytics service
-    // Example: posthog.capture('$pageview', { page: pageName, ...pageProperties });
+  // Get all tracked events (for debugging)
+  public getEvents(): AnalyticsEvent[] {
+    return [...this.events];
   }
 }
 
+// Create and export singleton instance
 export const analytics = Analytics.getInstance();
 
-// Event tracking hooks for common actions
-export const trackAddToCart = (productId: string, productName: string, price: number, store?: string) => {
-  analytics.trackEvent('add_to_cart', {
-    product_id: productId,
-    product_name: productName,
-    price,
-    store
-  });
-};
-
-export const trackSetPriceAlert = (productId: string, productName: string, currentPrice: number, targetPrice?: number) => {
-  analytics.trackEvent('set_price_alert', {
-    product_id: productId,
-    product_name: productName,
-    current_price: currentPrice,
-    target_price: targetPrice || currentPrice
-  });
-};
-
-export const trackAddToWishlist = (productId: string, productName: string) => {
-  analytics.trackEvent('add_to_wishlist', {
-    product_id: productId,
-    product_name: productName
-  });
-};
-
-export const trackCheckout = (orderId: string, totalAmount: number, itemCount: number) => {
-  analytics.trackEvent('checkout', {
-    order_id: orderId,
-    total_amount: totalAmount,
-    item_count: itemCount
-  });
-};
-
-export const trackSearch = (query: string, resultCount: number) => {
-  analytics.trackEvent('search', {
-    query,
-    result_count: resultCount
-  });
-};
+// Auto-initialize analytics when imported
+analytics.init();

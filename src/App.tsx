@@ -1,6 +1,6 @@
 
-import React, { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { lazy, Suspense, useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Welcome from "@/pages/Welcome";
 import Index from "@/pages/Index";
@@ -43,6 +43,7 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Leaderboard from "@/pages/community/Leaderboard";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import NotFound from "@/pages/NotFound"; // Import the NotFound page
 
 // Retailer pages
 import RetailerDashboard from "@/pages/retailer/RetailerDashboard";
@@ -63,7 +64,6 @@ import AdminStorePerformance from "@/pages/admin/AdminStorePerformance";
 // Providers
 import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
 import { analytics } from "@/lib/analytics";
-import { useLocation } from "react-router-dom";
 
 // Lazy load non-critical pages for performance optimization
 const PriceComparePage = lazy(() => import("@/pages/PriceComparePage"));
@@ -73,8 +73,13 @@ const EnhancedPriceCompare = lazy(() => import("@/pages/EnhancedPriceCompare"));
 function App() {
   const location = useLocation();
   
+  // Initialize analytics when the app first loads
+  useEffect(() => {
+    analytics.init();
+  }, []);
+  
   // Track page views
-  React.useEffect(() => {
+  useEffect(() => {
     analytics.trackPageView(location.pathname);
   }, [location]);
 
@@ -287,6 +292,9 @@ function App() {
               </Suspense>
             } />
           </Route>
+          
+          {/* 404 page - must be last */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </FeatureFlagProvider>
     </ErrorBoundary>
