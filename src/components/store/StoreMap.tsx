@@ -9,15 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { StoreMarker } from "./StoreMarker";
+import ReactDOM from "react-dom";
+import { analytics } from "@/lib/analytics";
 
 interface StoreMapProps {
   shops: Shop[];
   selectedShopId: string | null;
+  onShopSelect: (shopId: string) => void;
 }
 
-export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
+export const StoreMap = ({ shops, selectedShopId, onShopSelect }: StoreMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const [mapboxToken, setMapboxToken] = useState<string>(() => {
     // Try to retrieve token from localStorage if previously saved
     return localStorage.getItem("mapbox_token") || "";
@@ -38,8 +43,43 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
       // Save token to localStorage for future visits
       localStorage.setItem("mapbox_token", mapboxToken);
       
-      // Initialize map
-      map.current = initializeMap(mapContainer.current, mapboxToken, shops);
+      // Initialize the base map without markers
+      mapboxgl.accessToken = mapboxToken;
+      
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [77.2090, 28.6139], // Default to Delhi coordinates
+        zoom: 11
+      });
+
+      // Add navigation controls
+      map.current.addControl(
+        new mapboxgl.NavigationControl(),
+        'top-right'
+      );
+      
+      // Add a scale control
+      map.current.addControl(
+        new mapboxgl.ScaleControl(), 
+        'bottom-left'
+      );
+
+      // Add a geolocation control to show user's location
+      map.current.addControl(
+        new mapboxgl.GeolocateControl({
+          positionOptions: {
+            enableHighAccuracy: true
+          },
+          trackUserLocation: true,
+          showUserHeading: true
+        })
+      );
+
+      // Wait for the map to load before adding markers
+      map.current.on('load', () => {
+        addMarkersToMap();
+      });
 
       // Hide the input form
       setShowInput(false);
@@ -48,6 +88,10 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
         title: "Map loaded successfully",
         description: "You can now browse nearby stores on the map.",
       });
+      
+      analytics.trackEvent('map_initialized', { 
+        success: true
+      });
     } catch (error) {
       console.error("Map initialization error:", error);
       setError("There was an error loading the map. Please check your Mapbox token.");
@@ -55,36 +99,103 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
       // Clear token if invalid
       localStorage.removeItem("mapbox_token");
       setShowInput(true);
+      
+      analytics.trackEvent('map_error', { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stage: 'initialization'
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Highlight selected shop on the map when selectedShopId changes
+  // Function to add interactive markers to the map
+  const addMarkersToMap = () => {
+    if (!map.current) return;
+    
+    // Clear existing markers
+    Object.values(markersRef.current).forEach(marker => marker.remove());
+    markersRef.current = {};
+    
+    // Add a marker for each store
+    shops.forEach(shop => {
+      try {
+        // For demo purposes, generating random coordinates around Delhi
+        // In a real app, you would use actual store coordinates
+        const lat = 28.6139 + (Math.random() - 0.5) * 0.1;
+        const lng = 77.2090 + (Math.random() - 0.5) * 0.1;
+        
+        // Create a DOM element for the custom marker
+        const markerElement = document.createElement('div');
+        markerElement.className = 'store-marker';
+        
+        // Use React to render our custom marker component
+        const marker = new mapboxgl.Marker({
+          element: markerElement,
+          anchor: 'bottom',
+        }).setLngLat([lng, lat]);
+        
+        // Add to map
+        marker.addTo(map.current as mapboxgl.Map);
+        
+        // Store reference to remove later
+        markersRef.current[shop.id] = marker;
+        
+        // Render our React component inside the marker element
+        ReactDOM.render(
+          <StoreMarker 
+            shop={shop} 
+            onClick={onShopSelect}
+            isSelected={selectedShopId === shop.id}
+          />,
+          markerElement
+        );
+      } catch (error) {
+        console.error(`Error adding marker for ${shop.name}:`, error);
+        
+        analytics.trackEvent('map_marker_error', { 
+          shopId: shop.id,
+          shopName: shop.name,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+    
+    // Adjust map bounds to fit all markers if we have shops
+    if (shops.length > 0 && map.current) {
+      const bounds = new mapboxgl.LngLatBounds();
+      
+      Object.values(markersRef.current).forEach(marker => {
+        bounds.extend(marker.getLngLat());
+      });
+      
+      map.current.fitBounds(bounds, {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxZoom: 15
+      });
+    }
+  };
+
+  // Fly to selected shop when selectedShopId changes
   useEffect(() => {
     if (!map.current || !selectedShopId) return;
     
-    // Find the selected shop
-    const selectedShop = shops.find(shop => shop.id === selectedShopId);
-    if (selectedShop) {
-      console.log(`Selected shop: ${selectedShop.name}`);
-      
-      // For demo purposes, we'll use a random location near Delhi
-      // In a real app, you would have the actual coordinates
-      const [lng, lat] = getRandomCoordinates(77.2090, 28.6139, 3);
-      
+    const marker = markersRef.current[selectedShopId];
+    if (marker) {
       map.current.flyTo({
-        center: [lng, lat] as [number, number],
+        center: marker.getLngLat(),
         zoom: 14,
         essential: true
       });
-      
-      toast({
-        title: selectedShop.name,
-        description: `${selectedShop.isOpen ? "Open" : "Closed"} • ${selectedShop.distance} away`,
-      });
     }
-  }, [selectedShopId, shops, toast]);
+  }, [selectedShopId]);
+
+  // Update markers when shops list changes
+  useEffect(() => {
+    if (map.current && map.current.loaded()) {
+      addMarkersToMap();
+    }
+  }, [shops]);
 
   // Initialize map on component mount if token exists
   useEffect(() => {
@@ -94,6 +205,12 @@ export const StoreMap = ({ shops, selectedShopId }: StoreMapProps) => {
     
     // Cleanup function
     return () => {
+      // Clean up ReactDOM renders to prevent memory leaks
+      Object.values(markersRef.current).forEach(marker => {
+        const markerElement = marker.getElement();
+        ReactDOM.unmountComponentAtNode(markerElement);
+      });
+      
       if (map.current) {
         map.current.remove();
         map.current = null;
