@@ -2,6 +2,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 
 interface Props {
   children: ReactNode;
@@ -29,6 +30,14 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log the error to an error reporting service
     console.error("Error caught by ErrorBoundary:", error, errorInfo);
+    
+    // Track error in analytics
+    analytics.trackEvent("error_boundary_caught", { 
+      errorMessage: error.message,
+      errorStack: error.stack,
+      componentStack: errorInfo.componentStack
+    });
+    
     this.setState({
       error,
       errorInfo,
@@ -58,6 +67,16 @@ export class ErrorBoundary extends Component<Props, State> {
                 <p className="font-mono text-sm">
                   {this.state.error?.toString() || "An unknown error occurred"}
                 </p>
+                {this.state.errorInfo && (
+                  <details className="mt-2">
+                    <summary className="text-xs font-medium text-gray-500 cursor-pointer">
+                      Component Stack Details
+                    </summary>
+                    <pre className="mt-2 text-xs overflow-auto whitespace-pre-wrap">
+                      {this.state.errorInfo.componentStack}
+                    </pre>
+                  </details>
+                )}
               </div>
               <Button 
                 onClick={this.handleReset}

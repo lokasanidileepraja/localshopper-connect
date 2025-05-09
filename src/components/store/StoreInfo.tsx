@@ -2,16 +2,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Clock, Phone, ExternalLink, Navigation } from "lucide-react";
+import { Star, MapPin, Clock, Phone, ExternalLink, Navigation, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { analytics } from "@/lib/analytics";
 
 interface StoreInfoProps {
   id: string;
   name: string;
   address: string;
   phone: string;
-  hours: string;
+  hours?: string;
   rating: number;
   isOpen: boolean;
 }
@@ -21,7 +22,7 @@ export const StoreInfo = ({
   name,
   address,
   phone,
-  hours,
+  hours = "Not available",
   rating,
   isOpen,
 }: StoreInfoProps) => {
@@ -32,6 +33,11 @@ export const StoreInfo = ({
     toast({
       title: "Contact Store",
       description: "Initiating call to store...",
+    });
+    
+    analytics.trackEvent('store_contact', { 
+      storeId: id, 
+      storeName: name 
     });
   };
 
@@ -47,6 +53,12 @@ export const StoreInfo = ({
       title: "Get Directions",
       description: "Opening store location in maps...",
     });
+    
+    analytics.trackEvent('store_directions', { 
+      storeId: id, 
+      storeName: name,
+      address
+    });
   };
 
   const handleWebsite = () => {
@@ -56,7 +68,15 @@ export const StoreInfo = ({
       title: "Visit Website",
       description: "Opening store website...",
     });
+    
+    analytics.trackEvent('store_website_visit', { 
+      storeId: id, 
+      storeName: name 
+    });
   };
+
+  // Check if important data is missing
+  const hasMissingData = !address || !phone;
 
   return (
     <motion.div
@@ -72,15 +92,22 @@ export const StoreInfo = ({
           </Badge>
         </CardHeader>
         <CardContent className="space-y-6">
+          {hasMissingData && (
+            <div className="bg-yellow-50 border border-yellow-100 rounded-md p-3 flex items-center gap-2 text-yellow-700">
+              <AlertTriangle className="h-4 w-4" />
+              <p className="text-xs">Some store information may be incomplete</p>
+            </div>
+          )}
+          
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="h-4 w-4 text-gray-500" />
-              <span>{address}</span>
+              <span>{address || "Address not available"}</span>
             </div>
 
             <div className="flex items-center gap-3 text-sm">
               <Phone className="h-4 w-4 text-gray-500" />
-              <span>{phone}</span>
+              <span>{phone || "Phone not available"}</span>
             </div>
 
             <div className="flex items-center gap-3 text-sm">
@@ -90,7 +117,7 @@ export const StoreInfo = ({
 
             <div className="flex items-center gap-2 text-sm">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span>{rating} / 5.0</span>
+              <span>{rating.toFixed(1)} / 5.0</span>
             </div>
           </div>
 
@@ -99,6 +126,7 @@ export const StoreInfo = ({
               variant="outline" 
               className="w-full gap-2" 
               onClick={handleDirections}
+              disabled={!address}
             >
               <Navigation className="h-4 w-4" />
               Directions
@@ -107,6 +135,7 @@ export const StoreInfo = ({
               variant="outline" 
               className="w-full gap-2" 
               onClick={handleContact}
+              disabled={!phone}
             >
               <Phone className="h-4 w-4" />
               Call

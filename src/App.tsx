@@ -43,7 +43,7 @@ import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Leaderboard from "@/pages/community/Leaderboard";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import NotFound from "@/pages/NotFound"; // Import the NotFound page
+import NotFound from "@/pages/NotFound";
 
 // Retailer pages
 import RetailerDashboard from "@/pages/retailer/RetailerDashboard";
@@ -63,7 +63,7 @@ import AdminStorePerformance from "@/pages/admin/AdminStorePerformance";
 
 // Providers
 import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
-import { analytics } from "@/lib/analytics";
+import { analytics, trackPageView } from "@/lib/analytics";
 
 // Lazy load non-critical pages for performance optimization
 const PriceComparePage = lazy(() => import("@/pages/PriceComparePage"));
@@ -75,12 +75,14 @@ function App() {
   
   // Initialize analytics when the app first loads
   useEffect(() => {
-    analytics.init();
+    // Generate a unique session ID
+    const sessionId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    analytics.init(sessionId);
   }, []);
   
   // Track page views
   useEffect(() => {
-    analytics.trackPageView(location.pathname);
+    trackPageView(location.pathname);
   }, [location]);
 
   return (
