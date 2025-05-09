@@ -150,6 +150,7 @@ const NearbyStores = () => {
                   <StoreMap 
                     shops={shops} 
                     selectedShopId={selectedShopId} 
+                    onShopSelect={handleShopSelect} 
                   />
                 </div>
               </CardContent>
