@@ -8,6 +8,7 @@ import { PriceAlertView } from "./PriceAlertView";
 import { MapPin, BarChart3, TableProperties, Clock, BellRing, Store } from "lucide-react";
 import { useEffect } from "react";
 import { analytics } from "@/lib/analytics";
+import { BulkPurchaseView } from "./BulkPurchaseView";
 
 interface PriceCompareTabsProps {
   searchQuery: string;
@@ -93,7 +94,7 @@ export const PriceCompareTabs = ({ searchQuery, filters }: PriceCompareTabsProps
       </TabsContent>
 
       <TabsContent value="stores">
-        <MapView 
+        <BulkPurchaseView 
           searchQuery={searchQuery}
           filters={filters}
         />
