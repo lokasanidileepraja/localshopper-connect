@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Card, 
@@ -32,7 +31,7 @@ import { ELECTRONICS_SHOPS } from "@/data/shops";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Clock, Package, Percent, MessageSquare, Store, ShoppingBag } from "lucide-react";
 import { Shop } from "@/types/shop";
-import { Product } from "@/types/models";
+import { BaseProduct } from "@/types/models";
 import { products } from "@/data/products";
 import { motion } from "framer-motion";
 
@@ -46,10 +45,25 @@ interface BulkPurchaseViewProps {
   };
 }
 
+// Use a type that's compatible with both shop.Product and models.Product
+type DisplayProduct = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: number;
+  stock: number;
+  brand: string;
+  model: string;
+  inStock: boolean;
+};
+
 export const BulkPurchaseView = ({ searchQuery, filters }: BulkPurchaseViewProps) => {
   const { toast } = useToast();
   const [selectedStore, setSelectedStore] = useState<Shop | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<DisplayProduct | null>(null);
   const [quantity, setQuantity] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -65,7 +79,7 @@ export const BulkPurchaseView = ({ searchQuery, filters }: BulkPurchaseViewProps
   });
 
   // Get available products based on search query
-  const allProducts: Product[] = Object.values(products).flat();
+  const allProducts: DisplayProduct[] = Object.values(products).flat() as DisplayProduct[];
   const availableProducts = searchQuery 
     ? allProducts.filter(p => 
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
