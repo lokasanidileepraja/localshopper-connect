@@ -1,3 +1,4 @@
+
 import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -62,7 +63,7 @@ import AdminStorePerformance from "@/pages/admin/AdminStorePerformance";
 
 // Providers
 import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
-import { analytics, trackPageView } from "@/lib/analytics";
+import { trackPageView } from "@/lib/analytics";
 import { Toaster } from "@/components/ui/toaster";
 
 // Lazy load non-critical pages for performance optimization

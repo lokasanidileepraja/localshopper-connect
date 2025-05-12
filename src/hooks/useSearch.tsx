@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useSearchStore } from '@/store/searchStore';
 import { useToast } from '@/hooks/use-toast';

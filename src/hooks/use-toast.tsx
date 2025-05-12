@@ -1,5 +1,4 @@
 
-// Use toast implementation
 import * as React from "react";
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
 
@@ -11,7 +10,7 @@ type ToasterToast = {
   action?: ToastActionElement;
   open?: boolean;
   variant?: "default" | "destructive";
-  duration?: number; // Add duration property
+  duration?: number;
 };
 
 const TOAST_LIMIT = 20;
@@ -114,9 +113,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
   );
 }
 
-// Legacy compatibility function
+// Replace the legacy compatibility function with a more descriptive warning
 export const toast = (props: Omit<ToasterToast, "id">) => {
   console.warn(
-    "Direct toast call is deprecated. Use useToast hook instead."
+    "Direct toast call is deprecated. Use the useToast hook instead."
   );
 };
