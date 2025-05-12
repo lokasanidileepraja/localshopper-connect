@@ -12,6 +12,7 @@ type ToasterToast = {
   action?: ToastActionElement;
   open?: boolean;
   variant?: "default" | "destructive";
+  duration?: number; // Add duration property
 };
 
 const TOAST_LIMIT = 20;

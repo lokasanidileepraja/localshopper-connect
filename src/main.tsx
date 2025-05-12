@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import { analytics } from './lib/analytics.ts'
+import { ToastProvider } from './hooks/use-toast'
 
 // Initialize analytics only once at the app root
 if (!window.analyticsInitialized) {
@@ -31,10 +32,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <AuthProvider>
-          <BrowserRouter>
-            <App />
-            <Toaster />
-          </BrowserRouter>
+          <ToastProvider>
+            <BrowserRouter>
+              <App />
+              <Toaster />
+            </BrowserRouter>
+          </ToastProvider>
         </AuthProvider>
       </HelmetProvider>
     </QueryClientProvider>
