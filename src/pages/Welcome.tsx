@@ -11,10 +11,17 @@ import { analytics } from "@/lib/analytics";
 const Welcome = () => {
   const navigate = useNavigate();
 
+  // Initialize analytics just once on component mount
   useEffect(() => {
-    // Initialize analytics on component mount
-    analytics.init();
-    analytics.trackPageView('/welcome');
+    // Only initialize once per session
+    if (!window.analyticsInitialized) {
+      analytics.init();
+      analytics.trackPageView('/welcome');
+      window.analyticsInitialized = true;
+    } else {
+      // Just track the page view if already initialized
+      analytics.trackPageView('/welcome');
+    }
   }, []);
   
   const features = [

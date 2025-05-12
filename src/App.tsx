@@ -1,3 +1,4 @@
+
 import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -69,17 +70,17 @@ const PriceComparePage = lazy(() => import("@/pages/PriceComparePage"));
 const Search = lazy(() => import("@/pages/Search"));
 const EnhancedPriceCompare = lazy(() => import("@/pages/EnhancedPriceCompare"));
 
+// Extend Window interface to track analytics initialization
+declare global {
+  interface Window {
+    analyticsInitialized?: boolean;
+  }
+}
+
 function App() {
   const location = useLocation();
   
-  // Initialize analytics when the app first loads
-  useEffect(() => {
-    // Generate a unique session ID
-    const sessionId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    analytics.init(sessionId);
-  }, []);
-  
-  // Track page views
+  // Track page views but don't re-initialize analytics
   useEffect(() => {
     trackPageView(location.pathname);
   }, [location]);

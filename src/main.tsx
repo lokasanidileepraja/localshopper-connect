@@ -10,8 +10,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import { analytics } from './lib/analytics.ts'
 
-// Initialize analytics at the app root with a unique identifier (can be anonymous)
-analytics.init(`user_${Date.now()}`);
+// Initialize analytics only once at the app root
+if (!window.analyticsInitialized) {
+  analytics.init(`user_${Date.now()}`);
+  window.analyticsInitialized = true;
+}
 
 // Create a client
 const queryClient = new QueryClient({
