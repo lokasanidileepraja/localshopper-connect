@@ -1,7 +1,7 @@
 
 // Use toast implementation
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, createContext, useContext } from "react";
 
 type ToasterToast = Toast & {
   id: string;
@@ -94,18 +94,20 @@ export function ToastProvider({ children }: ToastProviderProps) {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   };
 
-  return (
-    <ToastContext.Provider
-      value={{
-        toasts,
-        addToast,
-        updateToast,
-        dismissToast,
-        removeToast,
-      }}
-    >
-      {children}
-    </ToastContext.Provider>
+  // Create the context value object
+  const contextValue: ToastContextType = {
+    toasts,
+    addToast,
+    updateToast,
+    dismissToast,
+    removeToast
+  };
+
+  // Use React.createElement instead of JSX since this is a .ts file
+  return React.createElement(
+    ToastContext.Provider,
+    { value: contextValue },
+    children
   );
 }
 
