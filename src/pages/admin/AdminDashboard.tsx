@@ -15,7 +15,7 @@ import {
   Database,
   ListOrdered,
   UserCog,
-  FileChart,
+  ChartPie, // Replaced FileChart with ChartPie
   UserSearch,
   DollarSign,
   MapPin,

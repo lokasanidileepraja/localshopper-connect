@@ -11,7 +11,7 @@ export function AnalyticsDashboard() {
   const handleExportData = () => {
     toast({
       title: "Export Started",
-      description: "Analytics data is being prepared for download.",
+      description: "Analytics data is being prepared for download."
     });
   };
   
