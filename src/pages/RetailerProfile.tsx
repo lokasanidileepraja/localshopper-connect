@@ -5,19 +5,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Lazy load components to improve initial loading time
-const ProductManagement = lazy(() => import("@/components/retailer/ProductManagement"));
-const InventoryTracking = lazy(() => import("@/components/retailer/InventoryTracking"));
-const OrderManagement = lazy(() => import("@/components/retailer/OrderManagement"));
-const CustomerInteraction = lazy(() => import("@/components/retailer/CustomerInteraction"));
-const PromotionsManagement = lazy(() => import("@/components/retailer/PromotionsManagement"));
-const RetailerAnalytics = lazy(() => import("@/components/retailer/RetailerAnalytics"));
-const DeliveryOptions = lazy(() => import("@/components/retailer/DeliveryOptions"));
-const PaymentManagement = lazy(() => import("@/components/retailer/PaymentManagement"));
-const UserAccessControl = lazy(() => import("@/components/retailer/UserAccessControl"));
-const RetailerSupport = lazy(() => import("@/components/retailer/RetailerSupport"));
-const RetailerDashboard = lazy(() => import("@/components/retailer/RetailerDashboard"));
-const WhatsAppUpdates = lazy(() => import("@/components/retailer/WhatsAppUpdates"));
+// Correct lazy loading imports to properly handle exports that aren't default exports
+const ProductManagement = lazy(() => import("@/components/retailer/ProductManagement").then(module => ({ default: () => <module.ProductManagement /> })));
+const InventoryTracking = lazy(() => import("@/components/retailer/InventoryTracking").then(module => ({ default: () => <module.InventoryTracking /> })));
+const OrderManagement = lazy(() => import("@/components/retailer/OrderManagement").then(module => ({ default: () => <module.OrderManagement /> })));
+const CustomerInteraction = lazy(() => import("@/components/retailer/CustomerInteraction").then(module => ({ default: () => <module.CustomerInteraction /> })));
+const PromotionsManagement = lazy(() => import("@/components/retailer/PromotionsManagement").then(module => ({ default: () => <module.PromotionsManagement /> })));
+const RetailerAnalytics = lazy(() => import("@/components/retailer/RetailerAnalytics").then(module => ({ default: () => <module.RetailerAnalytics /> })));
+const DeliveryOptions = lazy(() => import("@/components/retailer/DeliveryOptions").then(module => ({ default: () => <module.DeliveryOptions /> })));
+const PaymentManagement = lazy(() => import("@/components/retailer/PaymentManagement").then(module => ({ default: () => <module.PaymentManagement /> })));
+const UserAccessControl = lazy(() => import("@/components/retailer/UserAccessControl").then(module => ({ default: () => <module.UserAccessControl /> })));
+const RetailerSupport = lazy(() => import("@/components/retailer/RetailerSupport").then(module => ({ default: () => <module.RetailerSupport /> })));
+const RetailerDashboard = lazy(() => import("@/components/retailer/RetailerDashboard").then(module => ({ default: () => <module.RetailerDashboard /> })));
+const WhatsAppUpdates = lazy(() => import("@/components/retailer/WhatsAppUpdates").then(module => ({ default: () => <module.WhatsAppUpdates /> })));
 
 const RetailerProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
