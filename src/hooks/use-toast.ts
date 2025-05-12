@@ -1,7 +1,6 @@
 
 // Use toast implementation
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
-import { useToast as useToastOriginal } from "@radix-ui/react-toast";
 import { useState, useEffect, createContext, useContext } from "react";
 
 type ToasterToast = Toast & {
@@ -56,7 +55,11 @@ export function useToast() {
   };
 }
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+interface ToastProviderProps {
+  children: React.ReactNode;
+}
+
+export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToasterToast[]>([]);
 
   const addToast = (toast: ToasterToast) => {
