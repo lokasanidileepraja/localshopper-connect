@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -239,7 +238,7 @@ const AdminDashboard = () => {
             Users
           </TabsTrigger>
           <TabsTrigger value="reports">
-            <FileChart className="h-4 w-4 mr-1" />
+            <ChartPie className="h-4 w-4 mr-1" />
             Reports
           </TabsTrigger>
           <TabsTrigger value="insights">

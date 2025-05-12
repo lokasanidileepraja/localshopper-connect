@@ -1,19 +1,17 @@
 
 // Use toast implementation
+import * as React from "react";
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
 import { useState, createContext, useContext } from "react";
 
-// Extend ToastProps to include description
-interface ExtendedToastProps extends ToastProps {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-}
-
-type ToasterToast = Toast & {
+// Define proper types for our toast system
+type ToasterToast = {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  open?: boolean;
+  variant?: "default" | "destructive";
 };
 
 const TOAST_LIMIT = 20;
@@ -41,7 +39,7 @@ export function useToast() {
 
   return {
     toasts,
-    toast: (props: ExtendedToastProps & { id?: string }) => {
+    toast: (props: Omit<ToasterToast, "id"> & { id?: string }) => {
       const id = props.id || String(Math.random());
 
       addToast({
@@ -52,12 +50,12 @@ export function useToast() {
       return {
         id,
         dismiss: () => dismissToast(id),
-        update: (props: ExtendedToastProps) =>
+        update: (props: Partial<ToasterToast>) =>
           updateToast(id, { ...props }),
       };
     },
     dismiss: (id: string) => dismissToast(id),
-    update: (id: string, props: ExtendedToastProps) => updateToast(id, { ...props }),
+    update: (id: string, props: Partial<ToasterToast>) => updateToast(id, { ...props }),
   };
 }
 
@@ -118,7 +116,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
 }
 
 // Legacy compatibility function
-export const toast = ({ ...props }: ExtendedToastProps) => {
+export const toast = (props: Omit<ToasterToast, "id">) => {
   console.warn(
     "Direct toast call is deprecated. Use useToast hook instead."
   );
