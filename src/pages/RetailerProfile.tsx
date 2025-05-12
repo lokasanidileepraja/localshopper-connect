@@ -1,11 +1,11 @@
 
-import { useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useMemo, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Correct lazy loading imports to properly handle exports that aren't default exports
+// Optimize lazy loading with proper dynamic imports and memoization
 const ProductManagement = lazy(() => import("@/components/retailer/ProductManagement").then(module => ({ default: () => <module.ProductManagement /> })));
 const InventoryTracking = lazy(() => import("@/components/retailer/InventoryTracking").then(module => ({ default: () => <module.InventoryTracking /> })));
 const OrderManagement = lazy(() => import("@/components/retailer/OrderManagement").then(module => ({ default: () => <module.OrderManagement /> })));
@@ -23,8 +23,13 @@ const RetailerProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const isMobile = useIsMobile();
 
-  // Only load the currently active tab
-  const renderTabContent = (tabName: string, Component: React.ComponentType<any>) => {
+  // Memoize tab change handler to prevent unnecessary re-renders
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value);
+  }, []);
+
+  // Only load the currently active tab with optimized rendering
+  const renderTabContent = useCallback((tabName: string, Component: React.ComponentType<any>) => {
     if (activeTab !== tabName) return null;
     
     return (
@@ -32,7 +37,25 @@ const RetailerProfile = () => {
         <Component />
       </Suspense>
     );
-  };
+  }, [activeTab]);
+
+  // Memoize TabsList to prevent re-renders
+  const tabsList = useMemo(() => (
+    <TabsList className="w-full overflow-x-auto flex justify-start bg-transparent h-auto p-1">
+      <TabsTrigger value="dashboard" className="rounded-md px-3 py-2 text-sm">Dashboard</TabsTrigger>
+      <TabsTrigger value="whatsapp" className="rounded-md px-3 py-2 text-sm">WhatsApp</TabsTrigger>
+      <TabsTrigger value="products" className="rounded-md px-3 py-2 text-sm">Products</TabsTrigger>
+      <TabsTrigger value="inventory" className="rounded-md px-3 py-2 text-sm">Inventory</TabsTrigger>
+      <TabsTrigger value="orders" className="rounded-md px-3 py-2 text-sm">Orders</TabsTrigger>
+      <TabsTrigger value="customers" className="rounded-md px-3 py-2 text-sm">Customers</TabsTrigger>
+      <TabsTrigger value="promotions" className="rounded-md px-3 py-2 text-sm">Promotions</TabsTrigger>
+      <TabsTrigger value="analytics" className="rounded-md px-3 py-2 text-sm">Analytics</TabsTrigger>
+      <TabsTrigger value="delivery" className="rounded-md px-3 py-2 text-sm">Delivery</TabsTrigger>
+      <TabsTrigger value="payments" className="rounded-md px-3 py-2 text-sm">Payments</TabsTrigger>
+      <TabsTrigger value="users" className="rounded-md px-3 py-2 text-sm">Team</TabsTrigger>
+      <TabsTrigger value="support" className="rounded-md px-3 py-2 text-sm">Support</TabsTrigger>
+    </TabsList>
+  ), []);
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8 bg-background">
@@ -40,26 +63,14 @@ const RetailerProfile = () => {
         <h1 className="text-xl md:text-2xl font-bold">Retailer Dashboard</h1>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
         <Card className="border-0 shadow-sm">
           <CardContent className="p-1">
-            <TabsList className="w-full overflow-x-auto flex justify-start bg-transparent h-auto p-1">
-              <TabsTrigger value="dashboard" className="rounded-md px-3 py-2 text-sm">Dashboard</TabsTrigger>
-              <TabsTrigger value="whatsapp" className="rounded-md px-3 py-2 text-sm">WhatsApp</TabsTrigger>
-              <TabsTrigger value="products" className="rounded-md px-3 py-2 text-sm">Products</TabsTrigger>
-              <TabsTrigger value="inventory" className="rounded-md px-3 py-2 text-sm">Inventory</TabsTrigger>
-              <TabsTrigger value="orders" className="rounded-md px-3 py-2 text-sm">Orders</TabsTrigger>
-              <TabsTrigger value="customers" className="rounded-md px-3 py-2 text-sm">Customers</TabsTrigger>
-              <TabsTrigger value="promotions" className="rounded-md px-3 py-2 text-sm">Promotions</TabsTrigger>
-              <TabsTrigger value="analytics" className="rounded-md px-3 py-2 text-sm">Analytics</TabsTrigger>
-              <TabsTrigger value="delivery" className="rounded-md px-3 py-2 text-sm">Delivery</TabsTrigger>
-              <TabsTrigger value="payments" className="rounded-md px-3 py-2 text-sm">Payments</TabsTrigger>
-              <TabsTrigger value="users" className="rounded-md px-3 py-2 text-sm">Team</TabsTrigger>
-              <TabsTrigger value="support" className="rounded-md px-3 py-2 text-sm">Support</TabsTrigger>
-            </TabsList>
+            {tabsList}
           </CardContent>
         </Card>
 
+        {/* Only render the necessary content based on active tab */}
         <TabsContent value="dashboard">
           {renderTabContent("dashboard", RetailerDashboard)}
         </TabsContent>

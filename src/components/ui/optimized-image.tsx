@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface OptimizedImageProps {
@@ -11,7 +11,7 @@ interface OptimizedImageProps {
   priority?: boolean;
 }
 
-export const OptimizedImage = ({ 
+export const OptimizedImage = memo(({ 
   src, 
   alt, 
   className = "", 
@@ -21,34 +21,47 @@ export const OptimizedImage = ({
 }: OptimizedImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [imageSrc, setImageSrc] = useState("");
+  const [imageSrc, setImageSrc] = useState(priority ? optimizedSrcUrl(src, width) : "");
   const imgRef = useRef<HTMLImageElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   
-  // Generate smaller image URL for better performance
-  const optimizedSrc = src ? `${src}?w=${width}&q=75&auto=format` : "/placeholder.svg";
+  // Generate smaller image URL for better performance - memoized
+  const optimizedSrcUrl = useMemo(() => 
+    (imgSrc: string, imgWidth: number) => imgSrc ? `${imgSrc}?w=${imgWidth}&q=75&auto=format` : "/placeholder.svg", 
+  []);
 
   useEffect(() => {
+    // Clean up previous observer if it exists
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
     // Use intersection observer for lazy loading
-    if (!priority && 'IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
+    if (!priority && 'IntersectionObserver' in window && imgRef.current) {
+      observerRef.current = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setImageSrc(optimizedSrc);
-            observer.disconnect();
+            setImageSrc(optimizedSrcUrl(src, width));
+            observerRef.current?.disconnect();
           }
         });
-      }, { rootMargin: '200px' }); // Load images when they're within 200px of viewport
+      }, { 
+        rootMargin: '200px', // Load images when they're within 200px of viewport
+        threshold: 0.01 // Trigger when even 1% of the image is visible
+      });
       
-      if (imgRef.current) {
-        observer.observe(imgRef.current);
-      }
-      
-      return () => observer.disconnect();
-    } else {
-      // Preload priority images or fallback for browsers without IntersectionObserver
-      setImageSrc(optimizedSrc);
+      observerRef.current.observe(imgRef.current);
+    } else if (!imageSrc) {
+      // Fallback for priority images or browsers without IntersectionObserver
+      setImageSrc(optimizedSrcUrl(src, width));
     }
-  }, [optimizedSrc, priority]);
+    
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [src, width, priority, imageSrc, optimizedSrcUrl]);
 
   // Handle image load/error events
   const handleLoad = () => setIsLoading(false);
@@ -72,7 +85,10 @@ export const OptimizedImage = ({
         height={height}
         onLoad={handleLoad}
         onError={handleError}
+        decoding="async"
       />
     </div>
   );
-};
+});
+
+OptimizedImage.displayName = "OptimizedImage";

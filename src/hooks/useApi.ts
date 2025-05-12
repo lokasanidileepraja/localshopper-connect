@@ -14,7 +14,7 @@ import {
 } from '@/types/models';
 import { useToast } from './use-toast';
 
-// Initialize a query client with optimized settings
+// Create a singleton query client with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -22,6 +22,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1, // Reduce retry attempts
       gcTime: 10 * 60 * 1000, // 10 minutes garbage collection time
+      refetchOnMount: false, // Prevent automatic refetching
     },
   },
 });
@@ -34,6 +35,7 @@ export const useApi = () => {
     queryKey: ['currentUser'],
     queryFn: () => apiService.getCurrentUser(),
     staleTime: 15 * 60 * 1000, // 15 minutes - user data changes less frequently
+    refetchOnMount: false,
   });
   
   const useUserPoints = (userId?: string) => useQuery({
@@ -41,6 +43,7 @@ export const useApi = () => {
     queryFn: () => (userId ? apiService.getUserPoints(userId) : Promise.resolve(0)),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
   });
   
   const useUserBadges = (userId?: string) => useQuery({
@@ -48,44 +51,51 @@ export const useApi = () => {
     queryFn: () => (userId ? apiService.getUserBadges(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 10 * 60 * 1000, // 10 minutes - badges don't change often
+    refetchOnMount: false,
   });
   
-  // Product related queries
+  // Product related queries with aggressive caching
   const useProducts = (category?: string) => useQuery({
     queryKey: ['products', category],
     queryFn: () => apiService.getProducts(category),
-    staleTime: 3 * 60 * 1000, // 3 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes - product data doesn't change often
+    refetchOnMount: false,
+    cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
   });
   
   const useProductById = (productId?: string) => useQuery({
     queryKey: ['product', productId],
     queryFn: () => (productId ? apiService.getProductById(productId) : Promise.resolve(null)),
     enabled: !!productId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
   });
   
   const useProductPrices = (productId?: string) => useQuery({
     queryKey: ['productPrices', productId],
     queryFn: () => (productId ? apiService.getProductPrices(productId) : Promise.resolve([])),
     enabled: !!productId,
-    staleTime: 2 * 60 * 1000, // 2 minutes - prices can change more frequently
+    staleTime: 5 * 60 * 1000, // 5 minutes - prices can change more frequently
+    refetchOnMount: false,
   });
   
   // Store related queries
   const useStores = (nearbyLocation?: {lat: number, lng: number}) => useQuery({
-    queryKey: ['stores', nearbyLocation],
+    queryKey: ['stores', nearbyLocation ? `${nearbyLocation.lat.toFixed(2)}_${nearbyLocation.lng.toFixed(2)}` : 'all'],
     queryFn: () => apiService.getStores(nearbyLocation),
     staleTime: 10 * 60 * 1000, // 10 minutes - stores don't change locations often
+    refetchOnMount: false,
   });
   
   const useStoreById = (storeId?: string) => useQuery({
     queryKey: ['store', storeId],
     queryFn: () => (storeId ? apiService.getStoreById(storeId) : Promise.resolve(null)),
     enabled: !!storeId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: false,
   });
   
-  // Orders and reviews
+  // Orders and reviews with more appropriate caching
   const useUserOrders = (userId?: string) => useQuery({
     queryKey: ['userOrders', userId],
     queryFn: () => (userId ? apiService.getUserOrders(userId) : Promise.resolve([])),
@@ -98,14 +108,16 @@ export const useApi = () => {
     queryFn: () => (productId ? apiService.getProductReviews(productId) : Promise.resolve([])),
     enabled: !!productId,
     staleTime: 10 * 60 * 1000, // 10 minutes - reviews don't change often
+    refetchOnMount: false,
   });
   
-  // Price alerts
+  // Price alerts with improved caching
   const useUserAlerts = (userId?: string) => useQuery({
     queryKey: ['userAlerts', userId],
     queryFn: () => (userId ? apiService.getUserAlerts(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
   });
   
   // Points and gamification
@@ -114,6 +126,7 @@ export const useApi = () => {
     queryFn: () => (userId ? apiService.getUserPointsLog(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
   });
   
   return {

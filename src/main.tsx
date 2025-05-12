@@ -17,21 +17,22 @@ if (!window.analyticsInitialized) {
   window.analyticsInitialized = true;
 }
 
-// Create a client with optimized settings
+// Create a query client with improved performance settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       refetchOnWindowFocus: false,
       gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnMount: false, // Prevent automatic refetching when components mount
     },
   },
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ToastProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
         <HelmetProvider>
           <AuthProvider>
             <BrowserRouter>
@@ -40,7 +41,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </BrowserRouter>
           </AuthProvider>
         </HelmetProvider>
-      </QueryClientProvider>
-    </ToastProvider>
+      </ToastProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
 )

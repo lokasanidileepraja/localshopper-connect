@@ -20,12 +20,13 @@ import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipWrapper } from "@/components/common/TooltipWrapper";
 import { useToast } from "@/hooks/use-toast";
+import { memo, useCallback } from "react";
 
-export const UserActions = () => {
+export const UserActions = memo(() => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
-  const handleNavigation = (path: string, label: string) => {
+  const handleNavigation = useCallback((path: string, label: string) => {
     // Add a short delay to prevent quick toast dismissal during navigation
     setTimeout(() => {
       toast({
@@ -33,7 +34,21 @@ export const UserActions = () => {
         duration: 2000,
       });
     }, 100);
-  };
+  }, [toast]);
+
+  // Preload important route components on hover
+  const preloadRouteOnHover = useCallback((route: string) => {
+    if (navigator.connection && 
+        ('effectiveType' in navigator.connection) && 
+        /slow|2g|3g/i.test((navigator.connection as any).effectiveType)) {
+      return; // Skip preloading on slow connections
+    }
+    
+    // Dynamically import route component
+    import(`../../pages/${route}`).catch(() => {
+      // Silently fail if route doesn't exist
+    });
+  }, []);
 
   return (
     <div className="flex items-center gap-1 md:gap-2">
@@ -42,7 +57,11 @@ export const UserActions = () => {
         whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Retailer Dashboard">
-          <Link to="/retailer" onClick={() => handleNavigation("/retailer", "Retailer Dashboard")}>
+          <Link 
+            to="/retailer" 
+            onClick={() => handleNavigation("/retailer", "Retailer Dashboard")}
+            onMouseEnter={() => preloadRouteOnHover('RetailerDashboard')}
+          >
             <Button 
               variant={isMobile ? "ghost" : "outline"}
               size={isMobile ? "icon" : "sm"}
@@ -60,7 +79,11 @@ export const UserActions = () => {
         whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Admin Dashboard">
-          <Link to="/admin" onClick={() => handleNavigation("/admin", "Admin Dashboard")}>
+          <Link 
+            to="/admin" 
+            onClick={() => handleNavigation("/admin", "Admin Dashboard")}
+            onMouseEnter={() => preloadRouteOnHover('admin/AdminDashboard')}
+          >
             <Button 
               variant={isMobile ? "ghost" : "outline"}
               size={isMobile ? "icon" : "sm"}
@@ -130,4 +153,6 @@ export const UserActions = () => {
       </motion.div>
     </div>
   );
-};
+});
+
+UserActions.displayName = "UserActions";

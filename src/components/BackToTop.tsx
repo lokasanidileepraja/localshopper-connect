@@ -1,29 +1,43 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-export const BackToTop = () => {
+export const BackToTop = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
 
-  // Debounce scroll handler to improve performance
+  // Throttle scroll handler to improve performance
   const handleScroll = useCallback(() => {
-    if (window.pageYOffset > 300) {
-      if (!isVisible) setIsVisible(true);
-    } else {
-      if (isVisible) setIsVisible(false);
+    // Only update state when visibility actually changes
+    const shouldBeVisible = window.pageYOffset > 300;
+    if (shouldBeVisible !== isVisible) {
+      setIsVisible(shouldBeVisible);
     }
   }, [isVisible]);
 
   useEffect(() => {
-    // Add passive flag to improve scroll performance
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Use throttled event listener to reduce performance impact
+    let scrollTimer: number | null = null;
+    
+    const throttledScrollHandler = () => {
+      if (scrollTimer === null) {
+        scrollTimer = window.setTimeout(() => {
+          handleScroll();
+          scrollTimer = null;
+        }, 150); // Throttle to once every 150ms
+      }
+    };
+    
+    window.addEventListener("scroll", throttledScrollHandler, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", throttledScrollHandler);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    };
   }, [handleScroll]);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -33,7 +47,7 @@ export const BackToTop = () => {
       description: "Scrolling to the top of the page",
       duration: 2000,
     });
-  };
+  }, [toast]);
 
   return (
     <AnimatePresence>
@@ -60,4 +74,6 @@ export const BackToTop = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+BackToTop.displayName = "BackToTop";
