@@ -19,9 +19,18 @@ import {
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipWrapper } from "@/components/common/TooltipWrapper";
+import { useToast } from "@/hooks/use-toast";
 
 export const UserActions = () => {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  const handleNavigation = (path: string, label: string) => {
+    toast({
+      title: `Navigating to ${label}`,
+      duration: 2000,
+    });
+  };
 
   return (
     <div className="flex items-center gap-1 md:gap-2">
@@ -30,7 +39,7 @@ export const UserActions = () => {
         whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Retailer Dashboard">
-          <Link to="/retailer">
+          <Link to="/retailer" onClick={() => handleNavigation("/retailer", "Retailer Dashboard")}>
             <Button 
               variant={isMobile ? "ghost" : "outline"}
               size={isMobile ? "icon" : "sm"}
@@ -48,7 +57,7 @@ export const UserActions = () => {
         whileTap={{ scale: 0.95 }}
       >
         <TooltipWrapper content="Admin Dashboard">
-          <Link to="/admin">
+          <Link to="/admin" onClick={() => handleNavigation("/admin", "Admin Dashboard")}>
             <Button 
               variant={isMobile ? "ghost" : "outline"}
               size={isMobile ? "icon" : "sm"}
