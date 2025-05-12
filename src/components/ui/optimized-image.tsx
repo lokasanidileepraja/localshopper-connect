@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface OptimizedImageProps {
@@ -21,27 +21,41 @@ export const OptimizedImage = ({
 }: OptimizedImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(src);
-
+  const [imageSrc, setImageSrc] = useState("");
+  const imgRef = useRef<HTMLImageElement>(null);
+  
   // Generate smaller image URL for better performance
-  const optimizedSrc = `${src}?w=${width}&q=75&auto=format`;
+  const optimizedSrc = src ? `${src}?w=${width}&q=75&auto=format` : "/placeholder.svg";
 
   useEffect(() => {
-    // Preload the image if priority is true
-    if (priority && optimizedSrc) {
-      const img = new Image();
-      img.src = optimizedSrc;
-      setImageSrc(optimizedSrc);
+    // Use intersection observer for lazy loading
+    if (!priority && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setImageSrc(optimizedSrc);
+            observer.disconnect();
+          }
+        });
+      }, { rootMargin: '200px' }); // Load images when they're within 200px of viewport
       
-      img.onload = () => setIsLoading(false);
-      img.onerror = () => {
-        setError(true);
-        setIsLoading(false);
-      };
+      if (imgRef.current) {
+        observer.observe(imgRef.current);
+      }
+      
+      return () => observer.disconnect();
     } else {
+      // Preload priority images or fallback for browsers without IntersectionObserver
       setImageSrc(optimizedSrc);
     }
   }, [optimizedSrc, priority]);
+
+  // Handle image load/error events
+  const handleLoad = () => setIsLoading(false);
+  const handleError = () => {
+    setError(true);
+    setIsLoading(false);
+  };
 
   return (
     <div className="relative">
@@ -49,17 +63,15 @@ export const OptimizedImage = ({
         <Skeleton className={`absolute inset-0 ${className}`} />
       )}
       <img
+        ref={imgRef}
         src={error ? "/placeholder.svg" : imageSrc}
         alt={alt}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         loading={priority ? "eager" : "lazy"}
         width={width}
         height={height}
-        onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setError(true);
-          setIsLoading(false);
-        }}
+        onLoad={handleLoad}
+        onError={handleError}
       />
     </div>
   );

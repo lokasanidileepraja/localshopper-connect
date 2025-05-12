@@ -26,10 +26,13 @@ export const UserActions = () => {
   const { toast } = useToast();
 
   const handleNavigation = (path: string, label: string) => {
-    toast({
-      title: `Navigating to ${label}`,
-      duration: 2000,
-    });
+    // Add a short delay to prevent quick toast dismissal during navigation
+    setTimeout(() => {
+      toast({
+        title: `Navigating to ${label}`,
+        duration: 2000,
+      });
+    }, 100);
   };
 
   return (

@@ -1,25 +1,27 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
+  // Debounce scroll handler to improve performance
+  const handleScroll = useCallback(() => {
+    if (window.pageYOffset > 300) {
+      if (!isVisible) setIsVisible(true);
+    } else {
+      if (isVisible) setIsVisible(false);
+    }
+  }, [isVisible]);
 
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
+  useEffect(() => {
+    // Add passive flag to improve scroll performance
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   const scrollToTop = () => {
     window.scrollTo({

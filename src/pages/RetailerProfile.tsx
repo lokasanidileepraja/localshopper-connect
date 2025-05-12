@@ -1,24 +1,38 @@
 
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProductManagement } from "@/components/retailer/ProductManagement";
-import { InventoryTracking } from "@/components/retailer/InventoryTracking";
-import { OrderManagement } from "@/components/retailer/OrderManagement";
-import { CustomerInteraction } from "@/components/retailer/CustomerInteraction";
-import { PromotionsManagement } from "@/components/retailer/PromotionsManagement";
-import { RetailerAnalytics } from "@/components/retailer/RetailerAnalytics";
-import { DeliveryOptions } from "@/components/retailer/DeliveryOptions";
-import { PaymentManagement } from "@/components/retailer/PaymentManagement";
-import { UserAccessControl } from "@/components/retailer/UserAccessControl";
-import { RetailerSupport } from "@/components/retailer/RetailerSupport";
-import { RetailerDashboard } from "@/components/retailer/RetailerDashboard";
-import { WhatsAppUpdates } from "@/components/retailer/WhatsAppUpdates";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// Lazy load components to improve initial loading time
+const ProductManagement = lazy(() => import("@/components/retailer/ProductManagement"));
+const InventoryTracking = lazy(() => import("@/components/retailer/InventoryTracking"));
+const OrderManagement = lazy(() => import("@/components/retailer/OrderManagement"));
+const CustomerInteraction = lazy(() => import("@/components/retailer/CustomerInteraction"));
+const PromotionsManagement = lazy(() => import("@/components/retailer/PromotionsManagement"));
+const RetailerAnalytics = lazy(() => import("@/components/retailer/RetailerAnalytics"));
+const DeliveryOptions = lazy(() => import("@/components/retailer/DeliveryOptions"));
+const PaymentManagement = lazy(() => import("@/components/retailer/PaymentManagement"));
+const UserAccessControl = lazy(() => import("@/components/retailer/UserAccessControl"));
+const RetailerSupport = lazy(() => import("@/components/retailer/RetailerSupport"));
+const RetailerDashboard = lazy(() => import("@/components/retailer/RetailerDashboard"));
+const WhatsAppUpdates = lazy(() => import("@/components/retailer/WhatsAppUpdates"));
 
 const RetailerProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const isMobile = useIsMobile();
+
+  // Only load the currently active tab
+  const renderTabContent = (tabName: string, Component: React.ComponentType<any>) => {
+    if (activeTab !== tabName) return null;
+    
+    return (
+      <Suspense fallback={<div className="py-12 flex justify-center"><LoadingSpinner /></div>}>
+        <Component />
+      </Suspense>
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8 bg-background">
@@ -47,51 +61,51 @@ const RetailerProfile = () => {
         </Card>
 
         <TabsContent value="dashboard">
-          <RetailerDashboard />
+          {renderTabContent("dashboard", RetailerDashboard)}
         </TabsContent>
 
         <TabsContent value="whatsapp">
-          <WhatsAppUpdates />
+          {renderTabContent("whatsapp", WhatsAppUpdates)}
         </TabsContent>
         
         <TabsContent value="products">
-          <ProductManagement />
+          {renderTabContent("products", ProductManagement)}
         </TabsContent>
         
         <TabsContent value="inventory">
-          <InventoryTracking />
+          {renderTabContent("inventory", InventoryTracking)}
         </TabsContent>
         
         <TabsContent value="orders">
-          <OrderManagement />
+          {renderTabContent("orders", OrderManagement)}
         </TabsContent>
         
         <TabsContent value="customers">
-          <CustomerInteraction />
+          {renderTabContent("customers", CustomerInteraction)}
         </TabsContent>
         
         <TabsContent value="promotions">
-          <PromotionsManagement />
+          {renderTabContent("promotions", PromotionsManagement)}
         </TabsContent>
         
         <TabsContent value="analytics">
-          <RetailerAnalytics />
+          {renderTabContent("analytics", RetailerAnalytics)}
         </TabsContent>
         
         <TabsContent value="delivery">
-          <DeliveryOptions />
+          {renderTabContent("delivery", DeliveryOptions)}
         </TabsContent>
         
         <TabsContent value="payments">
-          <PaymentManagement />
+          {renderTabContent("payments", PaymentManagement)}
         </TabsContent>
         
         <TabsContent value="users">
-          <UserAccessControl />
+          {renderTabContent("users", UserAccessControl)}
         </TabsContent>
         
         <TabsContent value="support">
-          <RetailerSupport />
+          {renderTabContent("support", RetailerSupport)}
         </TabsContent>
       </Tabs>
     </div>
