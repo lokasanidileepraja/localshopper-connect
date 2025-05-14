@@ -1,4 +1,5 @@
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
+
+import { useQuery, useMutation, QueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { apiService } from '@/services/api';
 import { 
   Product, 
@@ -20,7 +21,7 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000, // 5 minutes
       refetchOnWindowFocus: false,
       retry: 1, // Reduce retry attempts
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection time
+      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection time (replaces cacheTime)
       refetchOnMount: false, // Prevent automatic refetching
     },
   },

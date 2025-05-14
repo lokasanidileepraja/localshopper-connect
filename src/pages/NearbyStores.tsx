@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,45 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { debounce } from "@/lib/utils";
+
+const ShopCard = memo(({ shop, isSelected, onSelect }: { 
+  shop: Shop; 
+  isSelected: boolean; 
+  onSelect: (id: string) => void;
+}) => {
+  const handleClick = useCallback(() => {
+    onSelect(shop.id);
+  }, [shop.id, onSelect]);
+
+  return (
+    <Card
+      key={shop.id}
+      className={`cursor-pointer transition-all hover:shadow-md ${
+        isSelected ? "ring-2 ring-primary" : ""
+      }`}
+      onClick={handleClick}
+    >
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-semibold">{shop.name}</h3>
+          <Badge variant={shop.isOpen ? "default" : "secondary"}>
+            {shop.isOpen ? "Open" : "Closed"}
+          </Badge>
+        </div>
+        <div className="text-sm text-muted-foreground space-y-1">
+          <div className="flex items-center gap-1">
+            <MapPin className="h-3 w-3" />
+            <span>{shop.distance}</span>
+          </div>
+          <div>Rating: {shop.rating} ⭐</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+ShopCard.displayName = "ShopCard";
 
 const NearbyStores = () => {
   const [shops, setShops] = useState<Shop[]>(ELECTRONICS_SHOPS);
@@ -19,33 +58,46 @@ const NearbyStores = () => {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const { toast } = useToast();
 
-  // Filter shops based on search query
+  // Debounce search to improve performance
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      if (query.trim() === "") {
+        setShops(ELECTRONICS_SHOPS);
+        return;
+      }
+
+      const filteredShops = ELECTRONICS_SHOPS.filter(
+        (shop) =>
+          shop.name.toLowerCase().includes(query.toLowerCase()) ||
+          shop.category.toLowerCase().includes(query.toLowerCase())
+      );
+
+      setShops(filteredShops);
+    }, 300),
+    []
+  );
+
+  // Update search when query changes
   useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setShops(ELECTRONICS_SHOPS);
-      return;
-    }
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
 
-    const filteredShops = ELECTRONICS_SHOPS.filter(
-      (shop) =>
-        shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        shop.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
-    setShops(filteredShops);
-  }, [searchQuery]);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     
     toast({
       title: "Searching for shops",
       description: searchQuery ? `Found ${shops.length} results for "${searchQuery}"` : "Showing all nearby shops",
     });
-  };
+  }, [searchQuery, shops.length, toast]);
 
-  const handleShopSelect = (shopId: string) => {
-    setSelectedShopId(shopId);
+  const handleShopSelect = useCallback((shopId: string) => {
+    setSelectedShopId((prevId) => (prevId === shopId ? null : shopId));
+    
     const shop = shops.find(shop => shop.id === shopId);
     
     if (shop) {
@@ -54,7 +106,11 @@ const NearbyStores = () => {
         description: `${shop.isOpen ? "Open now" : "Currently closed"} • ${shop.distance} away`,
       });
     }
-  };
+  }, [shops, toast]);
+
+  const handleTabChange = useCallback((value: string) => {
+    setViewMode(value as "list" | "map");
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -80,26 +136,24 @@ const NearbyStores = () => {
                 placeholder="Search by store name or category"
                 className="pl-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
             <Button type="submit">Search</Button>
           </form>
         </div>
 
-        <Tabs defaultValue="list" className="mb-6">
+        <Tabs defaultValue="list" className="mb-6" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger 
-              value="list" 
-              onClick={() => setViewMode("list")}
+              value="list"
               className="flex items-center gap-2"
             >
               <List className="h-4 w-4" />
               List View
             </TabsTrigger>
             <TabsTrigger 
-              value="map" 
-              onClick={() => setViewMode("map")}
+              value="map"
               className="flex items-center gap-2"
             >
               <MapPin className="h-4 w-4" />
@@ -111,29 +165,12 @@ const NearbyStores = () => {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {shops.length > 0 ? (
                 shops.map((shop) => (
-                  <Card
+                  <ShopCard
                     key={shop.id}
-                    className={`cursor-pointer transition-all hover:shadow-md ${
-                      selectedShopId === shop.id ? "ring-2 ring-primary" : ""
-                    }`}
-                    onClick={() => handleShopSelect(shop.id)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold">{shop.name}</h3>
-                        <Badge variant={shop.isOpen ? "default" : "secondary"}>
-                          {shop.isOpen ? "Open" : "Closed"}
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          <span>{shop.distance}</span>
-                        </div>
-                        <div>Rating: {shop.rating} ⭐</div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    shop={shop}
+                    isSelected={selectedShopId === shop.id}
+                    onSelect={handleShopSelect}
+                  />
                 ))
               ) : (
                 <div className="col-span-full text-center py-8">
