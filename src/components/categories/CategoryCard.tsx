@@ -4,8 +4,9 @@ import { CategoryCardProps } from "@/types/categories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { memo } from "react";
 
-export const CategoryCard = ({ category, onSelect, isSelected, index }: CategoryCardProps) => {
+export const CategoryCard = memo(({ category, onSelect, isSelected, index }: CategoryCardProps) => {
   const isMobile = useIsMobile();
   const Icon = category.icon;
   const { toast } = useToast();
@@ -115,4 +116,6 @@ export const CategoryCard = ({ category, onSelect, isSelected, index }: Category
       </div>
     </motion.div>
   );
-};
+});
+
+CategoryCard.displayName = 'CategoryCard';

@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useCategoryFilter } from "@/hooks/useCategoryFilter";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { CategoryHeader } from "./categories/CategoryHeader";
@@ -13,13 +13,13 @@ interface CategoriesProps {
   onCategorySelect: (category: string) => void;
 }
 
-export const Categories = ({ onCategorySelect }: CategoriesProps) => {
+export const Categories = memo(({ onCategorySelect }: CategoriesProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
-  const handleCategorySelect = (categoryName: string) => {
+  const handleCategorySelect = useCallback((categoryName: string) => {
     console.log(`Selected category: ${categoryName}`);
     onCategorySelect(categoryName);
     
@@ -32,7 +32,7 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
       title: "Category Selected",
       description: `Browsing ${categoryName} products`,
     });
-  };
+  }, [navigate, onCategorySelect, toast]);
 
   useKeyboardNav(
     () => setSelectedIndex(prev => Math.max(0, prev - 1)),
@@ -45,18 +45,20 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
     }
   );
 
+  // Reset selection index when filter changes
   useEffect(() => {
     setSelectedIndex(0);
   }, [filter]);
 
-  const filtered = filteredCategories();
+  // Memoize the filtered categories to prevent unnecessary recalculation
+  const filtered = useMemo(() => filteredCategories(), [filteredCategories]);
   console.log("Filtered categories:", filtered);
 
   return (
     <motion.section 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
       className="py-4 sm:py-8 bg-gradient-to-b from-white to-gray-50"
       id="categories"
     >
@@ -70,4 +72,6 @@ export const Categories = ({ onCategorySelect }: CategoriesProps) => {
       </div>
     </motion.section>
   );
-};
+});
+
+Categories.displayName = 'Categories';

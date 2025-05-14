@@ -1,75 +1,59 @@
 
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { 
+  debounce as performanceDebounce, 
+  throttle as performanceThrottle,
+  safeLocalStorageGet as performanceSafeLocalStorageGet,
+  safeLocalStorageSet as performanceSafeLocalStorageSet
+} from "./performance"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
 /**
- * Debounce function to limit how often a function can be called
- * Helps with performance by preventing excessive function calls
+ * Re-export performance utilities 
  */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  
-  return function(...args: Parameters<T>) {
-    const later = () => {
-      timeout = null;
-      func(...args);
-    };
-    
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
+export const debounce = performanceDebounce;
+export const throttle = performanceThrottle;
+export const safeLocalStorageGet = performanceSafeLocalStorageGet;
+export const safeLocalStorageSet = performanceSafeLocalStorageSet;
+
+/**
+ * Format currency with proper locale
+ */
+export function formatCurrency(amount: number, currency: string = 'INR', locale: string = 'en-IN') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0
+  }).format(amount);
 }
 
 /**
- * Throttle function to limit how often a function can be called
- * Especially useful for scroll and resize events
+ * Shorten text with ellipsis
  */
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
-  limit: number
-): (...args: Parameters<T>) => void {
-  let inThrottle = false;
-  
-  return function(...args: Parameters<T>) {
-    if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
-      setTimeout(() => {
-        inThrottle = false;
-      }, limit);
-    }
-  };
+export function shortenText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
 }
 
 /**
- * Safe localStorage getter that handles exceptions
+ * Create URL-friendly slug
  */
-export function safeLocalStorageGet(key: string, fallback: string = ''): string {
-  try {
-    const value = localStorage.getItem(key);
-    return value !== null ? value : fallback;
-  } catch (error) {
-    console.error('Error accessing localStorage:', error);
-    return fallback;
-  }
+export function createSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove non-word chars
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/--+/g, '-') // Replace multiple - with single -
+    .trim();
 }
 
 /**
- * Safe localStorage setter that handles exceptions
+ * Generate unique ID
  */
-export function safeLocalStorageSet(key: string, value: string): boolean {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  } catch (error) {
-    console.error('Error writing to localStorage:', error);
-    return false;
-  }
+export function generateId(): string {
+  return Math.random().toString(36).substring(2, 9);
 }

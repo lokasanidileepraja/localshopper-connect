@@ -1,41 +1,27 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from 'react';
+import { throttle } from '@/lib/utils';
 
-// Standardized breakpoints aligned with Tailwind
-export const BREAKPOINTS = {
-  sm: 640,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
-  '2xl': 1536
-};
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
-export type BreakpointKey = keyof typeof BREAKPOINTS;
-
-/**
- * Custom hook to detect if the viewport is at or below a specified breakpoint
- * @param breakpoint - The breakpoint to check against (default: "md")
- * @returns Boolean indicating if the viewport is at or below the specified breakpoint
- */
-export function useIsMobile(breakpoint: BreakpointKey = "md"): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const checkIsMobile = useCallback(() => {
+    setIsMobile(window.innerWidth < 640);
+  }, []);
 
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint]);
-    };
-
-    // Initial check
-    checkIfMobile();
-
-    // Add event listener for window resize
-    window.addEventListener("resize", checkIfMobile);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, [breakpoint]);
+    // Throttled resize handler
+    const handleResize = throttle(checkIsMobile, 200);
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Check initially
+    checkIsMobile();
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, [checkIsMobile]); 
 
   return isMobile;
 }
