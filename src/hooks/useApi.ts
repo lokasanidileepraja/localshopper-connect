@@ -60,7 +60,7 @@ export const useApi = () => {
     queryFn: () => apiService.getProducts(category),
     staleTime: 10 * 60 * 1000, // 10 minutes - product data doesn't change often
     refetchOnMount: false,
-    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes (replaces cacheTime)
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
   });
   
   const useProductById = (productId?: string) => useQuery({

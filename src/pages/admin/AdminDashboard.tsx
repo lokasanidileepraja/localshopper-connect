@@ -229,7 +229,7 @@ const AdminDashboard = () => {
                 icon={<ShoppingBag className="h-4 w-4 text-blue-600" />}
                 iconBg="bg-blue-100"
                 title="Product Added"
-                description="New product: "Samsung Galaxy S25""
+                description="New product: Samsung Galaxy S25"
                 time="5 mins ago"
               />
               

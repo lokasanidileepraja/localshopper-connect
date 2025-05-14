@@ -16,7 +16,7 @@ const orders = [
 
 // Order status badge component
 const StatusBadge = memo(({ status }: { status: string }) => {
-  const getStatusColor = () => {
+  const statusColor = useMemo(() => {
     switch (status.toLowerCase()) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'processing': return 'bg-blue-100 text-blue-800';
@@ -24,10 +24,10 @@ const StatusBadge = memo(({ status }: { status: string }) => {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
       default: return 'bg-gray-100 text-gray-800';
     }
-  };
+  }, [status]);
 
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor()}`}>
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
       {status}
     </span>
   );
@@ -36,7 +36,10 @@ const StatusBadge = memo(({ status }: { status: string }) => {
 StatusBadge.displayName = 'StatusBadge';
 
 // Order list item component
-const OrderItem = memo(({ order }: { order: any }) => (
+const OrderItem = memo(({ order, onProcessOrder }: { 
+  order: any; 
+  onProcessOrder: (orderId: string) => void;
+}) => (
   <tr className="hover:bg-muted/50">
     <td className="px-4 py-3 text-sm">{order.id}</td>
     <td className="px-4 py-3 text-sm">{order.customer}</td>
@@ -45,7 +48,13 @@ const OrderItem = memo(({ order }: { order: any }) => (
       <StatusBadge status={order.status} />
     </td>
     <td className="px-4 py-3 text-sm">
-      <Button variant="outline" size="sm">View</Button>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={() => onProcessOrder(order.id)}
+      >
+        View
+      </Button>
     </td>
   </tr>
 ));
@@ -60,6 +69,13 @@ export const OrderManagement = memo(() => {
     toast({
       title: "Orders Refreshed",
       description: "The order list has been updated with the latest data."
+    });
+  }, [toast]);
+  
+  const handleProcessOrder = useCallback((orderId: string) => {
+    toast({
+      title: "Processing Order",
+      description: `Order ${orderId} details opened.`
     });
   }, [toast]);
   
@@ -100,7 +116,11 @@ export const OrderManagement = memo(() => {
           <tbody>
             {filteredOrders.length > 0 ? (
               filteredOrders.map((order) => (
-                <OrderItem key={order.id} order={order} />
+                <OrderItem 
+                  key={order.id} 
+                  order={order} 
+                  onProcessOrder={handleProcessOrder} 
+                />
               ))
             ) : (
               <tr>

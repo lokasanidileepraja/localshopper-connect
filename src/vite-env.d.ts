@@ -13,3 +13,19 @@ interface ImportMeta {
 interface Window {
   analyticsInitialized?: boolean;
 }
+
+// Add NetworkInformation type definition
+interface NetworkInformation {
+  readonly downlink: number;
+  readonly effectiveType: string;
+  readonly rtt: number;
+  readonly saveData: boolean;
+  readonly type: string;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+}
+
+// Extend Navigator interface
+interface Navigator {
+  readonly connection?: NetworkInformation;
+}

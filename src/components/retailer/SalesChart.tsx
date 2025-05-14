@@ -1,7 +1,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
+import { throttle } from "@/lib/performance";
 
 const mockSalesData = [
   { name: "Mon", sales: 18 },
@@ -13,14 +14,23 @@ const mockSalesData = [
   { name: "Sun", sales: 30 },
 ];
 
-export const SalesChart = () => {
+export const SalesChart = memo(() => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   
+  // Use throttle to prevent excessive resize event handlers
+  const handleResize = useCallback(
+    throttle(() => {
+      setWindowWidth(window.innerWidth);
+    }, 200),
+    []
+  );
+  
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [handleResize]);
   
   return (
     <Card className="col-span-2">
@@ -45,4 +55,6 @@ export const SalesChart = () => {
       </CardContent>
     </Card>
   );
-};
+});
+
+SalesChart.displayName = 'SalesChart';

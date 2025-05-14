@@ -3,9 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { DashboardMetrics } from "./dashboard/DashboardMetrics";
 import { TopSellingProducts } from "./dashboard/TopSellingProducts";
 import { DashboardReservations } from "./dashboard/RecentReservations";
+import { memo, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export const RetailerDashboard = () => {
-  const { data: dashboardData } = useQuery({
+export const RetailerDashboard = memo(() => {
+  const { data: dashboardData, isLoading } = useQuery({
     queryKey: ["retailerDashboard"],
     queryFn: () => Promise.resolve({
       totalSales: 158750,
@@ -26,14 +28,18 @@ export const RetailerDashboard = () => {
         { id: "RES-1232", product: "OnePlus 12", customer: "Raj K.", time: "1 day ago", status: "cancelled" as const },
       ],
     }),
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 
-  if (!dashboardData) {
+  // Use loading skeleton with fixed dimensions to prevent layout shift
+  if (isLoading || !dashboardData) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-32 animate-pulse bg-muted rounded-lg" />
+          <Skeleton key={i} className="h-32" />
         ))}
+        <Skeleton className="h-64 col-span-2" />
+        <Skeleton className="h-64 col-span-2" />
       </div>
     );
   }
@@ -55,4 +61,6 @@ export const RetailerDashboard = () => {
       </div>
     </div>
   );
-};
+});
+
+RetailerDashboard.displayName = 'RetailerDashboard';
