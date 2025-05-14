@@ -22,6 +22,12 @@ import { TooltipWrapper } from "@/components/common/TooltipWrapper";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useCallback } from "react";
 
+// Add NetworkInformation interface to TypeScript
+interface NetworkInformation {
+  effectiveType: string;
+  [key: string]: any;
+}
+
 export const UserActions = memo(() => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
@@ -38,9 +44,12 @@ export const UserActions = memo(() => {
 
   // Preload important route components on hover
   const preloadRouteOnHover = useCallback((route: string) => {
-    if (navigator.connection && 
-        ('effectiveType' in navigator.connection) && 
-        /slow|2g|3g/i.test((navigator.connection as any).effectiveType)) {
+    // Check if Navigator API includes connection information
+    const connection = (navigator as any).connection as NetworkInformation | undefined;
+    
+    if (connection && 
+        ('effectiveType' in connection) && 
+        /slow|2g|3g/i.test(connection.effectiveType)) {
       return; // Skip preloading on slow connections
     }
     

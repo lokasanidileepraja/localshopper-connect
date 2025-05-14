@@ -21,7 +21,6 @@ export const OptimizedImage = memo(({
 }: OptimizedImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(priority ? optimizedSrcUrl(src, width) : "");
   const imgRef = useRef<HTMLImageElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   
@@ -29,6 +28,9 @@ export const OptimizedImage = memo(({
   const optimizedSrcUrl = useMemo(() => 
     (imgSrc: string, imgWidth: number) => imgSrc ? `${imgSrc}?w=${imgWidth}&q=75&auto=format` : "/placeholder.svg", 
   []);
+  
+  // Initialize image source based on priority
+  const [imageSrc, setImageSrc] = useState(priority ? optimizedSrcUrl(src, width) : "");
 
   useEffect(() => {
     // Clean up previous observer if it exists

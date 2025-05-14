@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
 import { apiService } from '@/services/api';
 import { 
@@ -60,7 +59,7 @@ export const useApi = () => {
     queryFn: () => apiService.getProducts(category),
     staleTime: 10 * 60 * 1000, // 10 minutes - product data doesn't change often
     refetchOnMount: false,
-    cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes (replaces cacheTime)
   });
   
   const useProductById = (productId?: string) => useQuery({
