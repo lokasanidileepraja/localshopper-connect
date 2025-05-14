@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useCallback, Suspense, lazy, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -14,7 +15,7 @@ import {
   Database,
   ListOrdered,
   UserCog,
-  ChartPie, // Replaced FileChart with ChartPie
+  ChartPie,
   UserSearch,
   DollarSign,
   MapPin,
@@ -24,27 +25,105 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
-import { InventoryManagement } from "@/components/admin/InventoryManagement";
-import { OrderManagement } from "@/components/admin/OrderManagement";
-import { UserManagement } from "@/components/admin/UserManagement";
-import { ReportingDashboard } from "@/components/admin/ReportingDashboard";
-import { CustomerInsights } from "@/components/admin/CustomerInsights";
-import { PricingTools } from "@/components/admin/PricingTools";
-import { GeoTargeting } from "@/components/admin/GeoTargeting";
-import { VendorManagement } from "@/components/admin/VendorManagement";
-import { IntegrationHub } from "@/components/admin/IntegrationHub";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy load tab content components
+const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard").then(mod => ({ 
+  default: memo(mod.AnalyticsDashboard) 
+})));
+const InventoryManagement = lazy(() => import("@/components/admin/InventoryManagement").then(mod => ({ 
+  default: memo(mod.InventoryManagement) 
+})));
+const OrderManagement = lazy(() => import("@/components/admin/OrderManagement").then(mod => ({ 
+  default: memo(mod.OrderManagement) 
+})));
+const UserManagement = lazy(() => import("@/components/admin/UserManagement").then(mod => ({ 
+  default: memo(mod.UserManagement) 
+})));
+const ReportingDashboard = lazy(() => import("@/components/admin/ReportingDashboard").then(mod => ({ 
+  default: memo(mod.ReportingDashboard) 
+})));
+const CustomerInsights = lazy(() => import("@/components/admin/CustomerInsights").then(mod => ({ 
+  default: memo(mod.CustomerInsights) 
+})));
+const PricingTools = lazy(() => import("@/components/admin/PricingTools").then(mod => ({ 
+  default: memo(mod.PricingTools) 
+})));
+const GeoTargeting = lazy(() => import("@/components/admin/GeoTargeting").then(mod => ({ 
+  default: memo(mod.GeoTargeting) 
+})));
+const VendorManagement = lazy(() => import("@/components/admin/VendorManagement").then(mod => ({ 
+  default: memo(mod.VendorManagement) 
+})));
+const IntegrationHub = lazy(() => import("@/components/admin/IntegrationHub").then(mod => ({ 
+  default: memo(mod.IntegrationHub) 
+})));
+
+// Create a lazy-loaded content wrapper for tab content
+const LazyTabContent = memo(({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+    {children}
+  </Suspense>
+));
+
+// Memoized summary card component
+const MetricCard = memo(({ title, value, icon, trend }: { 
+  title: string; 
+  value: string; 
+  icon: React.ReactNode;
+  trend: string;
+}) => (
+  <Card>
+    <CardHeader className="pb-2">
+      <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="flex items-center">
+        {icon}
+        <span className="text-2xl font-bold">{value}</span>
+      </div>
+      <p className="text-xs text-muted-foreground mt-2">
+        <span className="text-green-500">{trend}</span> from last month
+      </p>
+    </CardContent>
+  </Card>
+));
+
+const ActivityItem = memo(({ icon, iconBg, title, description, time }: {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  description: string;
+  time: string;
+}) => (
+  <div className="flex items-center p-2 bg-muted/50 rounded-md">
+    <div className={`mr-4 ${iconBg} p-2 rounded-full`}>
+      {icon}
+    </div>
+    <div className="flex-1">
+      <p className="text-sm font-medium">{title}</p>
+      <p className="text-xs text-muted-foreground">{description}</p>
+    </div>
+    <div className="text-xs text-muted-foreground">{time}</div>
+  </div>
+));
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
+  const [loadedTabs, setLoadedTabs] = useState<Record<string, boolean>>({ overview: true });
   
-  const handleAlertClick = () => {
+  const handleAlertClick = useCallback(() => {
     toast({
       title: "System Alerts",
       description: "You have 3 unread system alerts that require attention.",
     });
-  };
+  }, [toast]);
+
+  const handleTabChange = useCallback((value: string) => {
+    setActiveTab(value);
+    setLoadedTabs(prev => ({ ...prev, [value]: true }));
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,65 +149,33 @@ const AdminDashboard = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Users className="h-5 w-5 text-primary mr-2" />
-              <span className="text-2xl font-bold">14,583</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              <span className="text-green-500">↑ 12%</span> from last month
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard 
+          title="Total Users" 
+          value="14,583" 
+          icon={<Users className="h-5 w-5 text-primary mr-2" />}
+          trend="↑ 12%" 
+        />
         
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Stores</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Store className="h-5 w-5 text-primary mr-2" />
-              <span className="text-2xl font-bold">842</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              <span className="text-green-500">↑ 7%</span> from last month
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard 
+          title="Active Stores" 
+          value="842" 
+          icon={<Store className="h-5 w-5 text-primary mr-2" />}
+          trend="↑ 7%" 
+        />
         
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Products</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <ShoppingBag className="h-5 w-5 text-primary mr-2" />
-              <span className="text-2xl font-bold">23,947</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              <span className="text-green-500">↑ 18%</span> from last month
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard 
+          title="Total Products" 
+          value="23,947" 
+          icon={<ShoppingBag className="h-5 w-5 text-primary mr-2" />}
+          trend="↑ 18%" 
+        />
         
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <DollarSign className="h-5 w-5 text-primary mr-2" />
-              <span className="text-2xl font-bold">₹4.2M</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              <span className="text-green-500">↑ 22%</span> from last quarter
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard 
+          title="Revenue" 
+          value="₹4.2M" 
+          icon={<DollarSign className="h-5 w-5 text-primary mr-2" />}
+          trend="↑ 22%" 
+        />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -170,55 +217,43 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                <div className="mr-4 bg-green-100 p-2 rounded-full">
-                  <Users className="h-4 w-4 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">User Registration</p>
-                  <p className="text-xs text-muted-foreground">New user from Mumbai, India</p>
-                </div>
-                <div className="text-xs text-muted-foreground">2 mins ago</div>
-              </div>
+              <ActivityItem 
+                icon={<Users className="h-4 w-4 text-green-600" />}
+                iconBg="bg-green-100"
+                title="User Registration"
+                description="New user from Mumbai, India"
+                time="2 mins ago"
+              />
               
-              <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                <div className="mr-4 bg-blue-100 p-2 rounded-full">
-                  <ShoppingBag className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Product Added</p>
-                  <p className="text-xs text-muted-foreground">New product: "Samsung Galaxy S25"</p>
-                </div>
-                <div className="text-xs text-muted-foreground">5 mins ago</div>
-              </div>
+              <ActivityItem 
+                icon={<ShoppingBag className="h-4 w-4 text-blue-600" />}
+                iconBg="bg-blue-100"
+                title="Product Added"
+                description="New product: "Samsung Galaxy S25""
+                time="5 mins ago"
+              />
               
-              <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                <div className="mr-4 bg-purple-100 p-2 rounded-full">
-                  <DollarSign className="h-4 w-4 text-purple-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Order Processed</p>
-                  <p className="text-xs text-muted-foreground">Order #12489 - ₹5,999 - Pune</p>
-                </div>
-                <div className="text-xs text-muted-foreground">12 mins ago</div>
-              </div>
+              <ActivityItem 
+                icon={<DollarSign className="h-4 w-4 text-purple-600" />}
+                iconBg="bg-purple-100"
+                title="Order Processed"
+                description="Order #12489 - ₹5,999 - Pune"
+                time="12 mins ago"
+              />
               
-              <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                <div className="mr-4 bg-yellow-100 p-2 rounded-full">
-                  <Flag className="h-4 w-4 text-yellow-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Report Generated</p>
-                  <p className="text-xs text-muted-foreground">Weekly sales report - Q2 2023</p>
-                </div>
-                <div className="text-xs text-muted-foreground">25 mins ago</div>
-              </div>
+              <ActivityItem 
+                icon={<Flag className="h-4 w-4 text-yellow-600" />}
+                iconBg="bg-yellow-100"
+                title="Report Generated"
+                description="Weekly sales report - Q2 2023"
+                time="25 mins ago"
+              />
             </div>
           </CardContent>
         </Card>
       </div>
       
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
         <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">
@@ -273,41 +308,77 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="analytics">
-          <AnalyticsDashboard />
-        </TabsContent>
+        {loadedTabs.analytics && (
+          <TabsContent value="analytics">
+            <LazyTabContent>
+              <AnalyticsDashboard />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="inventory">
-          <InventoryManagement />
-        </TabsContent>
+        {loadedTabs.inventory && (
+          <TabsContent value="inventory">
+            <LazyTabContent>
+              <InventoryManagement />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="orders">
-          <OrderManagement />
-        </TabsContent>
+        {loadedTabs.orders && (
+          <TabsContent value="orders">
+            <LazyTabContent>
+              <OrderManagement />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="users">
-          <UserManagement />
-        </TabsContent>
+        {loadedTabs.users && (
+          <TabsContent value="users">
+            <LazyTabContent>
+              <UserManagement />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="reports">
-          <ReportingDashboard />
-        </TabsContent>
+        {loadedTabs.reports && (
+          <TabsContent value="reports">
+            <LazyTabContent>
+              <ReportingDashboard />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="insights">
-          <CustomerInsights />
-        </TabsContent>
+        {loadedTabs.insights && (
+          <TabsContent value="insights">
+            <LazyTabContent>
+              <CustomerInsights />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="pricing">
-          <PricingTools />
-        </TabsContent>
+        {loadedTabs.pricing && (
+          <TabsContent value="pricing">
+            <LazyTabContent>
+              <PricingTools />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="geo">
-          <GeoTargeting />
-        </TabsContent>
+        {loadedTabs.geo && (
+          <TabsContent value="geo">
+            <LazyTabContent>
+              <GeoTargeting />
+            </LazyTabContent>
+          </TabsContent>
+        )}
         
-        <TabsContent value="integrations">
-          <IntegrationHub />
-        </TabsContent>
+        {loadedTabs.integrations && (
+          <TabsContent value="integrations">
+            <LazyTabContent>
+              <IntegrationHub />
+            </LazyTabContent>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

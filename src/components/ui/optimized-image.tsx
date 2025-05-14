@@ -25,12 +25,12 @@ export const OptimizedImage = memo(({
   const observerRef = useRef<IntersectionObserver | null>(null);
   
   // Generate smaller image URL for better performance - memoized
-  const optimizedSrcUrl = useMemo(() => 
+  const getOptimizedSrcUrl = useMemo(() => 
     (imgSrc: string, imgWidth: number) => imgSrc ? `${imgSrc}?w=${imgWidth}&q=75&auto=format` : "/placeholder.svg", 
   []);
   
   // Initialize image source based on priority
-  const [imageSrc, setImageSrc] = useState(priority ? optimizedSrcUrl(src, width) : "");
+  const [imageSrc, setImageSrc] = useState(priority ? getOptimizedSrcUrl(src, width) : "");
 
   useEffect(() => {
     // Clean up previous observer if it exists
@@ -43,7 +43,7 @@ export const OptimizedImage = memo(({
       observerRef.current = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            setImageSrc(optimizedSrcUrl(src, width));
+            setImageSrc(getOptimizedSrcUrl(src, width));
             observerRef.current?.disconnect();
           }
         });
@@ -55,7 +55,7 @@ export const OptimizedImage = memo(({
       observerRef.current.observe(imgRef.current);
     } else if (!imageSrc) {
       // Fallback for priority images or browsers without IntersectionObserver
-      setImageSrc(optimizedSrcUrl(src, width));
+      setImageSrc(getOptimizedSrcUrl(src, width));
     }
     
     return () => {
@@ -63,7 +63,7 @@ export const OptimizedImage = memo(({
         observerRef.current.disconnect();
       }
     };
-  }, [src, width, priority, imageSrc, optimizedSrcUrl]);
+  }, [src, width, priority, imageSrc, getOptimizedSrcUrl]);
 
   // Handle image load/error events
   const handleLoad = () => setIsLoading(false);
