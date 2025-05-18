@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { motion } from "framer-motion";
-import { useState, useCallback, useMemo, Suspense, lazy, useEffect } from "react";
+import { useState, useCallback, useMemo, Suspense, lazy, useEffect, memo } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { ShoppingCart, ExternalLink } from "lucide-react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
