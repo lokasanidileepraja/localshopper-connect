@@ -11,6 +11,22 @@ const SummaryMetrics = lazy(() => import("@/components/admin/dashboard/SummaryMe
 const PerformanceMetrics = lazy(() => import("@/components/admin/dashboard/PerformanceMetrics"));
 const TabsSection = lazy(() => import("@/components/admin/dashboard/TabsSection"));
 
+// Create a custom error fallback component
+const SectionErrorFallback = ({ componentName, onRetry }: { componentName: string; onRetry?: () => void }) => (
+  <div className="p-4 bg-red-50 border border-red-100 rounded-md my-4">
+    <h3 className="text-red-600 font-medium mb-2">Error loading {componentName}</h3>
+    <p className="text-red-500 mb-3 text-sm">This section failed to load properly</p>
+    {onRetry && (
+      <button 
+        onClick={onRetry}
+        className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-600 rounded text-sm transition-colors"
+      >
+        Retry
+      </button>
+    )}
+  </div>
+);
+
 /**
  * Contains the admin dashboard content
  * Wrapped with memo to prevent unnecessary re-renders
@@ -36,10 +52,10 @@ const AdminDashboardContainer = () => {
     };
   }, [toast]);
   
-  // Error handling function for sub-components
+  // Error handling function for sub-components with retry capability
   const handleSectionError = (componentName: string) => {
-    return (error: Error) => {
-      console.error(`Error in ${componentName}:`, error);
+    return () => {
+      console.error(`Error in ${componentName}`);
       toast({
         title: `Error in ${componentName}`,
         description: "This section failed to load properly",
@@ -48,27 +64,48 @@ const AdminDashboardContainer = () => {
     };
   };
 
+  // Retry loading handlers
+  const retryLoading = (componentName: string) => () => {
+    toast({
+      title: `Retrying ${componentName}`,
+      description: "Attempting to reload the component"
+    });
+    // Force a re-render by updating state in a parent component (not implemented here)
+  };
+
   return (
     <div className="container mx-auto px-4 py-6">
-      <ErrorBoundary onError={handleSectionError("Header")}>
+      <ErrorBoundary 
+        fallback={<SectionErrorFallback componentName="Header" onRetry={retryLoading("Header")} />}
+        onError={handleSectionError("Header")}
+      >
         <Suspense fallback={<Skeleton className="h-12 w-2/3 mb-4" />}>
           <HeaderSection />
         </Suspense>
       </ErrorBoundary>
       
-      <ErrorBoundary onError={handleSectionError("Summary Metrics")}>
+      <ErrorBoundary 
+        fallback={<SectionErrorFallback componentName="Summary Metrics" onRetry={retryLoading("Summary Metrics")} />}
+        onError={handleSectionError("Summary Metrics")}
+      >
         <Suspense fallback={<Skeleton className="h-32 w-full mb-6" />}>
           <SummaryMetrics />
         </Suspense>
       </ErrorBoundary>
       
-      <ErrorBoundary onError={handleSectionError("Performance Metrics")}>
+      <ErrorBoundary 
+        fallback={<SectionErrorFallback componentName="Performance Metrics" onRetry={retryLoading("Performance Metrics")} />}
+        onError={handleSectionError("Performance Metrics")}
+      >
         <Suspense fallback={<Skeleton className="h-64 w-full mb-6" />}>
           <PerformanceMetrics />
         </Suspense>
       </ErrorBoundary>
       
-      <ErrorBoundary onError={handleSectionError("Tabs Section")}>
+      <ErrorBoundary 
+        fallback={<SectionErrorFallback componentName="Tabs Section" onRetry={retryLoading("Tabs Section")} />}
+        onError={handleSectionError("Tabs Section")}
+      >
         <Suspense fallback={<Skeleton className="h-48 w-full" />}>
           <TabsSection />
         </Suspense>

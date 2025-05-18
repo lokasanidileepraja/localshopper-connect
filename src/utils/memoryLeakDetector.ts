@@ -124,8 +124,9 @@ class MemoryLeakDetector {
    * Cleanup the detector
    */
   public cleanup(): void {
-    if (this.checkInterval) {
+    if (this.checkInterval !== null) {
       window.clearInterval(this.checkInterval);
+      this.checkInterval = null;
     }
     this.components.clear();
   }
@@ -141,7 +142,7 @@ export const memoryLeakDetector = new MemoryLeakDetector();
 export const useMemoryLeakDetection = (componentName: string): void => {
   if (process.env.NODE_ENV === 'development') {
     // Use a ref to store the instance ID
-    const instanceIdRef = React.useRef('');
+    const instanceIdRef = React.useRef<string>('');
     
     React.useEffect(() => {
       // Track component mount

@@ -46,7 +46,7 @@ const handleError = (error: Error) => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary onError={handleError}>
+    <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <HelmetProvider>

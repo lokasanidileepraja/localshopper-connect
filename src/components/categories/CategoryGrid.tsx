@@ -63,7 +63,6 @@ export const CategoryGrid = memo(({ categories, selectedIndex, onSelect }: Categ
     );
   }
   
-  // Standard grid rendering for reasonable category lists
   return (
     <motion.div
       variants={containerVariants}
@@ -72,7 +71,7 @@ export const CategoryGrid = memo(({ categories, selectedIndex, onSelect }: Categ
       className="w-full"
     >
       <div className={gridClasses}>
-        {/* Render only categories that are visible in the viewport */}
+        {/* Only render visible categories for better performance */}
         {categories.slice(0, 20).map((category, index) => (
           <CategoryCard
             key={category.name}

@@ -6,7 +6,7 @@ import { MapView } from "./MapView";
 import { PriceHistoryView } from "./PriceHistoryView";
 import { PriceAlertView } from "./PriceAlertView";
 import { MapPin, BarChart3, TableProperties, Clock, BellRing, Store } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useCallback, memo } from "react";
 import { analytics } from "@/lib/analytics";
 import { BulkPurchaseView } from "./BulkPurchaseView";
 
@@ -20,14 +20,21 @@ interface PriceCompareTabsProps {
   };
 }
 
-export const PriceCompareTabs = ({ searchQuery, filters }: PriceCompareTabsProps) => {
-  // Track tab changes for analytics
-  const handleTabChange = (value: string) => {
+export const PriceCompareTabs = memo(({ searchQuery, filters }: PriceCompareTabsProps) => {
+  // Track tab changes for analytics with stable callback
+  const handleTabChange = useCallback((value: string) => {
     analytics.trackEvent('price_compare_tab_change', { 
       tabValue: value,
       searchQuery: searchQuery || 'none'
     });
-  };
+  }, [searchQuery]);
+
+  // Log when filters change
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('PriceCompareTabs filters updated:', filters);
+    }
+  }, [filters]);
 
   return (
     <Tabs defaultValue="comparison" className="w-full" onValueChange={handleTabChange}>
@@ -101,4 +108,6 @@ export const PriceCompareTabs = ({ searchQuery, filters }: PriceCompareTabsProps
       </TabsContent>
     </Tabs>
   );
-};
+});
+
+PriceCompareTabs.displayName = 'PriceCompareTabs';

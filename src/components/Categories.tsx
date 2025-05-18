@@ -69,14 +69,7 @@ export const Categories = memo(({ onCategorySelect }: CategoriesProps) => {
   }, [filter]);
 
   // Memoize the filtered categories to prevent unnecessary recalculation
-  const filtered = useMemo(() => {
-    const result = filteredCategories;
-    // Avoid triggering console logs in production
-    if (process.env.NODE_ENV !== 'production') {
-      console.log("Filtered categories:", result);
-    }
-    return result;
-  }, [filteredCategories]);
+  const filtered = useMemo(() => filteredCategories, [filteredCategories]);
 
   return (
     <ErrorBoundary>

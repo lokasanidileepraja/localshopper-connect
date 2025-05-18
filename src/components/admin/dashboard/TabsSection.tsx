@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Suspense, lazy } from "react";
@@ -17,15 +16,62 @@ import {
   Link
 } from "lucide-react";
 import OverviewTab from "./OverviewTab";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+
+// Create a better loading component
+const TabContentLoading = ({ height = "h-64" }: { height?: string }) => (
+  <div className="w-full animate-pulse">
+    <Skeleton className={`${height} w-full mb-4 rounded-md`} />
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  </div>
+);
+
+// Create a component for error states
+const TabContentError = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="p-6 text-center bg-gray-50 rounded-lg border border-gray-100">
+    <div className="text-red-500 mb-4">
+      <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <h3 className="text-lg font-medium mt-2">Failed to load content</h3>
+    </div>
+    <p className="text-gray-500 mb-4">There was a problem loading this tab's content.</p>
+    <button
+      onClick={onRetry}
+      className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+    >
+      Try Again
+    </button>
+  </div>
+);
 
 // Create a lazy-loaded content wrapper for tab content
-const LazyTabContent = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
+const LazyTabContent = ({ children, isVisible, tabId }: { children: React.ReactNode; isVisible: boolean; tabId: string }) => {
+  const { toast } = useToast();
+  
   if (!isVisible) return null;
   
+  const handleError = (error: Error) => {
+    console.error(`Error loading tab ${tabId}:`, error);
+    toast({
+      title: `Failed to load ${tabId}`,
+      description: error.message,
+      variant: "destructive",
+    });
+  };
+  
   return (
-    <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-      {children}
-    </Suspense>
+    <ErrorBoundary
+      fallback={<TabContentError onRetry={() => window.location.reload()} />}
+      onError={handleError}
+    >
+      <Suspense fallback={<TabContentLoading />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
@@ -66,9 +112,18 @@ const TabsSection = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [loadedTabs, setLoadedTabs] = useState<Record<string, boolean>>({ overview: true });
   
+  // Track which tabs have errored
+  const [erroredTabs, setErroredTabs] = useState<Record<string, boolean>>({});
+  
+  // Keep track of tab change history for analytics
+  const [tabHistory, setTabHistory] = useState<string[]>(['overview']);
+  
   const handleTabChange = useCallback((value: string) => {
     setActiveTab(value);
     setLoadedTabs(prev => ({ ...prev, [value]: true }));
+    
+    // Add to tab history
+    setTabHistory(prev => [...prev, value]);
     
     // Analytics tracking for tab changes
     console.log(`Tab changed to: ${value}`);
@@ -80,6 +135,34 @@ const TabsSection = () => {
       description: `Switched to ${value} tab`,
       variant: "default",
     });
+  }, [toast]);
+  
+  // Log tab history for analytics on unmount
+  useEffect(() => {
+    return () => {
+      if (tabHistory.length > 1) {
+        console.log('Tab navigation history:', tabHistory);
+      }
+    };
+  }, [tabHistory]);
+  
+  // Handle tab error
+  const handleTabError = useCallback((tabId: string) => {
+    setErroredTabs(prev => ({ ...prev, [tabId]: true }));
+  }, []);
+  
+  // Retry loading a tab
+  const retryTabLoad = useCallback((tabId: string) => {
+    setErroredTabs(prev => ({ ...prev, [tabId]: false }));
+    toast({
+      title: `Retrying ${tabId}`,
+      description: "Attempting to reload tab content",
+    });
+    // Force re-render of the tab content
+    setLoadedTabs(prev => ({ ...prev, [tabId]: false }));
+    setTimeout(() => {
+      setLoadedTabs(prev => ({ ...prev, [tabId]: true }));
+    }, 100);
   }, [toast]);
   
   // Avoid recreating tab triggers on each render with useMemo
@@ -134,56 +217,92 @@ const TabsSection = () => {
       </TabsContent>
       
       <TabsContent value="analytics">
-        <LazyTabContent isVisible={loadedTabs.analytics}>
-          <AnalyticsDashboard />
+        <LazyTabContent isVisible={loadedTabs.analytics} tabId="analytics">
+          {erroredTabs.analytics ? (
+            <TabContentError onRetry={() => retryTabLoad('analytics')} />
+          ) : (
+            <AnalyticsDashboard />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="inventory">
-        <LazyTabContent isVisible={loadedTabs.inventory}>
-          <InventoryManagement />
+        <LazyTabContent isVisible={loadedTabs.inventory} tabId="inventory">
+          {erroredTabs.inventory ? (
+            <TabContentError onRetry={() => retryTabLoad('inventory')} />
+          ) : (
+            <InventoryManagement />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="orders">
-        <LazyTabContent isVisible={loadedTabs.orders}>
-          <OrderManagement />
+        <LazyTabContent isVisible={loadedTabs.orders} tabId="orders">
+          {erroredTabs.orders ? (
+            <TabContentError onRetry={() => retryTabLoad('orders')} />
+          ) : (
+            <OrderManagement />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="users">
-        <LazyTabContent isVisible={loadedTabs.users}>
-          <UserManagement />
+        <LazyTabContent isVisible={loadedTabs.users} tabId="users">
+          {erroredTabs.users ? (
+            <TabContentError onRetry={() => retryTabLoad('users')} />
+          ) : (
+            <UserManagement />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="reports">
-        <LazyTabContent isVisible={loadedTabs.reports}>
-          <ReportingDashboard />
+        <LazyTabContent isVisible={loadedTabs.reports} tabId="reports">
+          {erroredTabs.reports ? (
+            <TabContentError onRetry={() => retryTabLoad('reports')} />
+          ) : (
+            <ReportingDashboard />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="insights">
-        <LazyTabContent isVisible={loadedTabs.insights}>
-          <CustomerInsights />
+        <LazyTabContent isVisible={loadedTabs.insights} tabId="insights">
+          {erroredTabs.insights ? (
+            <TabContentError onRetry={() => retryTabLoad('insights')} />
+          ) : (
+            <CustomerInsights />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="pricing">
-        <LazyTabContent isVisible={loadedTabs.pricing}>
-          <PricingTools />
+        <LazyTabContent isVisible={loadedTabs.pricing} tabId="pricing">
+          {erroredTabs.pricing ? (
+            <TabContentError onRetry={() => retryTabLoad('pricing')} />
+          ) : (
+            <PricingTools />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="geo">
-        <LazyTabContent isVisible={loadedTabs.geo}>
-          <GeoTargeting />
+        <LazyTabContent isVisible={loadedTabs.geo} tabId="geo">
+          {erroredTabs.geo ? (
+            <TabContentError onRetry={() => retryTabLoad('geo')} />
+          ) : (
+            <GeoTargeting />
+          )}
         </LazyTabContent>
       </TabsContent>
       
       <TabsContent value="integrations">
-        <LazyTabContent isVisible={loadedTabs.integrations}>
-          <IntegrationHub />
+        <LazyTabContent isVisible={loadedTabs.integrations} tabId="integrations">
+          {erroredTabs.integrations ? (
+            <TabContentError onRetry={() => retryTabLoad('integrations')} />
+          ) : (
+            <IntegrationHub />
+          )}
         </LazyTabContent>
       </TabsContent>
     </Tabs>

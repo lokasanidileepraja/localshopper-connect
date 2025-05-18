@@ -9,7 +9,7 @@ import { usePreventRefresh } from "@/hooks/usePreventRefresh";
 import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-const AllCategories = () => {
+const AllCategories = memo(() => {
   // Apply the prevent refresh hook
   usePreventRefresh();
   
@@ -48,6 +48,8 @@ const AllCategories = () => {
       </div>
     </ErrorBoundary>
   );
-};
+});
 
-export default memo(AllCategories);
+AllCategories.displayName = 'AllCategories';
+
+export default AllCategories;
