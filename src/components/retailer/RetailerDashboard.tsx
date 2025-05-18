@@ -6,8 +6,15 @@ import { DashboardReservations } from "./dashboard/RecentReservations";
 import { memo, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { usePreventRefresh } from "@/hooks/usePreventRefresh";
+import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
 
 export const RetailerDashboard = memo(() => {
+  // Apply hooks to prevent unnecessary refreshes
+  usePreventRefresh();
+  useRenderOptimizer('RetailerDashboardComponent');
+  
+  // Improved React Query configuration
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ["retailerDashboard"],
     queryFn: () => Promise.resolve({
@@ -31,20 +38,25 @@ export const RetailerDashboard = memo(() => {
     }),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
     gcTime: 10 * 60 * 1000, // 10 minutes cache garbage collection
-    retry: 1, // Limit retries to prevent excessive network requests
+    retry: false, // Disable retries to prevent excessive requests
+    refetchOnWindowFocus: false, // Disable refetching on window focus
+    refetchOnMount: false, // Disable refetching on mount
   });
 
-  // Use loading skeleton with fixed dimensions to prevent layout shift
+  // Memoize skeleton to prevent recreation on each render
+  const loadingSkeleton = useMemo(() => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <Skeleton key={i} className="h-32" />
+      ))}
+      <Skeleton className="h-64 col-span-2" />
+      <Skeleton className="h-64 col-span-2" />
+    </div>
+  ), []);
+
+  // Show loading skeleton
   if (isLoading || !dashboardData) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-32" />
-        ))}
-        <Skeleton className="h-64 col-span-2" />
-        <Skeleton className="h-64 col-span-2" />
-      </div>
-    );
+    return loadingSkeleton;
   }
 
   return (

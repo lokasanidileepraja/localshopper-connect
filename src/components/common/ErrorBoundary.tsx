@@ -1,12 +1,14 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw } from "lucide-react";
-import { analytics } from "@/lib/analytics";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  resetKeys?: any[];
 }
 
 interface State {
@@ -22,21 +24,19 @@ export class ErrorBoundary extends Component<Props, State> {
     errorInfo: null,
   };
 
-  static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log the error to an error reporting service
-    console.error("Error caught by ErrorBoundary:", error, errorInfo);
+    // Call the onError callback if provided
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
+    }
     
-    // Track error in analytics
-    analytics.trackEvent("error_boundary_caught", { 
-      errorMessage: error.message,
-      errorStack: error.stack,
-      componentStack: errorInfo.componentStack
-    });
+    // Log the error
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
     
     this.setState({
       error,
@@ -44,7 +44,21 @@ export class ErrorBoundary extends Component<Props, State> {
     });
   }
 
-  handleReset = () => {
+  // Reset error boundary if any of the reset keys change
+  componentDidUpdate(prevProps: Props) {
+    if (this.state.hasError && this.props.resetKeys) {
+      // Check if any reset keys have changed
+      const hasChanged = this.props.resetKeys.some((key, index) => {
+        return prevProps.resetKeys?.[index] !== key;
+      });
+      
+      if (hasChanged) {
+        this.resetErrorBoundary();
+      }
+    }
+  }
+
+  resetErrorBoundary = () => {
     this.setState({
       hasError: false,
       error: null,
@@ -57,37 +71,11 @@ export class ErrorBoundary extends Component<Props, State> {
       // Custom fallback UI
       return (
         this.props.fallback || (
-          <div className="min-h-screen flex items-center justify-center bg-background p-4">
-            <div className="max-w-md w-full text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-100 mb-6">
-                <AlertTriangle className="h-10 w-10 text-red-500" />
-              </div>
-              <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
-              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-6 text-left overflow-auto max-h-48">
-                <p className="font-mono text-sm">
-                  {this.state.error?.toString() || "An unknown error occurred"}
-                </p>
-                {this.state.errorInfo && (
-                  <details className="mt-2">
-                    <summary className="text-xs font-medium text-gray-500 cursor-pointer">
-                      Component Stack Details
-                    </summary>
-                    <pre className="mt-2 text-xs overflow-auto whitespace-pre-wrap">
-                      {this.state.errorInfo.componentStack}
-                    </pre>
-                  </details>
-                )}
-              </div>
-              <Button 
-                onClick={this.handleReset}
-                className="gap-2"
-                size="lg"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Try Again
-              </Button>
-            </div>
-          </div>
+          <ErrorFallback 
+            error={this.state.error} 
+            errorInfo={this.state.errorInfo}
+            resetErrorBoundary={this.resetErrorBoundary}
+          />
         )
       );
     }
@@ -95,3 +83,64 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+// Create a separate component for the error UI
+const ErrorFallback = ({ 
+  error, 
+  errorInfo, 
+  resetErrorBoundary 
+}: { 
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+  resetErrorBoundary: () => void;
+}) => {
+  // Use navigate to allow going back to home
+  const navigate = useNavigate();
+  
+  const handleGoHome = () => {
+    resetErrorBoundary();
+    navigate('/');
+  };
+  
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[300px] p-4 bg-gray-50 rounded-lg">
+      <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-100 mb-4">
+        <AlertTriangle className="h-8 w-8 text-red-500" />
+      </div>
+      <h1 className="text-xl font-bold mb-2">Something went wrong</h1>
+      <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-4 text-left overflow-auto max-h-40 w-full max-w-lg">
+        <p className="font-mono text-sm">
+          {error?.toString() || "An unknown error occurred"}
+        </p>
+        {errorInfo && (
+          <details className="mt-2">
+            <summary className="text-xs font-medium text-gray-500 cursor-pointer">
+              Component Stack Details
+            </summary>
+            <pre className="mt-2 text-xs overflow-auto whitespace-pre-wrap">
+              {errorInfo.componentStack}
+            </pre>
+          </details>
+        )}
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button 
+          onClick={resetErrorBoundary}
+          className="gap-2"
+          variant="default"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Try Again
+        </Button>
+        <Button 
+          onClick={handleGoHome}
+          className="gap-2"
+          variant="outline"
+        >
+          <Home className="h-4 w-4" />
+          Go Home
+        </Button>
+      </div>
+    </div>
+  );
+};

@@ -1,16 +1,6 @@
-import { useQuery, useMutation, QueryClient, UseQueryOptions } from '@tanstack/react-query';
+
+import { useQuery, QueryClient } from '@tanstack/react-query';
 import { apiService } from '@/services/api';
-import { 
-  Product, 
-  Store, 
-  User, 
-  Order, 
-  Review,
-  PriceAlert,
-  Price,
-  PointsLog,
-  Badge
-} from '@/types/models';
 import { useToast } from './use-toast';
 
 // Create a singleton query client with optimized settings to prevent refresh loops
@@ -18,11 +8,11 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 10 * 60 * 1000, // 10 minutes - increased for stability
-      refetchOnWindowFocus: false,
-      retry: 1, // Reduce retry attempts
       gcTime: 30 * 60 * 1000, // 30 minutes garbage collection time (increased)
-      refetchOnMount: false, // Prevent automatic refetching
-      refetchOnReconnect: false // Don't refetch on reconnect
+      refetchOnWindowFocus: false, // Don't refetch when window regains focus
+      refetchOnMount: false, // Prevent automatic refetching when components mount
+      refetchOnReconnect: false, // Don't refetch on reconnect
+      retry: false, // Disable retries to prevent excessive requests
     },
   },
 });
@@ -168,7 +158,7 @@ export const useApi = () => {
   };
 };
 
-// Add methods to manually reset the query cache if needed
+// Add method to manually reset the query cache if needed
 export const resetQueryCache = () => {
   queryClient.clear();
 };

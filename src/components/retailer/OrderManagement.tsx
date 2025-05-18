@@ -1,9 +1,10 @@
 
 import { useState, useCallback, memo, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { usePreventRefresh } from "@/hooks/usePreventRefresh";
 
 // Sample orders data - in a real app this would come from an API
 const orders = [
@@ -62,6 +63,9 @@ const OrderItem = memo(({ order, onProcessOrder }: {
 OrderItem.displayName = 'OrderItem';
 
 export const OrderManagement = memo(() => {
+  // Apply the prevent refresh hook
+  usePreventRefresh();
+  
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("all");
   
@@ -79,60 +83,68 @@ export const OrderManagement = memo(() => {
     });
   }, [toast]);
   
-  // Filter orders based on active tab, memoized to prevent unnecessary recalculations
+  // Memoize filtered orders to prevent unnecessary recalculations
   const filteredOrders = useMemo(() => {
     if (activeTab === 'all') return orders;
     return orders.filter(order => order.status.toLowerCase() === activeTab.toLowerCase());
   }, [activeTab]);
   
+  // Memoize order items to prevent recreating on each render
+  const orderItems = useMemo(() => (
+    filteredOrders.map((order) => (
+      <OrderItem 
+        key={order.id} 
+        order={order} 
+        onProcessOrder={handleProcessOrder} 
+      />
+    ))
+  ), [filteredOrders, handleProcessOrder]);
+  
+  // Memoize empty state to prevent recreation on each render
+  const emptyState = useMemo(() => (
+    <tr>
+      <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+        No orders found
+      </td>
+    </tr>
+  ), []);
+  
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-5 w-full">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="processing">Processing</TabsTrigger>
-            <TabsTrigger value="shipped">Shipped</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <Button variant="outline" className="ml-2" onClick={handleRefresh}>
-          Refresh
-        </Button>
-      </div>
-      
-      <div className="rounded-md border">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-muted/50 text-left">
-              <th className="px-4 py-3 text-sm font-medium">Order ID</th>
-              <th className="px-4 py-3 text-sm font-medium">Customer</th>
-              <th className="px-4 py-3 text-sm font-medium">Total</th>
-              <th className="px-4 py-3 text-sm font-medium">Status</th>
-              <th className="px-4 py-3 text-sm font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
-                <OrderItem 
-                  key={order.id} 
-                  order={order} 
-                  onProcessOrder={handleProcessOrder} 
-                />
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  No orders found
-                </td>
+    <ErrorBoundary>
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-5 w-full">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="pending">Pending</TabsTrigger>
+              <TabsTrigger value="processing">Processing</TabsTrigger>
+              <TabsTrigger value="shipped">Shipped</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Button variant="outline" className="ml-2 shrink-0" onClick={handleRefresh}>
+            Refresh
+          </Button>
+        </div>
+        
+        <div className="rounded-md border">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-muted/50 text-left">
+                <th className="px-4 py-3 text-sm font-medium">Order ID</th>
+                <th className="px-4 py-3 text-sm font-medium">Customer</th>
+                <th className="px-4 py-3 text-sm font-medium">Total</th>
+                <th className="px-4 py-3 text-sm font-medium">Status</th>
+                <th className="px-4 py-3 text-sm font-medium">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredOrders.length > 0 ? orderItems : emptyState}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 });
 

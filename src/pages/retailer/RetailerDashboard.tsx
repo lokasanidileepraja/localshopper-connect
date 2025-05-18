@@ -1,44 +1,58 @@
 
-import { useCallback, useState, memo, Suspense } from "react";
+import { memo, Suspense, lazy } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RetailerDashboard as RetailerDashboardComponent } from "@/components/retailer/RetailerDashboard";
-import { SalesChart } from "@/components/retailer/SalesChart";
-import { InventorySummary } from "@/components/retailer/InventorySummary";
-import { RecentReservations } from "@/components/retailer/RecentReservations";
-import { OrderManagement } from "@/components/retailer/OrderManagement";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePreventRefresh } from "@/hooks/usePreventRefresh";
-import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-// Memoize content components for better performance
-const MemoizedSalesChart = memo(SalesChart);
-const MemoizedInventorySummary = memo(InventorySummary);
-const MemoizedReservations = memo(RecentReservations);
-const MemoizedOrderManagement = memo(OrderManagement);
+// Lazy load components to improve initial load time
+const RetailerDashboardComponent = lazy(() => 
+  import("@/components/retailer/RetailerDashboard").then(mod => ({ 
+    default: mod.RetailerDashboard 
+  }))
+);
 
-// Create a lazy-loaded content wrapper for tab content
-const LazyTabContent = memo(({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-    {children}
-  </Suspense>
-));
+const SalesChart = lazy(() => 
+  import("@/components/retailer/SalesChart").then(mod => ({ 
+    default: mod.SalesChart 
+  }))
+);
+
+const InventorySummary = lazy(() => 
+  import("@/components/retailer/InventorySummary").then(mod => ({ 
+    default: mod.InventorySummary 
+  }))
+);
+
+const RecentReservations = lazy(() => 
+  import("@/components/retailer/RecentReservations").then(mod => ({ 
+    default: mod.RecentReservations 
+  }))
+);
+
+const OrderManagement = lazy(() => 
+  import("@/components/retailer/OrderManagement").then(mod => ({ 
+    default: mod.OrderManagement 
+  }))
+);
+
+// Component for suspense fallback
+const CardSkeleton = ({ height = "h-48" }: { height?: string }) => (
+  <Skeleton className={`${height} w-full`} />
+);
 
 const RetailerDashboard = () => {
-  // Apply optimization hooks - but wrap in try/catch to prevent crashes
-  try {
-    usePreventRefresh();
-    useRenderOptimizer('RetailerDashboard');
-  } catch (err) {
-    console.error("Failed to initialize optimization hooks:", err);
-  }
+  // Apply the prevent refresh hook
+  usePreventRefresh();
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Retailer Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6">Retailer Dashboard</h1>
       
       <ErrorBoundary>
-        <RetailerDashboardComponent />
+        <Suspense fallback={<CardSkeleton height="h-64" />}>
+          <RetailerDashboardComponent />
+        </Suspense>
       </ErrorBoundary>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
@@ -49,7 +63,9 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ErrorBoundary>
-                <MemoizedSalesChart />
+                <Suspense fallback={<CardSkeleton />}>
+                  <SalesChart />
+                </Suspense>
               </ErrorBoundary>
             </CardContent>
           </Card>
@@ -62,7 +78,9 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ErrorBoundary>
-                <MemoizedInventorySummary />
+                <Suspense fallback={<CardSkeleton />}>
+                  <InventorySummary />
+                </Suspense>
               </ErrorBoundary>
             </CardContent>
           </Card>
@@ -76,8 +94,10 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ErrorBoundary>
-              <MemoizedReservations />
-              </ErrorBoundary>
+              <Suspense fallback={<CardSkeleton />}>
+                <RecentReservations />
+              </Suspense>
+            </ErrorBoundary>
           </CardContent>
         </Card>
         
@@ -87,9 +107,9 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ErrorBoundary>
-              <LazyTabContent>
-                <MemoizedOrderManagement />
-              </LazyTabContent>
+              <Suspense fallback={<CardSkeleton />}>
+                <OrderManagement />
+              </Suspense>
             </ErrorBoundary>
           </CardContent>
         </Card>

@@ -1,13 +1,25 @@
 
-import { memo, Suspense } from "react";
+import { memo, Suspense, lazy } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import AdminDashboardContainer from "@/components/admin/dashboard/AdminDashboardContainer";
+import { usePreventRefresh } from "@/hooks/usePreventRefresh";
+import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
+
+// Lazy load the dashboard container component
+const AdminDashboardContainer = lazy(() => 
+  import("@/components/admin/dashboard/AdminDashboardContainer")
+);
 
 /**
  * Admin Dashboard page with error boundaries and loading states
  */
 const AdminDashboard = () => {
+  // Apply the prevent refresh hook
+  usePreventRefresh();
+  
+  // Track renders to detect performance issues
+  useRenderOptimizer('AdminDashboardPage');
+
   return (
     <ErrorBoundary fallback={
       <div className="p-8 text-center">
@@ -20,7 +32,7 @@ const AdminDashboard = () => {
         </button>
       </div>
     }>
-      <Suspense fallback={<Skeleton className="h-[800px] w-full" />}>
+      <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
         <AdminDashboardContainer />
       </Suspense>
     </ErrorBoundary>

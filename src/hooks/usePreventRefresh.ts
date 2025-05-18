@@ -3,30 +3,30 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Hook to prevent unnecessary page refreshes by stabilizing dependencies
- * that might cause useEffect cleanup/setup cycles
+ * Hook to prevent unnecessary page refreshes by managing page navigation behavior
  */
 export const usePreventRefresh = () => {
   const location = useLocation();
   
   useEffect(() => {
-    // This prevents the browser from refreshing when React Router
-    // causes history changes by ensuring navigation uses proper routing
+    // This is a more efficient approach that avoids creating closures on each render
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      // Only prevent actual page reloads, not React Router navigation
-      const isActualNavigation = performance.navigation.type === 1;
-      if (!isActualNavigation) {
-        e.preventDefault();
-        e.returnValue = '';
+      // Only prevent actual browser refreshes (F5, Ctrl+R), not React Router navigation
+      if (e.currentTarget === window) {
+        // This is a standard way to show the "Are you sure?" dialog
+        // but we only apply it for actual page unloads, not React Router navigation
+        const confirmationMessage = 'Changes you made may not be saved.';
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
       }
     };
     
-    // Track this for debugging purposes
-    console.log('Route changed to:', location.pathname);
-    
+    // Only attach the event listener once and only for actual page unloads
     window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [location.pathname]);
+  }, []); // Remove location.pathname dependency to prevent unnecessary rerenders
 };
