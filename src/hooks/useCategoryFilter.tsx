@@ -1,10 +1,16 @@
-
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { Category } from '@/types/categories';
 import { debounce } from '@/lib/utils';
 
 export const useCategoryFilter = (categories: Category[]) => {
   const [filter, setFilter] = useState('');
+  const categoriesRef = useRef(categories);
+  
+  // Keep a ref to the categories to avoid unnecessary recalculations
+  // when the component re-renders but categories haven't actually changed
+  if (categoriesRef.current !== categories) {
+    categoriesRef.current = categories;
+  }
   
   // Debounced filter setter to prevent too frequent updates
   const setFilterDebounced = useMemo(() => 
@@ -12,15 +18,16 @@ export const useCategoryFilter = (categories: Category[]) => {
   []);
 
   // Memoized function to filter categories
+  // Using useCallback with a ref instead of direct dependency on categories
   const filteredCategories = useCallback(() => {
-    if (!filter) return categories;
+    if (!filter) return categoriesRef.current;
     
     const lowerFilter = filter.toLowerCase();
-    return categories.filter(category => 
+    return categoriesRef.current.filter(category => 
       category.name.toLowerCase().includes(lowerFilter) ||
       category.description.toLowerCase().includes(lowerFilter)
     );
-  }, [categories, filter]);
+  }, [filter]);
 
   return { 
     filter, 

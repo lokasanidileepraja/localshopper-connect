@@ -1,9 +1,11 @@
-
 import { useState, Suspense, lazy, useMemo, useCallback, memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePreventRefresh } from "@/hooks/usePreventRefresh";
+import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 // Optimize lazy loading with proper dynamic imports and memoization
 const ProductManagement = lazy(() => import("@/components/retailer/ProductManagement").then(module => ({ default: memo(() => <module.ProductManagement />) })));
@@ -32,12 +34,19 @@ const RetailerProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loadedTabs, setLoadedTabs] = useState<Record<string, boolean>>({ dashboard: true });
   const isMobile = useIsMobile();
+  
+  // Apply optimization hooks
+  usePreventRefresh();
+  useRenderOptimizer('RetailerProfile');
 
   // Memoize tab change handler to prevent unnecessary re-renders
   const handleTabChange = useCallback((value: string) => {
-    setActiveTab(value);
-    setLoadedTabs(prev => ({ ...prev, [value]: true }));
-  }, []);
+    // Only update if the tab actually changed
+    if (value !== activeTab) {
+      setActiveTab(value);
+      setLoadedTabs(prev => ({ ...prev, [value]: true }));
+    }
+  }, [activeTab]);
 
   // Memoize TabsList to prevent re-renders
   const tabsList = useMemo(() => (
@@ -58,117 +67,143 @@ const RetailerProfile = () => {
   ), []);
 
   return (
-    <div className="container mx-auto px-4 py-4 md:py-8 bg-background">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
-        <h1 className="text-xl md:text-2xl font-bold">Retailer Dashboard</h1>
+    <ErrorBoundary>
+      <div className="container mx-auto px-4 py-4 md:py-8 bg-background">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2">
+          <h1 className="text-xl md:text-2xl font-bold">Retailer Dashboard</h1>
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-1">
+              {tabsList}
+            </CardContent>
+          </Card>
+
+          {/* Only render the content for the active tab */}
+          <TabsContent value="dashboard">
+            <ErrorBoundary>
+              {loadedTabs.dashboard && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <RetailerDashboard />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+
+          <TabsContent value="whatsapp">
+            <ErrorBoundary>
+              {loadedTabs.whatsapp && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <WhatsAppUpdates />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="products">
+            <ErrorBoundary>
+              {loadedTabs.products && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <ProductManagement />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="inventory">
+            <ErrorBoundary>
+              {loadedTabs.inventory && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <InventoryTracking />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="orders">
+            <ErrorBoundary>
+              {loadedTabs.orders && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <OrderManagement />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="customers">
+            <ErrorBoundary>
+              {loadedTabs.customers && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <CustomerInteraction />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="promotions">
+            <ErrorBoundary>
+              {loadedTabs.promotions && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <PromotionsManagement />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="analytics">
+            <ErrorBoundary>
+              {loadedTabs.analytics && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <RetailerAnalytics />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="delivery">
+            <ErrorBoundary>
+              {loadedTabs.delivery && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <DeliveryOptions />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="payments">
+            <ErrorBoundary>
+              {loadedTabs.payments && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <PaymentManagement />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="users">
+            <ErrorBoundary>
+              {loadedTabs.users && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <UserAccessControl />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+          
+          <TabsContent value="support">
+            <ErrorBoundary>
+              {loadedTabs.support && (
+                <Suspense fallback={<TabContentLoader />}>
+                  <RetailerSupport />
+                </Suspense>
+              )}
+            </ErrorBoundary>
+          </TabsContent>
+        </Tabs>
       </div>
-      
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-1">
-            {tabsList}
-          </CardContent>
-        </Card>
-
-        {/* Only render the content for the active tab and ones that have been viewed */}
-        <TabsContent value="dashboard">
-          {loadedTabs.dashboard && (
-            <Suspense fallback={<TabContentLoader />}>
-              <RetailerDashboard />
-            </Suspense>
-          )}
-        </TabsContent>
-
-        <TabsContent value="whatsapp">
-          {loadedTabs.whatsapp && (
-            <Suspense fallback={<TabContentLoader />}>
-              <WhatsAppUpdates />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="products">
-          {loadedTabs.products && (
-            <Suspense fallback={<TabContentLoader />}>
-              <ProductManagement />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="inventory">
-          {loadedTabs.inventory && (
-            <Suspense fallback={<TabContentLoader />}>
-              <InventoryTracking />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="orders">
-          {loadedTabs.orders && (
-            <Suspense fallback={<TabContentLoader />}>
-              <OrderManagement />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="customers">
-          {loadedTabs.customers && (
-            <Suspense fallback={<TabContentLoader />}>
-              <CustomerInteraction />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="promotions">
-          {loadedTabs.promotions && (
-            <Suspense fallback={<TabContentLoader />}>
-              <PromotionsManagement />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="analytics">
-          {loadedTabs.analytics && (
-            <Suspense fallback={<TabContentLoader />}>
-              <RetailerAnalytics />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="delivery">
-          {loadedTabs.delivery && (
-            <Suspense fallback={<TabContentLoader />}>
-              <DeliveryOptions />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="payments">
-          {loadedTabs.payments && (
-            <Suspense fallback={<TabContentLoader />}>
-              <PaymentManagement />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="users">
-          {loadedTabs.users && (
-            <Suspense fallback={<TabContentLoader />}>
-              <UserAccessControl />
-            </Suspense>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="support">
-          {loadedTabs.support && (
-            <Suspense fallback={<TabContentLoader />}>
-              <RetailerSupport />
-            </Suspense>
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+    </ErrorBoundary>
   );
 };
 
-export default RetailerProfile;
+export default memo(RetailerProfile);

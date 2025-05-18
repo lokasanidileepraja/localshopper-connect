@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, QueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { apiService } from '@/services/api';
 import { 
@@ -14,15 +13,16 @@ import {
 } from '@/types/models';
 import { useToast } from './use-toast';
 
-// Create a singleton query client with optimized settings
+// Create a singleton query client with optimized settings to prevent refresh loops
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 10 * 60 * 1000, // 10 minutes - increased for stability
       refetchOnWindowFocus: false,
       retry: 1, // Reduce retry attempts
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection time (replaces cacheTime)
+      gcTime: 30 * 60 * 1000, // 30 minutes garbage collection time (increased)
       refetchOnMount: false, // Prevent automatic refetching
+      refetchOnReconnect: false // Don't refetch on reconnect
     },
   },
 });
@@ -34,8 +34,9 @@ export const useApi = () => {
   const useCurrentUser = () => useQuery({
     queryKey: ['currentUser'],
     queryFn: () => apiService.getCurrentUser(),
-    staleTime: 15 * 60 * 1000, // 15 minutes - user data changes less frequently
+    staleTime: 30 * 60 * 1000, // 30 minutes - user data changes less frequently
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useUserPoints = (userId?: string) => useQuery({
@@ -44,6 +45,7 @@ export const useApi = () => {
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useUserBadges = (userId?: string) => useQuery({
@@ -52,6 +54,7 @@ export const useApi = () => {
     enabled: !!userId,
     staleTime: 10 * 60 * 1000, // 10 minutes - badges don't change often
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   // Product related queries with aggressive caching
@@ -61,6 +64,7 @@ export const useApi = () => {
     staleTime: 10 * 60 * 1000, // 10 minutes - product data doesn't change often
     refetchOnMount: false,
     gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useProductById = (productId?: string) => useQuery({
@@ -69,6 +73,7 @@ export const useApi = () => {
     enabled: !!productId,
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useProductPrices = (productId?: string) => useQuery({
@@ -77,6 +82,7 @@ export const useApi = () => {
     enabled: !!productId,
     staleTime: 5 * 60 * 1000, // 5 minutes - prices can change more frequently
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   // Store related queries
@@ -85,6 +91,7 @@ export const useApi = () => {
     queryFn: () => apiService.getStores(nearbyLocation),
     staleTime: 10 * 60 * 1000, // 10 minutes - stores don't change locations often
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useStoreById = (storeId?: string) => useQuery({
@@ -93,6 +100,7 @@ export const useApi = () => {
     enabled: !!storeId,
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   // Orders and reviews with more appropriate caching
@@ -101,6 +109,7 @@ export const useApi = () => {
     queryFn: () => (userId ? apiService.getUserOrders(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 2 * 60 * 1000, // 2 minutes - orders can update frequently
+    refetchInterval: false, // Don't refetch periodically
   });
   
   const useProductReviews = (productId?: string) => useQuery({
@@ -109,6 +118,7 @@ export const useApi = () => {
     enabled: !!productId,
     staleTime: 10 * 60 * 1000, // 10 minutes - reviews don't change often
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   // Price alerts with improved caching
@@ -118,6 +128,7 @@ export const useApi = () => {
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   // Points and gamification
@@ -127,6 +138,7 @@ export const useApi = () => {
     enabled: !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: false,
+    refetchInterval: false, // Don't refetch periodically
   });
   
   return {
@@ -154,6 +166,11 @@ export const useApi = () => {
     // Points and gamification
     useUserPointsLog,
   };
+};
+
+// Add methods to manually reset the query cache if needed
+export const resetQueryCache = () => {
+  queryClient.clear();
 };
 
 // Export the query client to be used in the app

@@ -1,12 +1,9 @@
-
 import { useEffect, useCallback, useRef } from 'react';
+import { throttle } from '@/lib/utils';
 
 /**
- * A hook to handle keyboard navigation
- * @param onUp Function to call when up arrow is pressed
- * @param onDown Function to call when down arrow is pressed
- * @param onEnter Function to call when enter is pressed
- * @param deps Dependencies array to control when the event listeners are added/removed
+ * A hook to handle keyboard navigation with improved stability
+ * Uses stable refs and throttling to prevent refresh loops
  */
 export const useKeyboardNav = (
   onUp: () => void,
@@ -26,8 +23,8 @@ export const useKeyboardNav = (
     onEnterRef.current = onEnter;
   }, [onUp, onDown, onEnter]);
   
-  // Create a memoized keyboard handler
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+  // Throttled keyboard handler stored in a ref to keep it stable
+  const handleKeyDownRef = useRef(throttle((event: KeyboardEvent) => {
     // Only handle navigation events if no input element is focused
     const activeElement = document.activeElement;
     const isInputFocused = 
@@ -57,25 +54,17 @@ export const useKeyboardNav = (
       default:
         break;
     }
-  }, []);
+  }, 150));
   
   useEffect(() => {
-    // Add throttled event listener
-    let lastCallTime = 0;
-    const throttleDelay = 150; // ms
+    // Get the stable reference to the handler
+    const handler = handleKeyDownRef.current;
     
-    const throttledHandler = (event: KeyboardEvent) => {
-      const now = Date.now();
-      if (now - lastCallTime >= throttleDelay) {
-        handleKeyDown(event);
-        lastCallTime = now;
-      }
-    };
-    
-    window.addEventListener('keydown', throttledHandler);
+    // Add event listener
+    window.addEventListener('keydown', handler);
     
     return () => {
-      window.removeEventListener('keydown', throttledHandler);
+      window.removeEventListener('keydown', handler);
     };
-  }, [handleKeyDown, ...deps]);
+  }, deps); // Only re-attach when deps change
 };

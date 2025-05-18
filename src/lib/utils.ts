@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { 
@@ -13,10 +12,26 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Re-export performance utilities 
+ * Re-export performance utilities with optimized implementation
  */
-export const debounce = performanceDebounce;
-export const throttle = performanceThrottle;
+export const debounce: typeof performanceDebounce = (fn, delay) => {
+  // Use the imported debounce function but add a check to ensure fn is defined
+  if (typeof fn !== 'function') {
+    console.error('Debounce called with non-function argument');
+    return ((...args: any[]) => {}) as ReturnType<typeof performanceDebounce>;
+  }
+  return performanceDebounce(fn, delay);
+};
+
+export const throttle: typeof performanceThrottle = (fn, delay) => {
+  // Use the imported throttle function but add a check to ensure fn is defined
+  if (typeof fn !== 'function') {
+    console.error('Throttle called with non-function argument');
+    return ((...args: any[]) => {}) as ReturnType<typeof performanceThrottle>;
+  }
+  return performanceThrottle(fn, delay);
+};
+
 export const safeLocalStorageGet = performanceSafeLocalStorageGet;
 export const safeLocalStorageSet = performanceSafeLocalStorageSet;
 
@@ -56,4 +71,54 @@ export function createSlug(text: string): string {
  */
 export function generateId(): string {
   return Math.random().toString(36).substring(2, 9);
+}
+
+/**
+ * Helper function to safely use window object
+ * Prevents issues with server-side rendering
+ */
+export function isBrowser(): boolean {
+  return typeof window !== 'undefined';
+}
+
+/**
+ * Prevent layout thrashing by batching DOM reads and writes
+ */
+export function scheduleDOMOperation(read: () => any, write: (result: any) => void): void {
+  requestAnimationFrame(() => {
+    const result = read();
+    requestAnimationFrame(() => {
+      write(result);
+    });
+  });
+}
+
+/**
+ * Memoize expensive calculations with a limited cache size
+ */
+export function memoize<T extends (...args: any[]) => any>(
+  fn: T, 
+  maxCacheSize: number = 100
+): T {
+  const cache = new Map();
+  
+  return ((...args: any[]) => {
+    const key = JSON.stringify(args);
+    
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    
+    const result = fn(...args);
+    
+    // Limit cache size
+    if (cache.size >= maxCacheSize) {
+      // Remove oldest entry
+      const firstKey = cache.keys().next().value;
+      cache.delete(firstKey);
+    }
+    
+    cache.set(key, result);
+    return result;
+  }) as T;
 }
