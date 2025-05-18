@@ -9,16 +9,21 @@ import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 const LoadingError = memo(() => <div>Failed to load component</div>);
 LoadingError.displayName = 'LoadingError';
 
-// Type definition to ensure consistent return types
-type ComponentImport<T = Record<string, never>> = ComponentType<T>;
+// Type definition to ensure consistent return types for components with various props
+type ComponentImport<T = any> = ComponentType<T>;
+
+// WhatsApp component specifically needs storeId prop
+interface WhatsAppStockUpdateProps {
+  storeId: string;
+}
 
 // Consistent approach for lazy loading components with proper typing
 const WhatsAppStockUpdate = lazy(() => 
   import("./WhatsAppStockUpdate")
-    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) as ComponentImport }))
+    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) as ComponentImport<WhatsAppStockUpdateProps> }))
     .catch(() => {
       console.error("Failed to load WhatsAppStockUpdate");
-      return { default: LoadingError as ComponentImport };
+      return { default: LoadingError as ComponentImport<WhatsAppStockUpdateProps> };
     })
 );
 
