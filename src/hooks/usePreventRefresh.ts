@@ -26,7 +26,7 @@ export const usePreventRefresh = () => {
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
-      window.addEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [location.pathname]);
 };

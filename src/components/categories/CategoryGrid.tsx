@@ -4,7 +4,6 @@ import { CategoryCard } from "./CategoryCard";
 import { Category } from "@/types/categories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { memo } from "react";
-import { Virtuoso } from "react-virtuoso";
 
 interface CategoryGridProps {
   categories: Category[];
@@ -81,24 +80,35 @@ export const CategoryGrid = memo(({ categories, selectedIndex, onSelect }: Categ
     );
   }
   
-  // For large category lists, use virtualization
+  // For large category lists, use regular rendering instead of Virtuoso
+  // as Virtuoso might be causing issues in this context
   return (
     <div className="w-full">
-      <Virtuoso
-        style={{ height: '80vh' }}
-        totalCount={categories.length}
-        overscan={10}
-        itemContent={(index) => (
-          <div className="p-2">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="w-full"
+      >
+        <div className={`
+          grid gap-4 sm:gap-6
+          ${isMobile 
+            ? 'grid-cols-2' 
+            : 'sm:grid-cols-3 lg:grid-cols-4'}
+          auto-rows-fr
+          transform-gpu
+        `}>
+          {categories.map((category, index) => (
             <CategoryCard
-              category={categories[index]}
+              key={category.name}
+              category={category}
               onSelect={onSelect}
               isSelected={selectedIndex === index}
               index={index}
             />
-          </div>
-        )}
-      />
+          ))}
+        </div>
+      </motion.div>
       
       {categories.length === 0 && (
         <motion.div

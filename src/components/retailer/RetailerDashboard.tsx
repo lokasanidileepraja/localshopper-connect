@@ -5,6 +5,7 @@ import { TopSellingProducts } from "./dashboard/TopSellingProducts";
 import { DashboardReservations } from "./dashboard/RecentReservations";
 import { memo, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export const RetailerDashboard = memo(() => {
   const { data: dashboardData, isLoading } = useQuery({
@@ -29,6 +30,8 @@ export const RetailerDashboard = memo(() => {
       ],
     }),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
+    gcTime: 10 * 60 * 1000, // 10 minutes cache garbage collection
+    retry: 1, // Limit retries to prevent excessive network requests
   });
 
   // Use loading skeleton with fixed dimensions to prevent layout shift
@@ -46,18 +49,24 @@ export const RetailerDashboard = memo(() => {
 
   return (
     <div className="space-y-6">
-      <DashboardMetrics 
-        totalSales={dashboardData.totalSales}
-        totalReservations={dashboardData.totalReservations}
-        totalCustomers={dashboardData.totalCustomers}
-        pendingPickups={dashboardData.pendingPickups}
-        salesGrowth={dashboardData.salesGrowth}
-        pendingStockUpdates={dashboardData.pendingStockUpdates}
-      />
+      <ErrorBoundary>
+        <DashboardMetrics 
+          totalSales={dashboardData.totalSales}
+          totalReservations={dashboardData.totalReservations}
+          totalCustomers={dashboardData.totalCustomers}
+          pendingPickups={dashboardData.pendingPickups}
+          salesGrowth={dashboardData.salesGrowth}
+          pendingStockUpdates={dashboardData.pendingStockUpdates}
+        />
+      </ErrorBoundary>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <TopSellingProducts products={dashboardData.topSellingProducts} />
-        <DashboardReservations reservations={dashboardData.recentReservations} />
+        <ErrorBoundary>
+          <TopSellingProducts products={dashboardData.topSellingProducts} />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <DashboardReservations reservations={dashboardData.recentReservations} />
+        </ErrorBoundary>
       </div>
     </div>
   );

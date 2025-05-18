@@ -1,115 +1,86 @@
 
 /**
- * Utility functions for performance optimization
+ * Performance optimization utilities
  */
 
 /**
- * Creates a debounced function that delays invoking func until after wait milliseconds
- * @param func The function to debounce
- * @param wait Wait time in milliseconds
+ * Debounce function to limit the rate at which a function can fire
+ * @param fn The function to debounce
+ * @param delay The delay in milliseconds
  */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
+export const debounce = <T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number
+): ((...args: Parameters<T>) => void) => {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
   
   return function(...args: Parameters<T>): void {
-    const later = () => {
-      timeout = null;
-      func(...args);
-    };
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
     
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(later, wait);
+    timeoutId = setTimeout(() => {
+      fn(...args);
+      timeoutId = null;
+    }, delay);
   };
-}
+};
 
 /**
- * Creates a throttled function that only invokes func at most once per every wait milliseconds
- * @param func The function to throttle
- * @param limit Limit time in milliseconds
+ * Throttle function to limit the rate at which a function can fire
+ * @param fn The function to throttle
+ * @param delay The delay in milliseconds
  */
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
-  limit: number
-): (...args: Parameters<T>) => void {
-  let inThrottle = false;
-  let lastArgs: Parameters<T> | null = null;
+export const throttle = <T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number
+): ((...args: Parameters<T>) => void) => {
+  let lastCall = 0;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
   
   return function(...args: Parameters<T>): void {
-    if (!inThrottle) {
-      func(...args);
-      inThrottle = true;
+    const now = Date.now();
+    const remaining = delay - (now - lastCall);
+    
+    if (remaining <= 0) {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
       
-      setTimeout(() => {
-        inThrottle = false;
-        if (lastArgs) {
-          func(...lastArgs);
-          lastArgs = null;
-        }
-      }, limit);
-    } else {
-      lastArgs = args;
+      lastCall = now;
+      fn(...args);
+    } else if (timeoutId === null) {
+      timeoutId = setTimeout(() => {
+        lastCall = Date.now();
+        timeoutId = null;
+        fn(...args);
+      }, remaining);
     }
   };
-}
+};
 
 /**
- * Safely accesses nested properties without throwing errors
+ * Safe wrapper for localStorage.getItem that doesn't throw
  */
-export function safeAccess<T, K extends keyof T>(obj: T | null | undefined, key: K): T[K] | undefined {
-  return obj && obj[key];
-}
-
-/**
- * Safe local storage get with error handling
- */
-export function safeLocalStorageGet(key: string): string | null {
+export const safeLocalStorageGet = (key: string): string | null => {
   try {
     return localStorage.getItem(key);
   } catch (e) {
-    console.error('Error accessing localStorage:', e);
+    console.error(`Error accessing localStorage.getItem('${key}'):`, e);
     return null;
   }
-}
+};
 
 /**
- * Safe local storage set with error handling
+ * Safe wrapper for localStorage.setItem that doesn't throw
  */
-export function safeLocalStorageSet(key: string, value: string): boolean {
+export const safeLocalStorageSet = (key: string, value: string): boolean => {
   try {
     localStorage.setItem(key, value);
     return true;
   } catch (e) {
-    console.error('Error setting localStorage:', e);
+    console.error(`Error accessing localStorage.setItem('${key}', '${value}'):`, e);
     return false;
   }
-}
-
-/**
- * RAF (request animation frame) based throttle for smooth animations
- */
-export function rafThrottle<T extends (...args: any[]) => any>(
-  callback: T
-): (...args: Parameters<T>) => void {
-  let requestId: number | null = null;
-  let lastArgs: Parameters<T> | null = null;
-
-  const later = () => {
-    requestId = null;
-    if (lastArgs) {
-      callback(...lastArgs);
-      lastArgs = null;
-    }
-  };
-
-  return (...args: Parameters<T>) => {
-    lastArgs = args;
-    if (requestId === null) {
-      requestId = requestAnimationFrame(later);
-    }
-  };
-}
+};

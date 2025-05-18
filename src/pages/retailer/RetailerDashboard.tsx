@@ -1,8 +1,7 @@
 
 import { useCallback, useState, memo, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RetailerDashboard as RetailerDashboardComponents } from "@/components/retailer/RetailerDashboard";
+import { RetailerDashboard as RetailerDashboardComponent } from "@/components/retailer/RetailerDashboard";
 import { SalesChart } from "@/components/retailer/SalesChart";
 import { InventorySummary } from "@/components/retailer/InventorySummary";
 import { RecentReservations } from "@/components/retailer/RecentReservations";
@@ -26,26 +25,20 @@ const LazyTabContent = memo(({ children }: { children: React.ReactNode }) => (
 ));
 
 const RetailerDashboard = () => {
-  const [activeTab, setActiveTab] = useState<string | null>(null);
-  
-  // Apply optimization hooks
-  usePreventRefresh();
-  useRenderOptimizer('RetailerDashboard');
-  
-  // Only render components when their tab is active or has been viewed
-  const handleTabChange = useCallback((value: string) => {
-    // Only update state if actually changing
-    if (value !== activeTab) {
-      setActiveTab(prev => prev === null ? value : prev);
-    }
-  }, [activeTab]);
+  // Apply optimization hooks - but wrap in try/catch to prevent crashes
+  try {
+    usePreventRefresh();
+    useRenderOptimizer('RetailerDashboard');
+  } catch (err) {
+    console.error("Failed to initialize optimization hooks:", err);
+  }
   
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Retailer Dashboard</h1>
       
       <ErrorBoundary>
-        <RetailerDashboardComponents />
+        <RetailerDashboardComponent />
       </ErrorBoundary>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
@@ -84,7 +77,7 @@ const RetailerDashboard = () => {
           <CardContent>
             <ErrorBoundary>
               <MemoizedReservations />
-            </ErrorBoundary>
+              </ErrorBoundary>
           </CardContent>
         </Card>
         
