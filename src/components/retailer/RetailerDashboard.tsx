@@ -3,19 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { DashboardMetrics } from "./dashboard/DashboardMetrics";
 import { TopSellingProducts } from "./dashboard/TopSellingProducts";
 import { DashboardReservations } from "./dashboard/RecentReservations";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { usePreventRefresh } from "@/hooks/usePreventRefresh";
-import { useRenderOptimizer } from "@/hooks/useRenderOptimizer";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { useToast } from "@/hooks/use-toast";
 
 export const RetailerDashboard = memo(() => {
-  // Apply hooks to prevent unnecessary refreshes
-  usePreventRefresh();
-  useRenderOptimizer('RetailerDashboardComponent');
+  // Monitor performance to detect issues
+  usePerformanceMonitor('RetailerDashboardComponent');
+  
+  const { toast } = useToast();
   
   // Improved React Query configuration
-  const { data: dashboardData, isLoading } = useQuery({
+  const { data: dashboardData, isLoading, error } = useQuery({
     queryKey: ["retailerDashboard"],
     queryFn: () => Promise.resolve({
       totalSales: 158750,
@@ -38,10 +39,22 @@ export const RetailerDashboard = memo(() => {
     }),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
     gcTime: 10 * 60 * 1000, // 10 minutes cache garbage collection
-    retry: false, // Disable retries to prevent excessive requests
+    retry: 1, // Only retry once to prevent excessive requests
     refetchOnWindowFocus: false, // Disable refetching on window focus
-    refetchOnMount: false, // Disable refetching on mount
+    refetchOnMount: true, // Enable refetch on mount for data freshness
   });
+
+  // Handle errors gracefully
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Dashboard Error",
+        description: "Failed to load dashboard data. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Dashboard error:", error);
+    }
+  }, [error, toast]);
 
   // Memoize skeleton to prevent recreation on each render
   const loadingSkeleton = useMemo(() => (

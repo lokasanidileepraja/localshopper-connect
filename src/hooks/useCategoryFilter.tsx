@@ -1,10 +1,13 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
 import { Category } from '@/types/categories';
-import { debounce } from '@/lib/performance';
+import { debounce } from '@/utils/performance';
 
+/**
+ * Hook for filtering categories with optimized performance
+ */
 export const useCategoryFilter = (categories: Category[]) => {
   // Use useState for the filter value
-  const [filter, setFilter] = useState('');
+  const [filter, setFilterInternal] = useState('');
   
   // Keep a persistent reference to the categories to avoid unnecessary rerenders
   const categoriesRef = useRef<Category[]>(categories);
@@ -15,31 +18,47 @@ export const useCategoryFilter = (categories: Category[]) => {
   }
   
   // Create a stable debounced setter
-  const setFilterDebounced = useMemo(() => 
-    debounce((value: string) => setFilter(value), 300), 
+  const setFilter = useMemo(() => 
+    debounce((value: string) => setFilterInternal(value), 200), 
   []);
 
+  // Create a stable, non-debounced setter
+  const setFilterImmediate = useCallback((value: string) => {
+    setFilterInternal(value);
+  }, []);
+
   // Use a stable, memoized function to filter categories
-  const filteredCategories = useCallback(() => {
-    // Quick return if no filter
+  const filteredCategories = useMemo(() => {
+    // Quick return if no filter to avoid unnecessary processing
     if (!filter) return categoriesRef.current;
     
     // Convert to lowercase once for better performance
-    const lowerFilter = filter.toLowerCase();
+    const lowerFilter = filter.toLowerCase().trim();
     
-    // Filter categories
-    return categoriesRef.current.filter(category => 
-      category.name.toLowerCase().includes(lowerFilter) ||
-      category.description.toLowerCase().includes(lowerFilter)
-    );
+    if (!lowerFilter) return categoriesRef.current;
+    
+    // Filter categories with optimized algorithm
+    return categoriesRef.current.filter(category => {
+      const categoryName = category.name.toLowerCase();
+      const categoryDesc = category.description.toLowerCase();
+      
+      // Check name first as it's more likely to match and is faster
+      if (categoryName.includes(lowerFilter)) {
+        return true;
+      }
+      
+      // Only check description if name doesn't match
+      return categoryDesc.includes(lowerFilter);
+    });
   }, [filter]);
 
-  // Compact object with everything needed for category filtering
+  // Return with cleaner, properly typed API
   return { 
     filter, 
-    setFilter: setFilterDebounced, 
-    filteredCategories,
-    // For immediate non-debounced updates when needed
-    setFilterImmediate: setFilter
+    setFilter,
+    filteredCategories: filteredCategories,
+    setFilterImmediate,
+    resultsCount: filteredCategories.length,
+    hasFilter: !!filter.trim(),
   };
 };

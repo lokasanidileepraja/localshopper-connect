@@ -1,8 +1,9 @@
 
-import { Suspense, lazy, memo } from "react";
+import { Suspense, lazy, memo, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePreventRefresh } from "@/hooks/usePreventRefresh";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { useToast } from "@/hooks/use-toast";
 
 // Lazy load the component for better performance
 const OrderManagementComponent = lazy(() => 
@@ -12,14 +13,41 @@ const OrderManagementComponent = lazy(() =>
 );
 
 const RetailerOrders = () => {
-  // Apply the prevent refresh hook
-  usePreventRefresh();
+  // Monitor component performance
+  usePerformanceMonitor('RetailerOrdersPage');
+  
+  const { toast } = useToast();
+  
+  // Log page visit for analytics
+  useEffect(() => {
+    console.log("Retailer Orders page visited");
+    
+    return () => {
+      // Clean up any resources or events when component unmounts
+      console.log("Retailer Orders page exited");
+    };
+  }, []);
   
   return (
-    <ErrorBoundary>
+    <ErrorBoundary fallback={
+      <div className="p-8 text-center">
+        <p className="text-red-500">Something went wrong loading orders</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Reload Page
+        </button>
+      </div>
+    }>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Order Management</h1>
-        <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
+        <Suspense fallback={
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-[500px] w-full" />
+          </div>
+        }>
           <OrderManagementComponent />
         </Suspense>
       </div>

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { usePreventRefresh } from "@/hooks/usePreventRefresh";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
 // Sample orders data - in a real app this would come from an API
 const orders = [
@@ -63,8 +63,8 @@ const OrderItem = memo(({ order, onProcessOrder }: {
 OrderItem.displayName = 'OrderItem';
 
 export const OrderManagement = memo(() => {
-  // Apply the prevent refresh hook
-  usePreventRefresh();
+  // Monitor performance
+  usePerformanceMonitor('OrderManagement');
   
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("all");
@@ -108,19 +108,24 @@ export const OrderManagement = memo(() => {
       </td>
     </tr>
   ), []);
+
+  // Memoize tabs content to prevent recreation
+  const tabsListContent = useMemo(() => (
+    <TabsList className="grid grid-cols-5 w-full">
+      <TabsTrigger value="all">All</TabsTrigger>
+      <TabsTrigger value="pending">Pending</TabsTrigger>
+      <TabsTrigger value="processing">Processing</TabsTrigger>
+      <TabsTrigger value="shipped">Shipped</TabsTrigger>
+      <TabsTrigger value="completed">Completed</TabsTrigger>
+    </TabsList>
+  ), []);
   
   return (
     <ErrorBoundary>
       <div>
         <div className="flex justify-between items-center mb-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-5 w-full">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="processing">Processing</TabsTrigger>
-              <TabsTrigger value="shipped">Shipped</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-            </TabsList>
+            {tabsListContent}
           </Tabs>
           <Button variant="outline" className="ml-2 shrink-0" onClick={handleRefresh}>
             Refresh
