@@ -5,48 +5,54 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
-// Create fallback component type that matches the memo-wrapped component
-const createErrorFallback = () => memo(() => <div>Failed to load component</div>);
+// Simple error fallback component
+const LoadingError = memo(() => <div>Failed to load component</div>);
+LoadingError.displayName = 'LoadingError';
 
-// Lazy load components with consistent naming and error handling
+// Consistent approach for lazy loading components
 const WhatsAppStockUpdate = lazy(() => 
-  import("./WhatsAppStockUpdate").then(mod => ({ default: memo(mod.WhatsAppStockUpdate) }))
-  .catch(err => {
-    console.error("Failed to load WhatsAppStockUpdate:", err);
-    return { default: createErrorFallback() };
-  })
+  import("./WhatsAppStockUpdate")
+    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) }))
+    .catch(() => {
+      console.error("Failed to load WhatsAppStockUpdate");
+      return { default: LoadingError };
+    })
 );
 
 const QuickActions = lazy(() => 
-  import("./QuickActions").then(mod => ({ default: memo(mod.QuickActions) }))
-  .catch(err => {
-    console.error("Failed to load QuickActions:", err);
-    return { default: createErrorFallback() };
-  })
+  import("./QuickActions")
+    .then(mod => ({ default: memo(mod.QuickActions) }))
+    .catch(() => {
+      console.error("Failed to load QuickActions");
+      return { default: LoadingError };
+    })
 );
 
 const SalesChart = lazy(() => 
-  import("./SalesChart").then(mod => ({ default: memo(mod.SalesChart) }))
-  .catch(err => {
-    console.error("Failed to load SalesChart:", err);
-    return { default: createErrorFallback() };
-  })
+  import("./SalesChart")
+    .then(mod => ({ default: memo(mod.SalesChart) }))
+    .catch(() => {
+      console.error("Failed to load SalesChart");
+      return { default: LoadingError };
+    })
 );
 
 const RecentReservations = lazy(() => 
-  import("./RecentReservations").then(mod => ({ default: memo(mod.RecentReservations) }))
-  .catch(err => {
-    console.error("Failed to load RecentReservations:", err);
-    return { default: createErrorFallback() };
-  })
+  import("./RecentReservations")
+    .then(mod => ({ default: memo(mod.RecentReservations) }))
+    .catch(() => {
+      console.error("Failed to load RecentReservations");
+      return { default: LoadingError };
+    })
 );
 
 const InventorySummary = lazy(() => 
-  import("./InventorySummary").then(mod => ({ default: memo(mod.InventorySummary) }))
-  .catch(err => {
-    console.error("Failed to load InventorySummary:", err);
-    return { default: createErrorFallback() };
-  })
+  import("./InventorySummary")
+    .then(mod => ({ default: memo(mod.InventorySummary) }))
+    .catch(() => {
+      console.error("Failed to load InventorySummary");
+      return { default: LoadingError };
+    })
 );
 
 // Memoized card skeleton component for reuse
