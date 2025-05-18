@@ -49,11 +49,11 @@ export const Categories = memo(({ onCategorySelect }: CategoriesProps) => {
   useKeyboardNav(
     useCallback(() => setSelectedIndex(prev => Math.max(0, prev - 1)), []),
     useCallback(() => {
-      const filtered = filteredCategories();
+      const filtered = filteredCategories;
       setSelectedIndex(prev => Math.min(filtered.length - 1, prev + 1));
     }, [filteredCategories]),
     useCallback(() => {
-      const filtered = filteredCategories();
+      const filtered = filteredCategories;
       if (filtered.length > 0 && selectedIndex >= 0 && selectedIndex < filtered.length) {
         handleCategorySelect(filtered[selectedIndex].name);
       }
@@ -70,7 +70,7 @@ export const Categories = memo(({ onCategorySelect }: CategoriesProps) => {
 
   // Memoize the filtered categories to prevent unnecessary recalculation
   const filtered = useMemo(() => {
-    const result = filteredCategories();
+    const result = filteredCategories;
     // Avoid triggering console logs in production
     if (process.env.NODE_ENV !== 'production') {
       console.log("Filtered categories:", result);

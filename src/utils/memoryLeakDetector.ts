@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 /**
  * Utility to detect potential memory leaks in React components
  */

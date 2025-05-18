@@ -5,44 +5,47 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
+// Create fallback component type that matches the memo-wrapped component
+const createErrorFallback = () => memo(() => <div>Failed to load component</div>);
+
 // Lazy load components with consistent naming and error handling
 const WhatsAppStockUpdate = lazy(() => 
-  import("./WhatsAppStockUpdate").then(mod => ({ default: mod.WhatsAppStockUpdate }))
+  import("./WhatsAppStockUpdate").then(mod => ({ default: memo(mod.WhatsAppStockUpdate) }))
   .catch(err => {
     console.error("Failed to load WhatsAppStockUpdate:", err);
-    return { default: () => <div>Failed to load component</div> };
+    return { default: createErrorFallback() };
   })
 );
 
 const QuickActions = lazy(() => 
-  import("./QuickActions").then(mod => ({ default: mod.QuickActions }))
+  import("./QuickActions").then(mod => ({ default: memo(mod.QuickActions) }))
   .catch(err => {
     console.error("Failed to load QuickActions:", err);
-    return { default: () => <div>Failed to load component</div> };
+    return { default: createErrorFallback() };
   })
 );
 
 const SalesChart = lazy(() => 
-  import("./SalesChart").then(mod => ({ default: mod.SalesChart }))
+  import("./SalesChart").then(mod => ({ default: memo(mod.SalesChart) }))
   .catch(err => {
     console.error("Failed to load SalesChart:", err);
-    return { default: () => <div>Failed to load component</div> };
+    return { default: createErrorFallback() };
   })
 );
 
 const RecentReservations = lazy(() => 
-  import("./RecentReservations").then(mod => ({ default: mod.RecentReservations }))
+  import("./RecentReservations").then(mod => ({ default: memo(mod.RecentReservations) }))
   .catch(err => {
     console.error("Failed to load RecentReservations:", err);
-    return { default: () => <div>Failed to load component</div> };
+    return { default: createErrorFallback() };
   })
 );
 
 const InventorySummary = lazy(() => 
-  import("./InventorySummary").then(mod => ({ default: mod.InventorySummary }))
+  import("./InventorySummary").then(mod => ({ default: memo(mod.InventorySummary) }))
   .catch(err => {
     console.error("Failed to load InventorySummary:", err);
-    return { default: () => <div>Failed to load component</div> };
+    return { default: createErrorFallback() };
   })
 );
 
