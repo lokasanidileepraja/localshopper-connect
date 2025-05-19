@@ -11,8 +11,6 @@ import {
   Star, 
   Tags, 
   Store,
-  User,
-  Bell,
   Grid2x2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";

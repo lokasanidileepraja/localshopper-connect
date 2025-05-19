@@ -1,8 +1,15 @@
-import React, { lazy, Suspense, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+
+import React, { lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import Welcome from "@/pages/Welcome";
 import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
+
+// Import main page components
 import Brand from "@/pages/Brand";
 import Category from "@/pages/Category";
 import ProductDetails from "@/pages/ProductDetails";
@@ -27,8 +34,6 @@ import LocationSettings from "@/pages/LocationSettings";
 import Profile from "@/pages/Profile";
 import Alerts from "@/pages/Alerts";
 import FAQ from "@/pages/FAQ";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import AllCategories from "@/pages/AllCategories";
 import AllBrands from "@/pages/AllBrands";
 import NearbyStores from "@/pages/NearbyStores";
@@ -41,10 +46,8 @@ import Reports from "@/pages/admin/Reports";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 import Leaderboard from "@/pages/community/Leaderboard";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import NotFound from "@/pages/NotFound";
 
-// Retailer pages
+// Import retailer pages
 import RetailerDashboard from "@/pages/retailer/RetailerDashboard";
 import RetailerProducts from "@/pages/retailer/RetailerProducts";
 import RetailerInventory from "@/pages/retailer/RetailerInventory";
@@ -55,36 +58,20 @@ import RetailerAnalytics from "@/pages/retailer/RetailerAnalytics";
 import RetailerSettings from "@/pages/retailer/RetailerSettings";
 import RetailerRegister from "@/pages/retailer/RetailerRegister";
 
-// Admin routes
+// Import admin pages
 import AdminUserFeedback from "@/pages/admin/AdminUserFeedback";
 import AdminCatalogHealth from "@/pages/admin/AdminCatalogHealth";
 import AdminStorePerformance from "@/pages/admin/AdminStorePerformance";
 
-// Providers
-import { FeatureFlagProvider } from "@/contexts/FeatureFlagContext";
-import { trackPageView } from "@/lib/analytics";
-import { Toaster } from "@/components/ui/toaster";
+// Import auth components
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
-// Lazy load non-critical pages for performance optimization
+// Lazy load non-critical page components
 const PriceComparePage = lazy(() => import("@/pages/PriceComparePage"));
 const Search = lazy(() => import("@/pages/Search"));
 const EnhancedPriceCompare = lazy(() => import("@/pages/EnhancedPriceCompare"));
 
-// Extend Window interface to track analytics initialization
-declare global {
-  interface Window {
-    analyticsInitialized?: boolean;
-  }
-}
-
 function App() {
-  const location = useLocation();
-  
-  // Track page views but don't re-initialize analytics
-  useEffect(() => {
-    trackPageView(location.pathname);
-  }, [location]);
-
   return (
     <ErrorBoundary>
       <FeatureFlagProvider>
