@@ -28,28 +28,28 @@ const AdminDashboardContainer = () => {
   return (
     <div className="py-6 space-y-8">
       {/* Header Section */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load header section")} resetErrorBoundary={() => window.location.reload()} />}>
         <PageLoader>
           <HeaderSection />
         </PageLoader>
       </ErrorBoundary>
 
       {/* Summary Metrics */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load summary metrics")} resetErrorBoundary={() => window.location.reload()} />}>
         <PageLoader>
           <SummaryMetrics />
         </PageLoader>
       </ErrorBoundary>
 
       {/* Performance Metrics */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load performance metrics")} resetErrorBoundary={() => window.location.reload()} />}>
         <PageLoader>
           <PerformanceMetrics />
         </PageLoader>
       </ErrorBoundary>
 
       {/* Tabs Section */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load tabs section")} resetErrorBoundary={() => window.location.reload()} />}>
         <PageLoader>
           <TabsSection />
         </PageLoader>

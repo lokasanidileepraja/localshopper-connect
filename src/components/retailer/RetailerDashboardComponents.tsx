@@ -24,7 +24,7 @@ const RecentReservations = React.lazy(() => import('./RecentReservationsPlacehol
 
 // Export the components wrapped in error boundaries and suspense
 export const RetailerDashboard = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load overview")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <RetailerOverview />
     </PageLoader>
@@ -32,7 +32,7 @@ export const RetailerDashboard = memo(() => (
 ));
 
 export const RetailerSalesChart = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load sales chart")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <SalesChart />
     </PageLoader>
@@ -40,7 +40,7 @@ export const RetailerSalesChart = memo(() => (
 ));
 
 export const RetailerInventorySummary = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load inventory summary")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <InventorySummary />
     </PageLoader>
@@ -48,7 +48,7 @@ export const RetailerInventorySummary = memo(() => (
 ));
 
 export const RetailerOrderManagement = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load order management")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <OrderManagement />
     </PageLoader>
@@ -56,7 +56,7 @@ export const RetailerOrderManagement = memo(() => (
 ));
 
 export const RetailerQuickActions = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load quick actions")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <QuickActions />
     </PageLoader>
@@ -64,7 +64,7 @@ export const RetailerQuickActions = memo(() => (
 ));
 
 export const RetailerRecentReservations = memo(() => (
-  <ErrorBoundary FallbackComponent={ErrorFallback}>
+  <ErrorBoundary fallback={<ErrorFallback error={new Error("Failed to load recent reservations")} resetErrorBoundary={() => window.location.reload()} />}>
     <PageLoader>
       <RecentReservations />
     </PageLoader>
