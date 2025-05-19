@@ -1,25 +1,37 @@
 
-import { Hero } from "@/components/Hero";
-import { SearchBar } from "@/components/SearchBar";
-import { SearchErrorBoundary } from "@/components/search/SearchErrorBoundary";
-import { FeaturedProducts } from "@/components/FeaturedProducts";
-import { Newsletter } from "@/components/Newsletter";
-import { Testimonials } from "@/components/Testimonials";
-import { BrandsShowcase } from "@/components/BrandsShowcase";
-import { Categories } from "@/components/Categories";
-import { BackToTop } from "@/components/BackToTop";
+import React, { memo, Suspense, useCallback } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserPoints } from "@/components/gamification/UserPoints";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+
+// Lazy loaded components
+const Hero = React.lazy(() => import("@/components/Hero").then(mod => ({ default: mod.Hero || mod.default || mod })));
+const SearchBar = React.lazy(() => import("@/components/SearchBar").then(mod => ({ default: mod.SearchBar || mod.default || mod })));
+const SearchErrorBoundary = React.lazy(() => import("@/components/search/SearchErrorBoundary").then(mod => ({ default: mod.SearchErrorBoundary || mod.default || mod })));
+const FeaturedProducts = React.lazy(() => import("@/components/FeaturedProducts").then(mod => ({ default: mod.FeaturedProducts || mod.default || mod })));
+const Newsletter = React.lazy(() => import("@/components/Newsletter").then(mod => ({ default: mod.Newsletter || mod.default || mod })));
+const Testimonials = React.lazy(() => import("@/components/Testimonials").then(mod => ({ default: mod.Testimonials || mod.default || mod })));
+const BrandsShowcase = React.lazy(() => import("@/components/BrandsShowcase").then(mod => ({ default: mod.BrandsShowcase || mod.default || mod })));
+const Categories = React.lazy(() => import("@/components/Categories").then(mod => ({ default: mod.Categories || mod.default || mod })));
+const BackToTop = React.lazy(() => import("@/components/BackToTop").then(mod => ({ default: mod.BackToTop || mod.default || mod })));
+const UserPoints = React.lazy(() => import("@/components/gamification/UserPoints").then(mod => ({ default: mod.UserPoints || mod.default || mod })));
+
+const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+    {children}
+  </Suspense>
+);
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query)}`);
       toast({
@@ -27,38 +39,38 @@ const Index = () => {
         description: `Looking for "${query}"...`,
       });
     }
-  };
+  }, [navigate, toast]);
 
-  const handleCategorySelect = (category: string) => {
+  const handleCategorySelect = useCallback((category: string) => {
     navigate(`/category/${category.toLowerCase()}`);
     toast({
       title: "Category Selected",
       description: `Browsing ${category}`,
     });
-  };
+  }, [navigate, toast]);
 
-  const handleProductClick = (productId: string) => {
+  const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
     toast({
       title: "Loading Product",
       description: "Getting product details...",
     });
-  };
+  }, [navigate, toast]);
 
-  const handleNewsletterSubmit = (email: string) => {
+  const handleNewsletterSubmit = useCallback((email: string) => {
     toast({
       title: "Subscribed!",
       description: "Thank you for subscribing to our newsletter.",
     });
-  };
+  }, [toast]);
 
-  const handleBrandClick = (brandName: string) => {
+  const handleBrandClick = useCallback((brandName: string) => {
     navigate(`/brands/${brandName.toLowerCase()}`);
     toast({
       title: "Brand Selected",
       description: `Browsing ${brandName} products`,
     });
-  };
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
@@ -67,27 +79,50 @@ const Index = () => {
       </Helmet>
       
       <main>
-        <Hero />
-        <SearchErrorBoundary>
-          <SearchBar onSearch={handleSearch} />
-        </SearchErrorBoundary>
+        <ComponentLoader>
+          <Hero />
+        </ComponentLoader>
         
-        {/* Show user points and gamification for authenticated users */}
+        <ComponentLoader>
+          <SearchErrorBoundary>
+            <SearchBar onSearch={handleSearch} />
+          </SearchErrorBoundary>
+        </ComponentLoader>
+        
         {isAuthenticated && (
           <div className="container mx-auto px-4 mt-6">
-            <UserPoints />
+            <ComponentLoader>
+              <UserPoints />
+            </ComponentLoader>
           </div>
         )}
         
-        <Categories onCategorySelect={handleCategorySelect} />
-        <FeaturedProducts onProductClick={handleProductClick} />
-        <BrandsShowcase onBrandClick={handleBrandClick} />
-        <Testimonials />
-        <Newsletter onSubmit={handleNewsletterSubmit} />
-        <BackToTop />
+        <ComponentLoader>
+          <Categories onCategorySelect={handleCategorySelect} />
+        </ComponentLoader>
+        
+        <ComponentLoader>
+          <FeaturedProducts onProductClick={handleProductClick} />
+        </ComponentLoader>
+        
+        <ComponentLoader>
+          <BrandsShowcase onBrandClick={handleBrandClick} />
+        </ComponentLoader>
+        
+        <ComponentLoader>
+          <Testimonials />
+        </ComponentLoader>
+        
+        <ComponentLoader>
+          <Newsletter onSubmit={handleNewsletterSubmit} />
+        </ComponentLoader>
+        
+        <ComponentLoader>
+          <BackToTop />
+        </ComponentLoader>
       </main>
     </div>
   );
 };
 
-export default Index;
+export default memo(Index);

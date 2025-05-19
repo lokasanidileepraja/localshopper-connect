@@ -1,57 +1,36 @@
 
-import { memo, Suspense, lazy } from "react";
+import React, { memo, Suspense, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePreventRefresh } from "@/hooks/usePreventRefresh";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
-// Lazy load components to improve initial load time
-const RetailerDashboardComponent = lazy(() => 
-  import("@/components/retailer/RetailerDashboard").then(mod => ({ 
-    default: mod.RetailerDashboard 
-  }))
-);
-
-const SalesChart = lazy(() => 
-  import("@/components/retailer/SalesChart").then(mod => ({ 
-    default: mod.SalesChart 
-  }))
-);
-
-const InventorySummary = lazy(() => 
-  import("@/components/retailer/InventorySummary").then(mod => ({ 
-    default: mod.InventorySummary 
-  }))
-);
-
-const RecentReservations = lazy(() => 
-  import("@/components/retailer/RecentReservations").then(mod => ({ 
-    default: mod.RecentReservations 
-  }))
-);
-
-const OrderManagement = lazy(() => 
-  import("@/components/retailer/OrderManagement").then(mod => ({ 
-    default: mod.OrderManagement 
-  }))
-);
-
-// Component for suspense fallback
-const CardSkeleton = ({ height = "h-48" }: { height?: string }) => (
-  <Skeleton className={`${height} w-full`} />
+// Import optimized components
+const RetailerDashboardComponents = React.lazy(() => 
+  import("@/components/retailer/RetailerDashboardComponents")
 );
 
 const RetailerDashboard = () => {
-  // Apply the prevent refresh hook
-  usePreventRefresh();
+  // Monitor component performance
+  usePerformanceMonitor('RetailerDashboardPage');
+  
+  // Log page visit once on mount
+  useEffect(() => {
+    console.log("Retailer Dashboard page visited");
+    
+    return () => {
+      console.log("Retailer Dashboard page exited");
+    };
+  }, []);
   
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Retailer Dashboard</h1>
       
       <ErrorBoundary>
-        <Suspense fallback={<CardSkeleton height="h-64" />}>
-          <RetailerDashboardComponent />
+        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+          <RetailerDashboardComponents.RetailerDashboard />
         </Suspense>
       </ErrorBoundary>
       
@@ -63,8 +42,8 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ErrorBoundary>
-                <Suspense fallback={<CardSkeleton />}>
-                  <SalesChart />
+                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                  <RetailerDashboardComponents.RetailerSalesChart />
                 </Suspense>
               </ErrorBoundary>
             </CardContent>
@@ -78,8 +57,8 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ErrorBoundary>
-                <Suspense fallback={<CardSkeleton />}>
-                  <InventorySummary />
+                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                  <RetailerDashboardComponents.RetailerInventorySummary />
                 </Suspense>
               </ErrorBoundary>
             </CardContent>
@@ -94,8 +73,8 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton />}>
-                <RecentReservations />
+              <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                <RetailerDashboardComponents.RetailerRecentReservations />
               </Suspense>
             </ErrorBoundary>
           </CardContent>
@@ -107,8 +86,8 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton />}>
-                <OrderManagement />
+              <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                <RetailerDashboardComponents.RetailerOrderManagement />
               </Suspense>
             </ErrorBoundary>
           </CardContent>

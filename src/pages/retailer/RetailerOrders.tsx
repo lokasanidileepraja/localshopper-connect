@@ -1,14 +1,15 @@
 
-import { Suspense, lazy, memo, useEffect } from "react";
+import React, { Suspense, memo, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 // Lazy load the component for better performance
-const OrderManagementComponent = lazy(() => 
+const OrderManagement = React.lazy(() => 
   import("@/components/retailer/OrderManagement").then(mod => ({ 
-    default: mod.OrderManagement 
+    default: mod.OrderManagement || mod.default || mod
   }))
 );
 
@@ -18,12 +19,11 @@ const RetailerOrders = () => {
   
   const { toast } = useToast();
   
-  // Log page visit for analytics
+  // Log page visit for analytics - only on mount
   useEffect(() => {
     console.log("Retailer Orders page visited");
     
     return () => {
-      // Clean up any resources or events when component unmounts
       console.log("Retailer Orders page exited");
     };
   }, []);
@@ -38,7 +38,7 @@ const RetailerOrders = () => {
             <Skeleton className="h-[500px] w-full" />
           </div>
         }>
-          <OrderManagementComponent />
+          <OrderManagement />
         </Suspense>
       </div>
     </ErrorBoundary>

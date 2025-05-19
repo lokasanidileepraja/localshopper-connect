@@ -1,182 +1,101 @@
 
-import { memo, Suspense, lazy, ComponentType } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import React, { memo } from 'react';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { ErrorFallback } from '@/components/common/ErrorFallback';
+import { PageLoader } from '@/components/common/PageLoader';
 
-// Simple error fallback component that matches the expected type pattern
-const LoadingError = memo(({ message = "Failed to load component" }: { message?: string }) => (
-  <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-    <div className="flex items-center gap-2">
-      <AlertTriangle className="h-4 w-4 text-red-500" />
-      <p className="text-red-700 font-medium">{message}</p>
-    </div>
-    <Button 
-      variant="outline" 
-      size="sm" 
-      className="mt-2 bg-white" 
-      onClick={() => window.location.reload()}
-    >
-      Try Again
-    </Button>
-  </div>
-));
-
-LoadingError.displayName = 'LoadingError';
-
-// Type definition for component props with proper generics
-interface BaseComponentProps {}
-
-interface WhatsAppStockUpdateProps extends BaseComponentProps {
-  storeId: string;
+// Utility type for component imports
+interface ComponentProps {
+  [key: string]: any;
 }
 
-// Generic component type that can handle any props
-type ComponentImport<T extends BaseComponentProps = BaseComponentProps> = ComponentType<T>;
-
-// Consistent approach for lazy loading components with proper typing
-const WhatsAppStockUpdate = lazy<ComponentType<WhatsAppStockUpdateProps>>(() => 
-  import("./WhatsAppStockUpdate")
-    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) as ComponentType<WhatsAppStockUpdateProps> }))
-    .catch(() => {
-      console.error("Failed to load WhatsAppStockUpdate");
-      return { 
-        // Cast LoadingError to match the expected WhatsAppStockUpdateProps interface
-        default: (({ storeId }) => <LoadingError message={`Failed to load WhatsApp updates for store ${storeId}`} />) as ComponentType<WhatsAppStockUpdateProps>
-      };
-    })
+// Dashboard Overview Component
+const RetailerOverview = React.lazy(() => 
+  import('./RetailerOverview').then(module => ({
+    default: module.RetailerOverview || module.default || module
+  }))
 );
 
-const QuickActions = lazy(() => 
-  import("./QuickActions")
-    .then(mod => ({ default: memo(mod.QuickActions) as ComponentImport }))
-    .catch(() => {
-      console.error("Failed to load QuickActions");
-      return { default: () => <LoadingError message="Failed to load Quick Actions" /> as ComponentImport };
-    })
+// Sales Chart Component
+const SalesChart = React.lazy(() => 
+  import('./SalesChart').then(module => ({
+    default: module.SalesChart || module.default || module
+  }))
 );
 
-const SalesChart = lazy(() => 
-  import("./SalesChart")
-    .then(mod => ({ default: memo(mod.SalesChart) as ComponentImport }))
-    .catch(() => {
-      console.error("Failed to load SalesChart");
-      return { default: () => <LoadingError message="Failed to load Sales Chart" /> as ComponentImport };
-    })
+// Inventory Summary Component
+const InventorySummary = React.lazy(() => 
+  import('./InventorySummary').then(module => ({
+    default: module.InventorySummary || module.default || module
+  }))
 );
 
-const RecentReservations = lazy(() => 
-  import("./RecentReservations")
-    .then(mod => ({ default: memo(mod.RecentReservations) as ComponentImport }))
-    .catch(() => {
-      console.error("Failed to load RecentReservations");
-      return { default: () => <LoadingError message="Failed to load Recent Reservations" /> as ComponentImport };
-    })
+// Recent Orders Component
+const OrderManagement = React.lazy(() => 
+  import('./OrderManagement').then(module => ({
+    default: module.OrderManagement || module.default || module
+  }))
 );
 
-const InventorySummary = lazy(() => 
-  import("./InventorySummary")
-    .then(mod => ({ default: memo(mod.InventorySummary) as ComponentImport }))
-    .catch(() => {
-      console.error("Failed to load InventorySummary");
-      return { default: () => <LoadingError message="Failed to load Inventory Summary" /> as ComponentImport };
-    })
+// Quick Actions Component
+const QuickActions = React.lazy(() => 
+  import('./QuickActions').then(module => ({
+    default: module.QuickActions || module.default || module
+  }))
 );
 
-// Memoized card skeleton component for reuse
-const CardSkeleton = memo(({ height = "h-48" }: { height?: string }) => (
-  <Skeleton className={`${height} w-full rounded`} />
+// Recent Reservations Component
+const RecentReservations = React.lazy(() => 
+  import('./RecentReservations').then(module => ({
+    default: module.RecentReservations || module.default || module
+  }))
+);
+
+// Export the components wrapped in error boundaries and suspense
+export const RetailerDashboard = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <RetailerOverview />
+    </PageLoader>
+  </ErrorBoundary>
 ));
 
-CardSkeleton.displayName = 'CardSkeleton';
+export const RetailerSalesChart = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <SalesChart />
+    </PageLoader>
+  </ErrorBoundary>
+));
 
-export const RetailerDashboardComponents = memo(() => {
-  // Monitor performance
-  usePerformanceMonitor('RetailerDashboardComponents');
-  
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <div className="col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Sales Chart</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ErrorBoundary fallback={
-              <div className="h-72 flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-muted-foreground">Unable to load sales chart</p>
-              </div>
-            }>
-              <Suspense fallback={<CardSkeleton height="h-72" />}>
-                <SalesChart />
-              </Suspense>
-            </ErrorBoundary>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton height="h-32" />}>
-                <QuickActions />
-              </Suspense>
-            </ErrorBoundary>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>WhatsApp Stock Updates</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton height="h-32" />}>
-                <WhatsAppStockUpdate storeId="store123" />
-              </Suspense>
-            </ErrorBoundary>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Reservations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton />}>
-                <RecentReservations />
-              </Suspense>
-            </ErrorBoundary>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Inventory Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<CardSkeleton />}>
-                <InventorySummary />
-              </Suspense>
-            </ErrorBoundary>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-});
+export const RetailerInventorySummary = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <InventorySummary />
+    </PageLoader>
+  </ErrorBoundary>
+));
 
-RetailerDashboardComponents.displayName = 'RetailerDashboardComponents';
+export const RetailerOrderManagement = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <OrderManagement />
+    </PageLoader>
+  </ErrorBoundary>
+));
+
+export const RetailerQuickActions = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <QuickActions />
+    </PageLoader>
+  </ErrorBoundary>
+));
+
+export const RetailerRecentReservations = memo(() => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <PageLoader>
+      <RecentReservations />
+    </PageLoader>
+  </ErrorBoundary>
+));

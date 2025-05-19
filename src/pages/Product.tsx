@@ -1,24 +1,36 @@
 
+import React, { Suspense, memo } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { ProductDetails } from "@/components/product/ProductDetails";
-import { StoreInfo } from "@/components/store/StoreInfo";
-import { NearbyStoreFinder } from "@/components/store/NearbyStoreFinder";
-import { RetailerChat } from "@/components/chat/RetailerChat";
-import { PriceAlerts } from "@/components/alerts/PriceAlerts";
-import { ProductReviews } from "@/components/ProductReviews";
-import { ProductRecommendations } from "@/components/ProductRecommendations";
-import { ProductAlerts } from "@/components/ProductAlerts";
-import { BulkPurchase } from "@/components/BulkPurchase";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Lazy loaded components
+const ProductDetails = React.lazy(() => import("@/components/product/ProductDetails").then(mod => ({ default: mod.ProductDetails || mod.default || mod })));
+const StoreInfo = React.lazy(() => import("@/components/store/StoreInfo").then(mod => ({ default: mod.StoreInfo || mod.default || mod })));
+const NearbyStoreFinder = React.lazy(() => import("@/components/store/NearbyStoreFinder").then(mod => ({ default: mod.NearbyStoreFinder || mod.default || mod })));
+const RetailerChat = React.lazy(() => import("@/components/chat/RetailerChat").then(mod => ({ default: mod.RetailerChat || mod.default || mod })));
+const PriceAlerts = React.lazy(() => import("@/components/alerts/PriceAlerts").then(mod => ({ default: mod.PriceAlerts || mod.default || mod })));
+const ProductReviews = React.lazy(() => import("@/components/ProductReviews").then(mod => ({ default: mod.ProductReviews || mod.default || mod })));
+const ProductRecommendations = React.lazy(() => import("@/components/ProductRecommendations").then(mod => ({ default: mod.ProductRecommendations || mod.default || mod })));
+const ProductAlerts = React.lazy(() => import("@/components/ProductAlerts").then(mod => ({ default: mod.ProductAlerts || mod.default || mod })));
+const BulkPurchase = React.lazy(() => import("@/components/BulkPurchase").then(mod => ({ default: mod.BulkPurchase || mod.default || mod })));
+
+const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<Skeleton className="h-32 w-full rounded-md" />}>
+    {children}
+  </Suspense>
+);
 
 const Product = () => {
-  const { productId } = useParams();
+  const { productId } = useParams<{ productId: string }>();
 
+  // Use React Query for data fetching with loading state
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", productId],
     queryFn: async () => {
-      // Simulated API call
+      // Simulated API call - replace with your actual API call
       return Promise.resolve({
         id: productId,
         name: "iPhone 15",
@@ -34,7 +46,7 @@ const Product = () => {
         rating: 4.8,
         reviews: 128,
         store: {
-          id: "store123", // Added id property
+          id: "store123",
           name: "TechHub Electronics",
           address: "123 Tech Street, Digital City",
           phone: "+91 98765 43210",
@@ -60,8 +72,22 @@ const Product = () => {
     },
   });
 
-  if (isLoading) return <LoadingSpinner />;
-  if (!product) return <div>Product not found</div>;
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-16 flex justify-center">
+        <LoadingSpinner size="xl" />
+      </div>
+    );
+  }
+  
+  if (!product) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <h2 className="text-2xl font-bold">Product not found</h2>
+        <p className="text-muted-foreground mt-2">The requested product could not be found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -73,43 +99,85 @@ const Product = () => {
             className="w-full rounded-lg object-cover"
           />
           <div className="mt-8">
-            <ProductDetails
-              name={product.name}
-              specs={product.specs}
-              rating={product.rating}
-              reviews={product.reviews}
-            />
+            <ErrorBoundary>
+              <ComponentLoader>
+                <ProductDetails
+                  name={product.name}
+                  specs={product.specs}
+                  rating={product.rating}
+                  reviews={product.reviews}
+                />
+              </ComponentLoader>
+            </ErrorBoundary>
           </div>
         </div>
         <div className="space-y-8">
-          <StoreInfo {...product.store} />
-          <PriceAlerts
-            productName={product.name}
-            currentPrice={product.price}
-          />
-          <ProductAlerts
-            productId={product.id}
-            inStock={product.inStock}
-            currentPrice={product.price}
-          />
-          <BulkPurchase productId={product.id} basePrice={product.price} />
+          <ErrorBoundary>
+            <ComponentLoader>
+              <StoreInfo {...product.store} />
+            </ComponentLoader>
+          </ErrorBoundary>
+          
+          <ErrorBoundary>
+            <ComponentLoader>
+              <PriceAlerts
+                productName={product.name}
+                currentPrice={product.price}
+              />
+            </ComponentLoader>
+          </ErrorBoundary>
+          
+          <ErrorBoundary>
+            <ComponentLoader>
+              <ProductAlerts
+                productId={product.id}
+                inStock={product.inStock}
+                currentPrice={product.price}
+              />
+            </ComponentLoader>
+          </ErrorBoundary>
+          
+          <ErrorBoundary>
+            <ComponentLoader>
+              <BulkPurchase productId={product.id} basePrice={product.price} />
+            </ComponentLoader>
+          </ErrorBoundary>
         </div>
       </div>
 
       <div className="mt-12 space-y-8">
-        <NearbyStoreFinder
-          stores={product.nearbyStores}
-          onStoreSelect={(storeId) => console.log("Selected store:", storeId)}
-        />
-        <RetailerChat
-          retailerName={product.store.name}
-          retailerId={product.id}
-        />
-        <ProductReviews productId={product.id} />
-        <ProductRecommendations currentProductId={product.id} />
+        <ErrorBoundary>
+          <ComponentLoader>
+            <NearbyStoreFinder
+              stores={product.nearbyStores}
+              onStoreSelect={(storeId) => console.log("Selected store:", storeId)}
+            />
+          </ComponentLoader>
+        </ErrorBoundary>
+        
+        <ErrorBoundary>
+          <ComponentLoader>
+            <RetailerChat
+              retailerName={product.store.name}
+              retailerId={product.store.id}
+            />
+          </ComponentLoader>
+        </ErrorBoundary>
+        
+        <ErrorBoundary>
+          <ComponentLoader>
+            <ProductReviews productId={product.id} />
+          </ComponentLoader>
+        </ErrorBoundary>
+        
+        <ErrorBoundary>
+          <ComponentLoader>
+            <ProductRecommendations currentProductId={product.id} />
+          </ComponentLoader>
+        </ErrorBoundary>
       </div>
     </div>
   );
 };
 
-export default Product;
+export default memo(Product);

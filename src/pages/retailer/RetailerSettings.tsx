@@ -1,10 +1,33 @@
 
+import React, { memo, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { WhatsAppStockUpdate } from "@/components/retailer/WhatsAppStockUpdate";
-import { DeliveryOptions } from "@/components/retailer/DeliveryOptions";
-import { PaymentManagement } from "@/components/retailer/PaymentManagement";
-import { UserAccessControl } from "@/components/retailer/UserAccessControl";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+
+// Lazy loaded components
+const WhatsAppStockUpdate = React.lazy(() => 
+  import("@/components/retailer/WhatsAppStockUpdate").then(mod => ({
+    default: mod.WhatsAppStockUpdate || mod.default || mod
+  }))
+);
+
+const DeliveryOptions = React.lazy(() => 
+  import("@/components/retailer/DeliveryOptions").then(mod => ({
+    default: mod.DeliveryOptions || mod.default || mod
+  }))
+);
+
+const PaymentManagement = React.lazy(() => 
+  import("@/components/retailer/PaymentManagement").then(mod => ({
+    default: mod.PaymentManagement || mod.default || mod
+  }))
+);
+
+const UserAccessControl = React.lazy(() => 
+  import("@/components/retailer/UserAccessControl").then(mod => ({
+    default: mod.UserAccessControl || mod.default || mod
+  }))
+);
 
 const RetailerSettings = () => {
   // Mock store ID for the retailer
@@ -21,7 +44,11 @@ const RetailerSettings = () => {
               <CardTitle>Notification Preferences</CardTitle>
             </CardHeader>
             <CardContent>
-              <WhatsAppStockUpdate storeId={mockStoreId} />
+              <ErrorBoundary>
+                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+                  <WhatsAppStockUpdate storeId={mockStoreId} />
+                </Suspense>
+              </ErrorBoundary>
             </CardContent>
           </Card>
           
@@ -30,7 +57,11 @@ const RetailerSettings = () => {
               <CardTitle>Payment Methods</CardTitle>
             </CardHeader>
             <CardContent>
-              <PaymentManagement />
+              <ErrorBoundary>
+                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+                  <PaymentManagement />
+                </Suspense>
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </div>
@@ -41,7 +72,11 @@ const RetailerSettings = () => {
               <CardTitle>Delivery Options</CardTitle>
             </CardHeader>
             <CardContent>
-              <DeliveryOptions />
+              <ErrorBoundary>
+                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+                  <DeliveryOptions />
+                </Suspense>
+              </ErrorBoundary>
             </CardContent>
           </Card>
           
@@ -50,7 +85,11 @@ const RetailerSettings = () => {
               <CardTitle>Team Members</CardTitle>
             </CardHeader>
             <CardContent>
-              <UserAccessControl />
+              <ErrorBoundary>
+                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+                  <UserAccessControl />
+                </Suspense>
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </div>
@@ -59,4 +98,4 @@ const RetailerSettings = () => {
   );
 };
 
-export default RetailerSettings;
+export default memo(RetailerSettings);
