@@ -17,7 +17,7 @@ import Newsletter from "@/components/Newsletter";
 import Testimonials from "@/components/Testimonials";
 import BrandsShowcase from "@/components/BrandsShowcase";
 import Categories from "@/components/Categories";
-import BackToTop from "@/components/BackToTop";
+import { BackToTop } from "@/components/BackToTop"; // Changed to named import
 import UserPoints from "@/components/gamification/UserPoints";
 
 const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
