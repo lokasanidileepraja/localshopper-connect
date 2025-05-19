@@ -7,12 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet-async";
 import { prefetchComponent } from "@/utils/prefetchUtils";
 
-// Lazy load the component for better performance
-const OrderManagement = React.lazy(() => 
-  import("@/components/retailer/OrderManagement").then(mod => ({ 
-    default: mod.OrderManagement || mod.default || mod
-  }))
-);
+// Fix the import to use default export
+import { OrderManagement } from "@/components/retailer/OrderManagement";
 
 const RetailerOrders = () => {
   // Monitor component performance

@@ -6,10 +6,14 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { Helmet } from "react-helmet-async";
 
-// Import optimized components
-const RetailerDashboardComponents = React.lazy(() => 
-  import("@/components/retailer/RetailerDashboardComponents")
-);
+// Import RetailerDashboardComponents directly
+import RetailerDashboardComponents, {
+  RetailerDashboard as RetailerDashboardComponent,
+  RetailerSalesChart,
+  RetailerInventorySummary,
+  RetailerOrderManagement,
+  RetailerRecentReservations
+} from "@/components/retailer/RetailerDashboardComponents";
 
 const RetailerDashboard = () => {
   // Monitor component performance
@@ -65,7 +69,7 @@ const RetailerDashboard = () => {
       
       <ComponentWithErrorBoundary>
         <React.Suspense fallback={loadingSkeleton}>
-          <RetailerDashboardComponents.RetailerDashboard />
+          <RetailerDashboardComponent />
         </React.Suspense>
       </ComponentWithErrorBoundary>
       
@@ -77,7 +81,7 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ComponentWithErrorBoundary>
-                <RetailerDashboardComponents.RetailerSalesChart />
+                <RetailerSalesChart />
               </ComponentWithErrorBoundary>
             </CardContent>
           </Card>
@@ -90,7 +94,7 @@ const RetailerDashboard = () => {
             </CardHeader>
             <CardContent>
               <ComponentWithErrorBoundary>
-                <RetailerDashboardComponents.RetailerInventorySummary />
+                <RetailerInventorySummary />
               </ComponentWithErrorBoundary>
             </CardContent>
           </Card>
@@ -104,7 +108,7 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ComponentWithErrorBoundary>
-              <RetailerDashboardComponents.RetailerRecentReservations />
+              <RetailerRecentReservations />
             </ComponentWithErrorBoundary>
           </CardContent>
         </Card>
@@ -115,7 +119,7 @@ const RetailerDashboard = () => {
           </CardHeader>
           <CardContent>
             <ComponentWithErrorBoundary>
-              <RetailerDashboardComponents.RetailerOrderManagement />
+              <RetailerOrderManagement />
             </ComponentWithErrorBoundary>
           </CardContent>
         </Card>

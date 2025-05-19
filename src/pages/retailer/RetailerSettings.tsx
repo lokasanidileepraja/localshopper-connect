@@ -4,30 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-// Lazy loaded components
-const WhatsAppStockUpdate = React.lazy(() => 
-  import("@/components/retailer/WhatsAppStockUpdate").then(mod => ({
-    default: mod.WhatsAppStockUpdate || mod.default || mod
-  }))
-);
-
-const DeliveryOptions = React.lazy(() => 
-  import("@/components/retailer/DeliveryOptions").then(mod => ({
-    default: mod.DeliveryOptions || mod.default || mod
-  }))
-);
-
-const PaymentManagement = React.lazy(() => 
-  import("@/components/retailer/PaymentManagement").then(mod => ({
-    default: mod.PaymentManagement || mod.default || mod
-  }))
-);
-
-const UserAccessControl = React.lazy(() => 
-  import("@/components/retailer/UserAccessControl").then(mod => ({
-    default: mod.UserAccessControl || mod.default || mod
-  }))
-);
+// Fix imports to use named exports instead of default
+import { WhatsAppStockUpdate } from "@/components/retailer/WhatsAppStockUpdate";
+import { DeliveryOptions } from "@/components/retailer/DeliveryOptions";
+import { PaymentManagement } from "@/components/retailer/PaymentManagement";
+import { UserAccessControl } from "@/components/retailer/UserAccessControl";
 
 const RetailerSettings = () => {
   // Mock store ID for the retailer

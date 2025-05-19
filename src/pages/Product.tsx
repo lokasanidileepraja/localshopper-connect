@@ -6,16 +6,16 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Lazy loaded components
-const ProductDetails = React.lazy(() => import("@/components/product/ProductDetails").then(mod => ({ default: mod.ProductDetails || mod.default || mod })));
-const StoreInfo = React.lazy(() => import("@/components/store/StoreInfo").then(mod => ({ default: mod.StoreInfo || mod.default || mod })));
-const NearbyStoreFinder = React.lazy(() => import("@/components/store/NearbyStoreFinder").then(mod => ({ default: mod.NearbyStoreFinder || mod.default || mod })));
-const RetailerChat = React.lazy(() => import("@/components/chat/RetailerChat").then(mod => ({ default: mod.RetailerChat || mod.default || mod })));
-const PriceAlerts = React.lazy(() => import("@/components/alerts/PriceAlerts").then(mod => ({ default: mod.PriceAlerts || mod.default || mod })));
-const ProductReviews = React.lazy(() => import("@/components/ProductReviews").then(mod => ({ default: mod.ProductReviews || mod.default || mod })));
-const ProductRecommendations = React.lazy(() => import("@/components/ProductRecommendations").then(mod => ({ default: mod.ProductRecommendations || mod.default || mod })));
-const ProductAlerts = React.lazy(() => import("@/components/ProductAlerts").then(mod => ({ default: mod.ProductAlerts || mod.default || mod })));
-const BulkPurchase = React.lazy(() => import("@/components/BulkPurchase").then(mod => ({ default: mod.BulkPurchase || mod.default || mod })));
+// Fix lazy loaded component imports
+const ProductDetails = React.lazy(() => import("@/components/product/ProductDetails"));
+const StoreInfo = React.lazy(() => import("@/components/store/StoreInfo"));
+const NearbyStoreFinder = React.lazy(() => import("@/components/store/NearbyStoreFinder"));
+const RetailerChat = React.lazy(() => import("@/components/chat/RetailerChat"));
+const PriceAlerts = React.lazy(() => import("@/components/alerts/PriceAlerts"));
+const ProductReviews = React.lazy(() => import("@/components/ProductReviews"));
+const ProductRecommendations = React.lazy(() => import("@/components/ProductRecommendations"));
+const ProductAlerts = React.lazy(() => import("@/components/ProductAlerts"));
+const BulkPurchase = React.lazy(() => import("@/components/BulkPurchase"));
 
 const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<Skeleton className="h-32 w-full rounded-md" />}>

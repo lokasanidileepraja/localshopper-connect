@@ -70,3 +70,15 @@ export const RetailerRecentReservations = memo(() => (
     </PageLoader>
   </ErrorBoundary>
 ));
+
+// Export everything as default as well
+const RetailerDashboardComponents = {
+  RetailerDashboard,
+  RetailerSalesChart,
+  RetailerInventorySummary,
+  RetailerOrderManagement,
+  RetailerQuickActions,
+  RetailerRecentReservations
+};
+
+export default RetailerDashboardComponents;
