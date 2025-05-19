@@ -11,6 +11,7 @@ import { AuthProvider } from './contexts/AuthContext.tsx'
 import { analytics } from './lib/analytics.ts'
 import { ToastProvider } from './hooks/use-toast.tsx'
 import { ErrorBoundary } from './components/common/ErrorBoundary.tsx'
+import RouterGuard from './guards/RouterGuard.tsx'
 
 // Initialize analytics only once at the app root
 if (typeof window !== 'undefined' && !window.analyticsInitialized) {
@@ -18,7 +19,7 @@ if (typeof window !== 'undefined' && !window.analyticsInitialized) {
   window.analyticsInitialized = true;
 }
 
-// Create a query client with improved performance settings
+// Create a query client with improved performance and error handling settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -46,14 +47,16 @@ const handleError = (error: Error) => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary>
+    <ErrorBoundary onError={handleError}>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <HelmetProvider>
             <AuthProvider>
               <BrowserRouter>
-                <App />
-                <Toaster />
+                <RouterGuard>
+                  <App />
+                  <Toaster />
+                </RouterGuard>
               </BrowserRouter>
             </AuthProvider>
           </HelmetProvider>

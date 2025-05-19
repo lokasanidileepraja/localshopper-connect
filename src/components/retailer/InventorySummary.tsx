@@ -1,72 +1,41 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { BarChart, AlertTriangle, PackageCheck } from "lucide-react";
+import { memo } from 'react';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, ShoppingBag } from 'lucide-react';
 
-const mockInventoryData = [
-  {
-    category: "Mobile Phones",
-    stock: 65,
-    total: 100,
-    status: "healthy"
-  },
-  {
-    category: "Laptops",
-    stock: 12,
-    total: 35,
-    status: "warning"
-  },
-  {
-    category: "Accessories",
-    stock: 85,
-    total: 200,
-    status: "healthy"
-  },
-  {
-    category: "Tablets",
-    stock: 3,
-    total: 30,
-    status: "critical"
-  }
-];
+export const InventorySummary = memo(() => {
+  const categories = [
+    { name: 'Smartphones', inStock: 45, total: 50, low: false },
+    { name: 'Laptops', inStock: 12, total: 30, low: false },
+    { name: 'Accessories', inStock: 120, total: 200, low: false },
+    { name: 'Tablets', inStock: 5, total: 25, low: true },
+  ];
 
-export const InventorySummary = () => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Inventory Status</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {mockInventoryData.map((item, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{item.category}</span>
-                <Badge variant={
-                  item.status === "healthy" ? "outline" :
-                  item.status === "warning" ? "default" : "destructive"
-                }>
-                  {item.stock}/{item.total}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <Progress value={(item.stock / item.total) * 100} className="h-2" />
-                {item.status === "healthy" && <BarChart className="h-4 w-4 text-green-500" />}
-                {item.status === "warning" && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
-                {item.status === "critical" && <AlertTriangle className="h-4 w-4 text-red-500" />}
-              </div>
-            </div>
-          ))}
-          
-          <div className="pt-2 mt-2 border-t text-center">
-            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-              <PackageCheck className="h-4 w-4" />
-              <span>Total items in stock: 165</span>
-            </div>
+    <div className="space-y-4">
+      {categories.map((category) => (
+        <div key={category.name} className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-sm">{category.name}</span>
+            <span className="text-xs text-muted-foreground">{category.inStock}/{category.total} items</span>
           </div>
+          <Progress value={(category.inStock / category.total) * 100} />
+          {category.low && (
+            <div className="flex items-center gap-1 text-amber-600 text-xs">
+              <AlertCircle className="h-3 w-3" />
+              <span>Low stock - Reorder soon</span>
+            </div>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      ))}
+      <Button variant="outline" size="sm" className="w-full mt-4">
+        <ShoppingBag className="h-4 w-4 mr-2" />
+        View Full Inventory
+      </Button>
+    </div>
   );
-};
+});
+
+InventorySummary.displayName = "InventorySummary";

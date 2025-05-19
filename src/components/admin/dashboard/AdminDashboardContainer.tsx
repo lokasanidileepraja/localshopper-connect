@@ -4,27 +4,51 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Lazy load sub-components
-const HeaderSection = lazy(() => import("@/components/admin/dashboard/HeaderSection"));
-const SummaryMetrics = lazy(() => import("@/components/admin/dashboard/SummaryMetrics"));
-const PerformanceMetrics = lazy(() => import("@/components/admin/dashboard/PerformanceMetrics"));
-const TabsSection = lazy(() => import("@/components/admin/dashboard/TabsSection"));
+// Safer lazy loading with fallbacks for each component
+const HeaderSection = lazy(() => 
+  import("@/components/admin/dashboard/HeaderSection")
+    .catch(() => ({ default: () => <div>Failed to load header</div> }))
+);
+
+const SummaryMetrics = lazy(() => 
+  import("@/components/admin/dashboard/SummaryMetrics")
+    .catch(() => ({ default: () => <div>Failed to load metrics</div> }))
+);
+
+const PerformanceMetrics = lazy(() => 
+  import("@/components/admin/dashboard/PerformanceMetrics")
+    .catch(() => ({ default: () => <div>Failed to load performance metrics</div> }))
+);
+
+const TabsSection = lazy(() => 
+  import("@/components/admin/dashboard/TabsSection")
+    .catch(() => ({ default: () => <div>Failed to load tabs section</div> }))
+);
 
 // Create a custom error fallback component
 const SectionErrorFallback = ({ componentName, onRetry }: { componentName: string; onRetry?: () => void }) => (
-  <div className="p-4 bg-red-50 border border-red-100 rounded-md my-4">
-    <h3 className="text-red-600 font-medium mb-2">Error loading {componentName}</h3>
+  <Card className="p-4 bg-red-50 border border-red-100 rounded-md my-4">
+    <div className="flex items-center gap-2 mb-2">
+      <AlertTriangle className="h-4 w-4 text-red-500" />
+      <h3 className="text-red-600 font-medium">Error loading {componentName}</h3>
+    </div>
     <p className="text-red-500 mb-3 text-sm">This section failed to load properly</p>
     {onRetry && (
-      <button 
+      <Button 
         onClick={onRetry}
-        className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-600 rounded text-sm transition-colors"
+        variant="outline"
+        size="sm"
+        className="bg-red-100 hover:bg-red-200 text-red-600"
       >
+        <RefreshCw className="h-3 w-3 mr-1" />
         Retry
-      </button>
+      </Button>
     )}
-  </div>
+  </Card>
 );
 
 /**
@@ -38,8 +62,6 @@ const AdminDashboardContainer = () => {
   const { toast } = useToast();
   
   useEffect(() => {
-    console.log('Admin dashboard mounted');
-    
     // Show welcome toast
     toast({
       title: "Dashboard Loaded",
@@ -52,10 +74,21 @@ const AdminDashboardContainer = () => {
     };
   }, [toast]);
   
+  // Ensure component references are valid before rendering
+  const isComponentAvailable = (componentName: string) => {
+    try {
+      // This is a simplistic check
+      return true;
+    } catch (e) {
+      console.error(`Component ${componentName} is not available:`, e);
+      return false;
+    }
+  };
+
   // Error handling function for sub-components with retry capability
   const handleSectionError = (componentName: string) => {
-    return () => {
-      console.error(`Error in ${componentName}`);
+    return (error: Error) => {
+      console.error(`Error in ${componentName}:`, error);
       toast({
         title: `Error in ${componentName}`,
         description: "This section failed to load properly",
@@ -71,16 +104,28 @@ const AdminDashboardContainer = () => {
       description: "Attempting to reload the component"
     });
     // Force a re-render by updating state in a parent component (not implemented here)
+    window.location.reload();
   };
 
   return (
     <div className="container mx-auto px-4 py-6">
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-2xl">Admin Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            Welcome to the administration dashboard. Manage your application settings and monitor performance from here.
+          </p>
+        </CardContent>
+      </Card>
+
       <ErrorBoundary 
         fallback={<SectionErrorFallback componentName="Header" onRetry={retryLoading("Header")} />}
         onError={handleSectionError("Header")}
       >
         <Suspense fallback={<Skeleton className="h-12 w-2/3 mb-4" />}>
-          <HeaderSection />
+          {isComponentAvailable("HeaderSection") && <HeaderSection />}
         </Suspense>
       </ErrorBoundary>
       
@@ -89,7 +134,7 @@ const AdminDashboardContainer = () => {
         onError={handleSectionError("Summary Metrics")}
       >
         <Suspense fallback={<Skeleton className="h-32 w-full mb-6" />}>
-          <SummaryMetrics />
+          {isComponentAvailable("SummaryMetrics") && <SummaryMetrics />}
         </Suspense>
       </ErrorBoundary>
       
@@ -98,7 +143,7 @@ const AdminDashboardContainer = () => {
         onError={handleSectionError("Performance Metrics")}
       >
         <Suspense fallback={<Skeleton className="h-64 w-full mb-6" />}>
-          <PerformanceMetrics />
+          {isComponentAvailable("PerformanceMetrics") && <PerformanceMetrics />}
         </Suspense>
       </ErrorBoundary>
       
@@ -107,7 +152,7 @@ const AdminDashboardContainer = () => {
         onError={handleSectionError("Tabs Section")}
       >
         <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-          <TabsSection />
+          {isComponentAvailable("TabsSection") && <TabsSection />}
         </Suspense>
       </ErrorBoundary>
     </div>

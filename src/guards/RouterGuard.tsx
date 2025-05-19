@@ -10,9 +10,8 @@ interface RouterGuardProps {
 /**
  * Global router guard that handles common navigation concerns:
  * - Scroll restoration
- * - Analytics tracking
- * - Navigation confirmation for unsaved changes
  * - Error handling for route transitions
+ * - Analytics tracking
  */
 const RouterGuard: React.FC<RouterGuardProps> = ({ children }) => {
   const location = useLocation();
@@ -23,9 +22,6 @@ const RouterGuard: React.FC<RouterGuardProps> = ({ children }) => {
   useEffect(() => {
     // Scroll to top when route changes
     window.scrollTo(0, 0);
-    
-    // Track page view
-    console.log(`Page view: ${location.pathname}`);
     
     // Close any open mobile menus on navigation
     document.body.classList.remove('mobile-menu-open');
@@ -39,7 +35,7 @@ const RouterGuard: React.FC<RouterGuardProps> = ({ children }) => {
       if (event.error && event.error.toString().includes('Failed to load')) {
         toast({
           title: "Navigation Error",
-          description: "Failed to load the requested page. Please try again.",
+          description: "Failed to load the requested page. Redirecting to home page.",
           variant: "destructive",
         });
         

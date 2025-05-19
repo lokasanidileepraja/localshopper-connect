@@ -1,39 +1,53 @@
 
-import { Users, Store, ShoppingBag, DollarSign } from "lucide-react";
-import MetricCard from "./MetricCard";
+import { memo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { User, Package, CreditCard, Activity } from 'lucide-react';
 
 const SummaryMetrics = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <MetricCard 
-        title="Total Users" 
-        value="14,583" 
-        icon={<Users className="h-5 w-5 text-primary mr-2" />}
-        trend="↑ 12%" 
-      />
-      
-      <MetricCard 
-        title="Active Stores" 
-        value="842" 
-        icon={<Store className="h-5 w-5 text-primary mr-2" />}
-        trend="↑ 7%" 
-      />
-      
-      <MetricCard 
-        title="Total Products" 
-        value="23,947" 
-        icon={<ShoppingBag className="h-5 w-5 text-primary mr-2" />}
-        trend="↑ 18%" 
-      />
-      
-      <MetricCard 
-        title="Revenue" 
-        value="₹4.2M" 
-        icon={<DollarSign className="h-5 w-5 text-primary mr-2" />}
-        trend="↑ 22%" 
-      />
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+          <CreditCard className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">$45,231.89</div>
+          <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Users</CardTitle>
+          <User className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">+2350</div>
+          <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Sales</CardTitle>
+          <Package className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">+12,234</div>
+          <p className="text-xs text-muted-foreground">+19% from last month</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+          <Activity className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">+573</div>
+          <p className="text-xs text-muted-foreground">+201 since last hour</p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default SummaryMetrics;
+export default memo(SummaryMetrics);

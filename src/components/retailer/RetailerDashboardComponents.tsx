@@ -4,26 +4,49 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 // Simple error fallback component that matches the expected type pattern
-const LoadingError = memo(() => <div>Failed to load component</div>);
+const LoadingError = memo(({ message = "Failed to load component" }: { message?: string }) => (
+  <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+    <div className="flex items-center gap-2">
+      <AlertTriangle className="h-4 w-4 text-red-500" />
+      <p className="text-red-700 font-medium">{message}</p>
+    </div>
+    <Button 
+      variant="outline" 
+      size="sm" 
+      className="mt-2 bg-white" 
+      onClick={() => window.location.reload()}
+    >
+      Try Again
+    </Button>
+  </div>
+));
+
 LoadingError.displayName = 'LoadingError';
 
-// Type definition to ensure consistent return types for components with various props
-type ComponentImport<T = any> = ComponentType<T>;
+// Type definition for component props with proper generics
+interface BaseComponentProps {}
 
-// WhatsApp component specifically needs storeId prop
-interface WhatsAppStockUpdateProps {
+interface WhatsAppStockUpdateProps extends BaseComponentProps {
   storeId: string;
 }
 
+// Generic component type that can handle any props
+type ComponentImport<T extends BaseComponentProps = BaseComponentProps> = ComponentType<T>;
+
 // Consistent approach for lazy loading components with proper typing
-const WhatsAppStockUpdate = lazy(() => 
+const WhatsAppStockUpdate = lazy<ComponentType<WhatsAppStockUpdateProps>>(() => 
   import("./WhatsAppStockUpdate")
-    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) as ComponentImport<WhatsAppStockUpdateProps> }))
+    .then(mod => ({ default: memo(mod.WhatsAppStockUpdate) as ComponentType<WhatsAppStockUpdateProps> }))
     .catch(() => {
       console.error("Failed to load WhatsAppStockUpdate");
-      return { default: LoadingError as ComponentImport<WhatsAppStockUpdateProps> };
+      return { 
+        // Cast LoadingError to match the expected WhatsAppStockUpdateProps interface
+        default: (({ storeId }) => <LoadingError message={`Failed to load WhatsApp updates for store ${storeId}`} />) as ComponentType<WhatsAppStockUpdateProps>
+      };
     })
 );
 
@@ -32,7 +55,7 @@ const QuickActions = lazy(() =>
     .then(mod => ({ default: memo(mod.QuickActions) as ComponentImport }))
     .catch(() => {
       console.error("Failed to load QuickActions");
-      return { default: LoadingError as ComponentImport };
+      return { default: () => <LoadingError message="Failed to load Quick Actions" /> as ComponentImport };
     })
 );
 
@@ -41,7 +64,7 @@ const SalesChart = lazy(() =>
     .then(mod => ({ default: memo(mod.SalesChart) as ComponentImport }))
     .catch(() => {
       console.error("Failed to load SalesChart");
-      return { default: LoadingError as ComponentImport };
+      return { default: () => <LoadingError message="Failed to load Sales Chart" /> as ComponentImport };
     })
 );
 
@@ -50,7 +73,7 @@ const RecentReservations = lazy(() =>
     .then(mod => ({ default: memo(mod.RecentReservations) as ComponentImport }))
     .catch(() => {
       console.error("Failed to load RecentReservations");
-      return { default: LoadingError as ComponentImport };
+      return { default: () => <LoadingError message="Failed to load Recent Reservations" /> as ComponentImport };
     })
 );
 
@@ -59,7 +82,7 @@ const InventorySummary = lazy(() =>
     .then(mod => ({ default: memo(mod.InventorySummary) as ComponentImport }))
     .catch(() => {
       console.error("Failed to load InventorySummary");
-      return { default: LoadingError as ComponentImport };
+      return { default: () => <LoadingError message="Failed to load Inventory Summary" /> as ComponentImport };
     })
 );
 
@@ -157,10 +180,3 @@ export const RetailerDashboardComponents = memo(() => {
 });
 
 RetailerDashboardComponents.displayName = 'RetailerDashboardComponents';
-
-// Export components with consistent error handling
-export { WhatsAppStockUpdate } from "./WhatsAppStockUpdate";
-export { QuickActions } from "./QuickActions";
-export { SalesChart } from "./SalesChart";
-export { RecentReservations } from "./RecentReservations";
-export { InventorySummary } from "./InventorySummary";

@@ -4,14 +4,35 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-// Lazy load the dashboard container component
+// Lazy load the dashboard container component with error handling
 const AdminDashboardContainer = lazy(() => 
   import("@/components/admin/dashboard/AdminDashboardContainer")
+    .then(module => module)
+    .catch(error => {
+      console.error("Failed to load AdminDashboardContainer:", error);
+      // Return a placeholder component when loading fails
+      return {
+        default: () => (
+          <Card className="p-6 text-center">
+            <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Dashboard Component Failed to Load</h2>
+            <p className="text-muted-foreground mb-4">There was a problem loading the dashboard components.</p>
+            <Button onClick={() => window.location.reload()} className="mx-auto">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Reload Page
+            </Button>
+          </Card>
+        )
+      };
+    })
 );
 
 /**
- * Admin Dashboard page with error boundaries and loading states
+ * Admin Dashboard page with enhanced error boundaries and loading states
  */
 const AdminDashboard = () => {
   // Monitor component performance
@@ -43,24 +64,38 @@ const AdminDashboard = () => {
   );
 
   return (
-    <ErrorBoundary 
-      onError={handleError}
-      fallback={
-        <div className="p-8 text-center">
-          <p className="text-red-500">Something went wrong loading the dashboard</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Reload Page
-          </button>
-        </div>
-      }
-    >
-      <Suspense fallback={loadingFallback}>
-        <AdminDashboardContainer />
-      </Suspense>
-    </ErrorBoundary>
+    <div className="container mx-auto">
+      <ErrorBoundary 
+        onError={handleError}
+        fallback={(error, resetError) => (
+          <div className="p-8 text-center">
+            <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Dashboard Error</h2>
+            <p className="text-muted-foreground mb-4">
+              {error?.message || "Something went wrong loading the dashboard"}
+            </p>
+            <div className="flex gap-2 justify-center">
+              <Button 
+                onClick={resetError}
+                variant="outline"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Try Again
+              </Button>
+              <Button 
+                onClick={() => window.location.reload()} 
+              >
+                Reload Page
+              </Button>
+            </div>
+          </div>
+        )}
+      >
+        <Suspense fallback={loadingFallback}>
+          <AdminDashboardContainer />
+        </Suspense>
+      </ErrorBoundary>
+    </div>
   );
 };
 

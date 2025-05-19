@@ -1,12 +1,12 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  fallback?: ReactNode | ((error: Error, resetError: () => void) => ReactNode);
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   resetKeys?: any[];
 }
@@ -28,24 +28,27 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public static getDerivedStateFromError(error: Error): Partial<State> {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true, error };
+    return { 
+      hasError: true, 
+      error 
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Update error count
+    // Update error count and store error info
     this.setState(prevState => ({
-      errorInfo,
-      errorCount: prevState.errorCount + 1
+      errorCount: prevState.errorCount + 1,
+      errorInfo
     }));
+
+    // Log the error for debugging
+    console.error("Error caught by ErrorBoundary:", error);
+    console.error("Component stack:", errorInfo.componentStack);
     
     // Call the onError callback if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-    
-    // Log the error
-    console.error("Error caught by ErrorBoundary:", error);
-    console.error("Component stack:", errorInfo.componentStack);
   }
 
   // Reset error boundary if any of the reset keys change
@@ -72,16 +75,24 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
+      // If custom fallback function is provided
+      if (typeof this.props.fallback === 'function') {
+        return this.props.fallback(this.state.error!, this.resetErrorBoundary);
+      }
+      
+      // If custom fallback element is provided
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+      
+      // Default fallback UI
       return (
-        this.props.fallback || (
-          <ErrorFallback 
-            error={this.state.error} 
-            errorInfo={this.state.errorInfo}
-            errorCount={this.state.errorCount}
-            resetErrorBoundary={this.resetErrorBoundary}
-          />
-        )
+        <ErrorFallback 
+          error={this.state.error} 
+          errorInfo={this.state.errorInfo}
+          errorCount={this.state.errorCount}
+          resetErrorBoundary={this.resetErrorBoundary}
+        />
       );
     }
 
@@ -89,18 +100,20 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Create a separate component for the error UI
+interface ErrorFallbackProps {
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+  errorCount: number;
+  resetErrorBoundary: () => void;
+}
+
+// Separate component for the error UI
 const ErrorFallback = ({ 
   error, 
   errorInfo, 
   errorCount,
   resetErrorBoundary 
-}: { 
-  error: Error | null;
-  errorInfo: ErrorInfo | null;
-  errorCount: number;
-  resetErrorBoundary: () => void;
-}) => {
+}: ErrorFallbackProps) => {
   // Use navigate to allow going back to home
   const navigate = useNavigate();
   
@@ -109,21 +122,25 @@ const ErrorFallback = ({
     navigate('/');
   };
   
-  const handleReportError = () => {
-    // In a real app, this would send the error to a reporting service
-    console.log('Error reported:', { error, errorInfo });
-    alert('Error has been reported to our team');
-  };
-  
-  // Determine if this is a persistent error (happening multiple times)
-  const isPersistentError = errorCount > 1;
+  // Show a more severe message for repeated errors
+  const isSevereError = errorCount > 2;
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] p-4 bg-gray-50 rounded-lg">
-      <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-100 mb-4">
-        <AlertTriangle className="h-8 w-8 text-red-500" />
+    <div className={`flex flex-col items-center justify-center min-h-[300px] p-6 rounded-lg ${
+      isSevereError ? 'bg-red-50' : 'bg-gray-50'
+    }`}>
+      <div className={`inline-flex h-16 w-16 items-center justify-center rounded-full ${
+        isSevereError ? 'bg-red-100' : 'bg-yellow-100'
+      } mb-4`}>
+        <AlertTriangle className={`h-8 w-8 ${
+          isSevereError ? 'text-red-500' : 'text-yellow-500'
+        }`} />
       </div>
-      <h1 className="text-xl font-bold mb-2">Something went wrong</h1>
+      <h1 className="text-xl font-bold mb-2">
+        {isSevereError 
+          ? `Persistent Error` 
+          : `Something went wrong`}
+      </h1>
       <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-4 text-left overflow-auto max-h-40 w-full max-w-lg">
         <p className="font-mono text-sm">
           {error?.toString() || "An unknown error occurred"}
@@ -143,32 +160,31 @@ const ErrorFallback = ({
         <Button 
           onClick={resetErrorBoundary}
           className="gap-2"
-          variant="default"
+          variant={isSevereError ? "outline" : "default"}
         >
           <RefreshCw className="h-4 w-4" />
-          Try Again
+          {isSevereError ? 'Force Retry' : 'Try Again'}
         </Button>
         <Button 
           onClick={handleGoHome}
           className="gap-2"
-          variant="outline"
+          variant="default"
         >
           <Home className="h-4 w-4" />
           Go Home
         </Button>
         <Button
-          onClick={handleReportError}
+          onClick={() => window.location.reload()}
           className="gap-2"
           variant="secondary"
         >
-          <Bug className="h-4 w-4" />
-          Report Issue
+          <RefreshCw className="h-4 w-4" />
+          Reload Page
         </Button>
       </div>
-      
-      {isPersistentError && (
-        <p className="mt-4 text-sm text-red-600">
-          This error has occurred multiple times. You might want to try refreshing the page.
+      {isSevereError && (
+        <p className="mt-4 text-sm text-red-600 max-w-md text-center">
+          This error has occurred multiple times. You may need to reload the page or clear your browser cache.
         </p>
       )}
     </div>
