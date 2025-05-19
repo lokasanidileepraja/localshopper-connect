@@ -4,23 +4,42 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { PageLoader } from '@/components/common/PageLoader';
 
-// Dashboard Overview Component (creating a placeholder if it doesn't exist)
-const RetailerOverview = React.lazy(() => import('./RetailerOverviewPlaceholder').then(module => ({ default: module.default || module })));
+// Lazy load components with proper type annotations
+const RetailerOverview = React.lazy(() => 
+  import('./RetailerOverviewPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Retailer Overview</div>)
+  }))
+);
 
-// Sales Chart Component
-const SalesChart = React.lazy(() => import('./SalesChartPlaceholder').then(module => ({ default: module.default || module })));
+const SalesChart = React.lazy(() => 
+  import('./SalesChartPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Sales Chart</div>)
+  }))
+);
 
-// Inventory Summary Component
-const InventorySummary = React.lazy(() => import('./InventorySummaryPlaceholder').then(module => ({ default: module.default || module })));
+const InventorySummary = React.lazy(() => 
+  import('./InventorySummaryPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Inventory Summary</div>)
+  }))
+);
 
-// Order Management Component
-const OrderManagement = React.lazy(() => import('./OrderManagementPlaceholder').then(module => ({ default: module.default || module })));
+const OrderManagement = React.lazy(() => 
+  import('./OrderManagementPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Order Management</div>)
+  }))
+);
 
-// Quick Actions Component
-const QuickActions = React.lazy(() => import('./QuickActionsPlaceholder').then(module => ({ default: module.default || module })));
+const QuickActions = React.lazy(() => 
+  import('./QuickActionsPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Quick Actions</div>)
+  }))
+);
 
-// Recent Reservations Component
-const RecentReservations = React.lazy(() => import('./RecentReservationsPlaceholder').then(module => ({ default: module.default || module })));
+const RecentReservations = React.lazy(() => 
+  import('./RecentReservationsPlaceholder').then(module => ({ 
+    default: module.default || (() => <div>Recent Reservations</div>)
+  }))
+);
 
 // Export the components wrapped in error boundaries and suspense
 export const RetailerDashboard = memo(() => (

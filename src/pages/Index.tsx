@@ -8,17 +8,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
-// Import components directly
-import Hero from "@/components/Hero";
-import SearchBar from "@/components/SearchBar";
-import SearchErrorBoundary from "@/components/search/SearchErrorBoundary";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import Newsletter from "@/components/Newsletter";
-import Testimonials from "@/components/Testimonials";
-import BrandsShowcase from "@/components/BrandsShowcase";
-import Categories from "@/components/Categories";
-import { BackToTop } from "@/components/BackToTop"; // Changed to named import
-import UserPoints from "@/components/gamification/UserPoints";
+// Import components with named exports
+import { Hero } from "@/components/Hero";
+import { SearchBar } from "@/components/SearchBar";
+import { SearchErrorBoundary } from "@/components/search/SearchErrorBoundary";
+import { FeaturedProducts } from "@/components/FeaturedProducts";
+import { Newsletter } from "@/components/Newsletter";
+import { Testimonials } from "@/components/Testimonials";
+import { BrandsShowcase } from "@/components/BrandsShowcase";
+import { Categories } from "@/components/Categories";
+import { BackToTop } from "@/components/BackToTop";
+import { UserPoints } from "@/components/gamification/UserPoints";
 
 const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<Skeleton className="h-32 w-full" />}>
