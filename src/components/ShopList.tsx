@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useToast } from "@/hooks/use-toast";
 import { useKeyboardNav } from "@/hooks/useKeyboardNav";
@@ -23,16 +23,19 @@ export const ShopList = () => {
   const { data: shops, isLoading, error, refetch } = useQuery({
     queryKey: ["shops"],
     queryFn: () => Promise.resolve(ELECTRONICS_SHOPS),
-    // Added error handling
-    onError: (err) => {
-      console.error("Error fetching shops:", err);
+  });
+  
+  // Handle error effect - moved from onError to useEffect
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching shops:", error);
       toast({
         title: "Failed to load shops",
         description: "Please try again later",
         variant: "destructive",
       });
-    },
-  });
+    }
+  }, [error, toast]);
 
   const handleCompare = useCallback((model: string) => {
     setSelectedModel(prev => prev === model ? null : model);
