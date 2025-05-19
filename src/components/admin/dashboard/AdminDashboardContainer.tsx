@@ -4,32 +4,24 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { ErrorFallback } from '@/components/common/ErrorFallback';
 import { PageLoader } from '@/components/common/PageLoader';
 
-// Header section
+// Header section - properly typed lazy import
 const HeaderSection = React.lazy(() => 
-  import('@/components/admin/dashboard/HeaderSection').then(module => ({
-    default: module.default || module
-  }))
+  import('@/components/admin/dashboard/HeaderSection')
 );
 
-// Summary Metrics Section
+// Summary Metrics Section - properly typed lazy import
 const SummaryMetrics = React.lazy(() => 
-  import('@/components/admin/dashboard/SummaryMetrics').then(module => ({
-    default: module.default || module
-  }))
+  import('@/components/admin/dashboard/SummaryMetrics')
 );
 
-// Performance Metrics Section
+// Performance Metrics Section - properly typed lazy import
 const PerformanceMetrics = React.lazy(() => 
-  import('@/components/admin/dashboard/PerformanceMetrics').then(module => ({
-    default: module.default || module
-  }))
+  import('@/components/admin/dashboard/PerformanceMetrics')
 );
 
-// Tabs Section
+// Tabs Section - properly typed lazy import
 const TabsSection = React.lazy(() => 
-  import('@/components/admin/dashboard/TabsSection').then(module => ({
-    default: module.default || module
-  }))
+  import('@/components/admin/dashboard/TabsSection')
 );
 
 const AdminDashboardContainer = () => {

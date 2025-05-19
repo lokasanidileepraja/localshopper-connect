@@ -1,10 +1,10 @@
 
-import React, { memo, Suspense, useEffect } from "react";
+import React, { memo, Suspense, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Helmet } from "react-helmet-async";
 
 // Import optimized components
 const RetailerDashboardComponents = React.lazy(() => 
@@ -19,20 +19,55 @@ const RetailerDashboard = () => {
   useEffect(() => {
     console.log("Retailer Dashboard page visited");
     
+    // Prefetch related components
+    const prefetchModules = async () => {
+      try {
+        await import("@/components/retailer/RetailerDashboardComponents");
+      } catch (error) {
+        console.error("Error prefetching retailer components:", error);
+      }
+    };
+    
+    // Use requestIdleCallback for better performance
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(prefetchModules);
+    } else {
+      setTimeout(prefetchModules, 1000);
+    }
+    
     return () => {
       console.log("Retailer Dashboard page exited");
     };
   }, []);
   
+  // Memoized loading placeholder
+  const loadingSkeleton = useMemo(() => (
+    <Skeleton className="h-64 w-full" />
+  ), []);
+  
+  // Component wrapper with error boundary
+  const ComponentWithErrorBoundary = useCallback(({ children }) => (
+    <ErrorBoundary>
+      <Suspense fallback={loadingSkeleton}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  ), [loadingSkeleton]);
+  
   return (
     <div className="container mx-auto px-4 py-8">
+      <Helmet>
+        <title>Retailer Dashboard | TechLocator</title>
+        <meta name="description" content="Retailer management dashboard" />
+      </Helmet>
+      
       <h1 className="text-3xl font-bold mb-6">Retailer Dashboard</h1>
       
-      <ErrorBoundary>
-        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+      <ComponentWithErrorBoundary>
+        <React.Suspense fallback={loadingSkeleton}>
           <RetailerDashboardComponents.RetailerDashboard />
-        </Suspense>
-      </ErrorBoundary>
+        </React.Suspense>
+      </ComponentWithErrorBoundary>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
         <div className="lg:col-span-2">
@@ -41,11 +76,9 @@ const RetailerDashboard = () => {
               <CardTitle>Sales Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-                  <RetailerDashboardComponents.RetailerSalesChart />
-                </Suspense>
-              </ErrorBoundary>
+              <ComponentWithErrorBoundary>
+                <RetailerDashboardComponents.RetailerSalesChart />
+              </ComponentWithErrorBoundary>
             </CardContent>
           </Card>
         </div>
@@ -56,11 +89,9 @@ const RetailerDashboard = () => {
               <CardTitle>Inventory Summary</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-                  <RetailerDashboardComponents.RetailerInventorySummary />
-                </Suspense>
-              </ErrorBoundary>
+              <ComponentWithErrorBoundary>
+                <RetailerDashboardComponents.RetailerInventorySummary />
+              </ComponentWithErrorBoundary>
             </CardContent>
           </Card>
         </div>
@@ -72,11 +103,9 @@ const RetailerDashboard = () => {
             <CardTitle>Recent Reservations</CardTitle>
           </CardHeader>
           <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-                <RetailerDashboardComponents.RetailerRecentReservations />
-              </Suspense>
-            </ErrorBoundary>
+            <ComponentWithErrorBoundary>
+              <RetailerDashboardComponents.RetailerRecentReservations />
+            </ComponentWithErrorBoundary>
           </CardContent>
         </Card>
         
@@ -85,11 +114,9 @@ const RetailerDashboard = () => {
             <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <ErrorBoundary>
-              <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-                <RetailerDashboardComponents.RetailerOrderManagement />
-              </Suspense>
-            </ErrorBoundary>
+            <ComponentWithErrorBoundary>
+              <RetailerDashboardComponents.RetailerOrderManagement />
+            </ComponentWithErrorBoundary>
           </CardContent>
         </Card>
       </div>

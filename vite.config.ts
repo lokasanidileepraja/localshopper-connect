@@ -67,7 +67,7 @@ export default defineConfig({
   // Optimize dev server
   server: {
     hmr: true,
-    port: 3000,
+    port: 8080,
     open: true,
     cors: true,
     host: true,

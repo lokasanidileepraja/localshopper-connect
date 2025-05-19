@@ -1,10 +1,11 @@
 
-import React, { Suspense, memo, useEffect } from "react";
+import React, { Suspense, memo, useEffect, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Helmet } from "react-helmet-async";
+import { prefetchComponent } from "@/utils/prefetchUtils";
 
 // Lazy load the component for better performance
 const OrderManagement = React.lazy(() => 
@@ -19,9 +20,20 @@ const RetailerOrders = () => {
   
   const { toast } = useToast();
   
+  // Memoized loading fallback
+  const loadingFallback = useCallback(() => (
+    <div className="space-y-4">
+      <Skeleton className="h-12 w-full" />
+      <Skeleton className="h-[500px] w-full" />
+    </div>
+  ), []);
+  
   // Log page visit for analytics - only on mount
   useEffect(() => {
     console.log("Retailer Orders page visited");
+    
+    // Prefetch related components for better UX
+    prefetchComponent(() => import("@/components/retailer/OrderManagement"));
     
     return () => {
       console.log("Retailer Orders page exited");
@@ -29,20 +41,52 @@ const RetailerOrders = () => {
   }, []);
   
   return (
-    <ErrorBoundary>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Order Management</h1>
-        <Suspense fallback={
-          <div className="space-y-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-[500px] w-full" />
-          </div>
-        }>
-          <OrderManagement />
-        </Suspense>
-      </div>
-    </ErrorBoundary>
+    <>
+      <Helmet>
+        <title>Order Management | Retailer Dashboard</title>
+        <meta name="description" content="Manage customer orders and track fulfillment" />
+      </Helmet>
+      
+      <ErrorBoundary>
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold mb-6">Order Management</h1>
+          <Suspense fallback={loadingFallback()}>
+            <OrderManagement />
+          </Suspense>
+        </div>
+      </ErrorBoundary>
+    </>
   );
 };
 
-export default memo(RetailerOrders);
+// Create utility function for prefetching components
+<lov-write file_path="src/utils/prefetchUtils.ts">
+/**
+ * Prefetch a component during idle time to improve perceived performance
+ * @param importFn Function that returns a dynamic import
+ */
+export const prefetchComponent = (importFn: () => Promise<any>) => {
+  if (typeof window === 'undefined') return;
+  
+  const prefetch = async () => {
+    try {
+      await importFn();
+    } catch (error) {
+      console.error('Error prefetching component:', error);
+    }
+  };
+
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(() => prefetch());
+  } else {
+    setTimeout(prefetch, 1000);
+  }
+};
+
+/**
+ * Prefetch multiple components during idle time
+ * @param importFns Array of functions that return dynamic imports
+ */
+export const prefetchComponents = (importFns: Array<() => Promise<any>>) => {
+  importFns.forEach(prefetchComponent);
+};
