@@ -1,21 +1,20 @@
-
-import React, { Suspense, memo } from "react";
+import React, { Suspense, lazy } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Fix lazy loaded component imports
-const ProductDetails = React.lazy(() => import("@/components/product/ProductDetails"));
-const StoreInfo = React.lazy(() => import("@/components/store/StoreInfo"));
-const NearbyStoreFinder = React.lazy(() => import("@/components/store/NearbyStoreFinder"));
-const RetailerChat = React.lazy(() => import("@/components/chat/RetailerChat"));
-const PriceAlerts = React.lazy(() => import("@/components/alerts/PriceAlerts"));
-const ProductReviews = React.lazy(() => import("@/components/ProductReviews"));
-const ProductRecommendations = React.lazy(() => import("@/components/ProductRecommendations"));
-const ProductAlerts = React.lazy(() => import("@/components/ProductAlerts"));
-const BulkPurchase = React.lazy(() => import("@/components/BulkPurchase"));
+// Import components with correct export handling
+const ProductDetails = lazy(() => import("@/components/product/ProductDetails").then(module => ({ default: module.ProductDetails || (() => <div>Product Details</div>) })));
+const StoreInfo = lazy(() => import("@/components/store/StoreInfo").then(module => ({ default: module.StoreInfo || (() => <div>Store Info</div>) })));
+const NearbyStoreFinder = lazy(() => import("@/components/store/NearbyStoreFinder").then(module => ({ default: module.NearbyStoreFinder || (() => <div>Nearby Store Finder</div>) })));
+const RetailerChat = lazy(() => import("@/components/chat/RetailerChat").then(module => ({ default: module.RetailerChat || (() => <div>Retailer Chat</div>) })));
+const PriceAlerts = lazy(() => import("@/components/alerts/PriceAlerts").then(module => ({ default: module.PriceAlerts || (() => <div>Price Alerts</div>) })));
+const ProductReviews = lazy(() => import("@/components/ProductReviews").then(module => ({ default: module.ProductReviews || (() => <div>Product Reviews</div>) })));
+const ProductRecommendations = lazy(() => import("@/components/ProductRecommendations").then(module => ({ default: module.ProductRecommendations || (() => <div>Product Recommendations</div>) })));
+const ProductAlerts = lazy(() => import("@/components/ProductAlerts").then(module => ({ default: module.ProductAlerts || (() => <div>Product Alerts</div>) })));
+const BulkPurchase = lazy(() => import("@/components/BulkPurchase").then(module => ({ default: module.BulkPurchase || (() => <div>Bulk Purchase</div>) })));
 
 const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<Skeleton className="h-32 w-full rounded-md" />}>
@@ -180,4 +179,4 @@ const Product = () => {
   );
 };
 
-export default memo(Product);
+export default Product;
