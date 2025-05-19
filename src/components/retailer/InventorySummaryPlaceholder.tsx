@@ -7,8 +7,8 @@ const InventorySummaryPlaceholder = () => {
       <CardHeader>
         <CardTitle>Inventory Summary</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p>Inventory data will be displayed here.</p>
+      <CardContent className="min-h-[200px] flex items-center justify-center">
+        <p className="text-muted-foreground">Loading inventory data...</p>
       </CardContent>
     </Card>
   );

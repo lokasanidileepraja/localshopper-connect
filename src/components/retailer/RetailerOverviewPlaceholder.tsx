@@ -7,8 +7,8 @@ const RetailerOverviewPlaceholder = () => {
       <CardHeader>
         <CardTitle>Retailer Dashboard Overview</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p>Dashboard overview content will be displayed here.</p>
+      <CardContent className="min-h-[200px] flex items-center justify-center">
+        <p className="text-muted-foreground">Loading dashboard overview data...</p>
       </CardContent>
     </Card>
   );

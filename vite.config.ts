@@ -61,8 +61,7 @@ export default defineConfig({
         }
       }
     },
-    // Enable BrOTLI compression
-    brotliSize: true
+    // Remove invalid brotliSize property
   },
   // Optimize dev server
   server: {
