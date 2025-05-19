@@ -6,8 +6,8 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { Helmet } from "react-helmet-async";
 
-// Import RetailerDashboardComponents directly
-import RetailerDashboardComponents, {
+// Import direct components instead of using lazy loading
+import { 
   RetailerDashboard as RetailerDashboardComponent,
   RetailerSalesChart,
   RetailerInventorySummary,
@@ -68,9 +68,7 @@ const RetailerDashboard = () => {
       <h1 className="text-3xl font-bold mb-6">Retailer Dashboard</h1>
       
       <ComponentWithErrorBoundary>
-        <React.Suspense fallback={loadingSkeleton}>
-          <RetailerDashboardComponent />
-        </React.Suspense>
+        <RetailerDashboardComponent />
       </ComponentWithErrorBoundary>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">

@@ -1,3 +1,4 @@
+
 import React, { memo, Suspense, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -7,17 +8,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
-// Define component imports properly
-const Hero = React.lazy(() => import("@/components/Hero"));
-const SearchBar = React.lazy(() => import("@/components/SearchBar"));
-const SearchErrorBoundary = React.lazy(() => import("@/components/search/SearchErrorBoundary"));
-const FeaturedProducts = React.lazy(() => import("@/components/FeaturedProducts"));
-const Newsletter = React.lazy(() => import("@/components/Newsletter"));
-const Testimonials = React.lazy(() => import("@/components/Testimonials"));
-const BrandsShowcase = React.lazy(() => import("@/components/BrandsShowcase"));
-const Categories = React.lazy(() => import("@/components/Categories"));
-const BackToTop = React.lazy(() => import("@/components/BackToTop"));
-const UserPoints = React.lazy(() => import("@/components/gamification/UserPoints"));
+// Import components directly
+import Hero from "@/components/Hero";
+import SearchBar from "@/components/SearchBar";
+import SearchErrorBoundary from "@/components/search/SearchErrorBoundary";
+import FeaturedProducts from "@/components/FeaturedProducts";
+import Newsletter from "@/components/Newsletter";
+import Testimonials from "@/components/Testimonials";
+import BrandsShowcase from "@/components/BrandsShowcase";
+import Categories from "@/components/Categories";
+import BackToTop from "@/components/BackToTop";
+import UserPoints from "@/components/gamification/UserPoints";
 
 const ComponentLoader = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<Skeleton className="h-32 w-full" />}>

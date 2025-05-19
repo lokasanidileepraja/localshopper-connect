@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
-// Fix imports to use named exports instead of default
-import { WhatsAppStockUpdate } from "@/components/retailer/WhatsAppStockUpdate";
-import { DeliveryOptions } from "@/components/retailer/DeliveryOptions";
-import { PaymentManagement } from "@/components/retailer/PaymentManagement";
-import { UserAccessControl } from "@/components/retailer/UserAccessControl";
+// Import components directly without using named exports
+import WhatsAppStockUpdate from "@/components/retailer/WhatsAppStockUpdate";
+import DeliveryOptions from "@/components/retailer/DeliveryOptions";
+import PaymentManagement from "@/components/retailer/PaymentManagement";
+import UserAccessControl from "@/components/retailer/UserAccessControl";
 
 const RetailerSettings = () => {
   // Mock store ID for the retailer

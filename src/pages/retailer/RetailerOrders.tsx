@@ -7,8 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet-async";
 import { prefetchComponent } from "@/utils/prefetchUtils";
 
-// Fix the import to use default export
-import { OrderManagement } from "@/components/retailer/OrderManagement";
+// Import OrderManagement component
+import OrderManagement from "@/components/retailer/OrderManagement";
 
 const RetailerOrders = () => {
   // Monitor component performance
