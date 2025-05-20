@@ -4,43 +4,31 @@ import { CategoryCardProps } from "@/types/categories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { memo, useCallback } from "react";
 
-export const CategoryCard = memo(({ category, onSelect, isSelected, index }: CategoryCardProps) => {
+export const CategoryCard = ({ category, onSelect, isSelected, index }: CategoryCardProps) => {
   const isMobile = useIsMobile();
   const Icon = category.icon;
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Use useCallback to create stable function reference
-  const handleInteraction = useCallback(() => {
+  const handleInteraction = () => {
     onSelect(category.name);
-    const categoryPath = `/category/${category.name.toLowerCase()}`;
-    navigate(categoryPath);
+    navigate(`/category/${category.name.toLowerCase()}`);
     toast({
       title: `Selected ${category.name}`,
       description: "Loading category details...",
       duration: 2000,
     });
-  }, [category.name, navigate, onSelect, toast]);
+  };
 
-  // Memoize event handler to prevent recreating on each render
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleInteraction();
-    }
-  }, [handleInteraction]);
-
-  // Don't compute these on every render - memoize instead
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.3,  // Reduce animation duration for better performance
-        delay: Math.min(index * 0.05, 0.5),  // Cap the maximum delay
+        duration: 0.5,
+        delay: index * 0.1,
         ease: [0.6, -0.05, 0.01, 0.99]
       }
     },
@@ -74,10 +62,14 @@ export const CategoryCard = memo(({ category, onSelect, isSelected, index }: Cat
         ${isSelected ? 'ring-2 ring-primary shadow-lg' : ''}
         hover:shadow-xl
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
-        will-change-transform
+        transform-gpu
       `}
       onClick={handleInteraction}
-      onKeyPress={handleKeyPress}
+      onKeyPress={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleInteraction();
+        }
+      }}
       role="button"
       tabIndex={0}
       aria-label={`Browse ${category.name} category`}
@@ -85,8 +77,8 @@ export const CategoryCard = memo(({ category, onSelect, isSelected, index }: Cat
     >
       <div className="flex flex-col items-center text-center space-y-3">
         <motion.div
-          whileHover={{ rotate: 10, scale: 1.1 }}  // Reduce rotation and scale for better performance
-          transition={{ duration: 0.3, type: "spring", stiffness: 200 }}
+          whileHover={{ rotate: 360, scale: 1.2 }}
+          transition={{ duration: 0.5, type: "spring" }}
           className="relative"
         >
           <Icon className={`
@@ -106,17 +98,21 @@ export const CategoryCard = memo(({ category, onSelect, isSelected, index }: Cat
         <h3 className="font-semibold text-sm sm:text-lg mb-1 group-hover:text-primary transition-colors">
           {category.name}
         </h3>
-        <p 
+        <motion.p 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ 
+            opacity: 1, 
+            height: "auto",
+            transition: { duration: 0.3 }
+          }}
           className="text-xs sm:text-sm text-gray-600 
             group-hover:text-gray-800
             transition-all duration-200 
             line-clamp-2 max-w-[200px]"
         >
           {category.description}
-        </p>
+        </motion.p>
       </div>
     </motion.div>
   );
-});
-
-CategoryCard.displayName = 'CategoryCard';
+};

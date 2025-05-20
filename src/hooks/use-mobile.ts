@@ -1,43 +1,41 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { throttle } from '@/lib/utils';
+import { useState, useEffect } from "react";
+
+// Standardized breakpoints aligned with Tailwind
+export const BREAKPOINTS = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536
+};
+
+export type BreakpointKey = keyof typeof BREAKPOINTS;
 
 /**
- * Optimized mobile detection hook
- * Uses throttling and stable references to prevent refresh loops
+ * Custom hook to detect if the viewport is at or below a specified breakpoint
+ * @param breakpoint - The breakpoint to check against (default: "md")
+ * @returns Boolean indicating if the viewport is at or below the specified breakpoint
  */
-export function useIsMobile() {
-  // Get initial value
-  const getIsMobile = () => window.innerWidth < 640;
-  
-  const [isMobile, setIsMobile] = useState(() => {
-    // Safely handle server-side rendering
-    if (typeof window === 'undefined') return false;
-    return getIsMobile();
-  });
-  
-  // Use ref to prevent recreating the handler on each render
-  const checkIsMobileRef = useRef(throttle(() => {
-    const mobileCheck = getIsMobile();
-    // Only update state if value actually changed
-    if (mobileCheck !== isMobile) {
-      setIsMobile(mobileCheck);
-    }
-  }, 200));
-  
+export function useIsMobile(breakpoint: BreakpointKey = "md"): boolean {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
   useEffect(() => {
-    // Get the current stable reference to the handler
-    const handler = checkIsMobileRef.current;
-    
-    // Add event listener
-    window.addEventListener('resize', handler);
-    
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < BREAKPOINTS[breakpoint]);
+    };
+
     // Initial check
-    handler();
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', handler);
-  }, []); // Empty dependency array is intentional
+    checkIfMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkIfMobile);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, [breakpoint]);
 
   return isMobile;
 }

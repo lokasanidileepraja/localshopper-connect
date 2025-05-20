@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TooltipWrapper } from "@/components/common/TooltipWrapper";
 import { useCartStore } from "@/store/cartStore";

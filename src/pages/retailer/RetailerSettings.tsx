@@ -1,10 +1,6 @@
 
-import React, { memo, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-
-// Import components with named exports
+import { Button } from "@/components/ui/button";
 import { WhatsAppStockUpdate } from "@/components/retailer/WhatsAppStockUpdate";
 import { DeliveryOptions } from "@/components/retailer/DeliveryOptions";
 import { PaymentManagement } from "@/components/retailer/PaymentManagement";
@@ -25,11 +21,7 @@ const RetailerSettings = () => {
               <CardTitle>Notification Preferences</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-                  <WhatsAppStockUpdate storeId={mockStoreId} />
-                </Suspense>
-              </ErrorBoundary>
+              <WhatsAppStockUpdate storeId={mockStoreId} />
             </CardContent>
           </Card>
           
@@ -38,11 +30,7 @@ const RetailerSettings = () => {
               <CardTitle>Payment Methods</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-                  <PaymentManagement />
-                </Suspense>
-              </ErrorBoundary>
+              <PaymentManagement />
             </CardContent>
           </Card>
         </div>
@@ -53,11 +41,7 @@ const RetailerSettings = () => {
               <CardTitle>Delivery Options</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-                  <DeliveryOptions />
-                </Suspense>
-              </ErrorBoundary>
+              <DeliveryOptions />
             </CardContent>
           </Card>
           
@@ -66,11 +50,7 @@ const RetailerSettings = () => {
               <CardTitle>Team Members</CardTitle>
             </CardHeader>
             <CardContent>
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-                  <UserAccessControl />
-                </Suspense>
-              </ErrorBoundary>
+              <UserAccessControl />
             </CardContent>
           </Card>
         </div>
@@ -79,4 +59,4 @@ const RetailerSettings = () => {
   );
 };
 
-export default memo(RetailerSettings);
+export default RetailerSettings;

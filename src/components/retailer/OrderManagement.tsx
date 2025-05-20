@@ -1,156 +1,261 @@
 
-import { useState, useCallback, memo, useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Search, 
+  Filter, 
+  Calendar, 
+  CheckCircle, 
+  Clock,
+  Truck,
+  X,
+  FileText,
+  RefreshCcw,
+  Download,
+  ShoppingBag,
+  CreditCard
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
-// Sample orders data - in a real app this would come from an API
-const orders = [
-  { id: "ORD-001", customer: "John Doe", total: "₹4,999", status: "Processing" },
-  { id: "ORD-002", customer: "Alice Smith", total: "₹2,450", status: "Completed" },
-  { id: "ORD-003", customer: "Robert Brown", total: "₹3,299", status: "Shipped" },
-  { id: "ORD-004", customer: "Emma Wilson", total: "₹1,599", status: "Pending" },
-  { id: "ORD-005", customer: "Michael Lee", total: "₹8,750", status: "Processing" }
-];
-
-// Order status badge component
-const StatusBadge = memo(({ status }: { status: string }) => {
-  const statusColor = useMemo(() => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'processing': return 'bg-blue-100 text-blue-800';
-      case 'shipped': return 'bg-purple-100 text-purple-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  }, [status]);
-
-  return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
-      {status}
-    </span>
-  );
-});
-
-StatusBadge.displayName = 'StatusBadge';
-
-// Order list item component
-const OrderItem = memo(({ order, onProcessOrder }: { 
-  order: any; 
-  onProcessOrder: (orderId: string) => void;
-}) => (
-  <tr className="hover:bg-muted/50">
-    <td className="px-4 py-3 text-sm">{order.id}</td>
-    <td className="px-4 py-3 text-sm">{order.customer}</td>
-    <td className="px-4 py-3 text-sm">{order.total}</td>
-    <td className="px-4 py-3 text-sm">
-      <StatusBadge status={order.status} />
-    </td>
-    <td className="px-4 py-3 text-sm">
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={() => onProcessOrder(order.id)}
-      >
-        View
-      </Button>
-    </td>
-  </tr>
-));
-
-OrderItem.displayName = 'OrderItem';
-
-export const OrderManagement = memo(() => {
-  // Monitor performance
-  usePerformanceMonitor('OrderManagement');
-  
+export const OrderManagement = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("all");
+  const [orderTab, setOrderTab] = useState("all");
   
-  const handleRefresh = useCallback(() => {
-    toast({
-      title: "Orders Refreshed",
-      description: "The order list has been updated with the latest data."
-    });
-  }, [toast]);
-  
-  const handleProcessOrder = useCallback((orderId: string) => {
-    toast({
-      title: "Processing Order",
-      description: `Order ${orderId} details opened.`
-    });
-  }, [toast]);
-  
-  // Memoize filtered orders to prevent unnecessary recalculations
-  const filteredOrders = useMemo(() => {
-    if (activeTab === 'all') return orders;
-    return orders.filter(order => order.status.toLowerCase() === activeTab.toLowerCase());
-  }, [activeTab]);
-  
-  // Memoize order items to prevent recreating on each render
-  const orderItems = useMemo(() => (
-    filteredOrders.map((order) => (
-      <OrderItem 
-        key={order.id} 
-        order={order} 
-        onProcessOrder={handleProcessOrder} 
-      />
-    ))
-  ), [filteredOrders, handleProcessOrder]);
-  
-  // Memoize empty state to prevent recreation on each render
-  const emptyState = useMemo(() => (
-    <tr>
-      <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
-        No orders found
-      </td>
-    </tr>
-  ), []);
+  // Sample orders data
+  const orders = [
+    { 
+      id: "10045", 
+      customer: "Rahul Sharma", 
+      items: 3,
+      value: 4999,
+      date: "2023-09-15", 
+      status: "pending",
+      payment: "online"
+    },
+    { 
+      id: "10044", 
+      customer: "Priya Singh", 
+      items: 1,
+      value: 89999,
+      date: "2023-09-14", 
+      status: "processing",
+      payment: "cod"
+    },
+    { 
+      id: "10043", 
+      customer: "Ajay Patel", 
+      items: 4,
+      value: 12499,
+      date: "2023-09-14", 
+      status: "shipped",
+      payment: "online"
+    },
+    { 
+      id: "10042", 
+      customer: "Neha Gupta", 
+      items: 2,
+      value: 6249,
+      date: "2023-09-13", 
+      status: "delivered",
+      payment: "cod"
+    },
+    { 
+      id: "10041", 
+      customer: "Vijay Kumar", 
+      items: 1,
+      value: 54999,
+      date: "2023-09-12", 
+      status: "cancelled",
+      payment: "online"
+    }
+  ];
 
-  // Memoize tabs content to prevent recreation
-  const tabsListContent = useMemo(() => (
-    <TabsList className="grid grid-cols-5 w-full">
-      <TabsTrigger value="all">All</TabsTrigger>
-      <TabsTrigger value="pending">Pending</TabsTrigger>
-      <TabsTrigger value="processing">Processing</TabsTrigger>
-      <TabsTrigger value="shipped">Shipped</TabsTrigger>
-      <TabsTrigger value="completed">Completed</TabsTrigger>
-    </TabsList>
-  ), []);
-  
+  const getStatusIcon = (status: string) => {
+    switch(status) {
+      case "pending": return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "processing": return <RefreshCcw className="h-4 w-4 text-blue-500" />;
+      case "shipped": return <Truck className="h-4 w-4 text-purple-500" />;
+      case "delivered": return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "cancelled": return <X className="h-4 w-4 text-red-500" />;
+      default: return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    let variant: "default" | "secondary" | "destructive" | "outline" = "default";
+    
+    switch(status) {
+      case "pending": variant = "secondary"; break;
+      case "processing": variant = "secondary"; break;
+      case "delivered": variant = "default"; break;
+      case "cancelled": variant = "destructive"; break;
+      default: variant = "outline";
+    }
+    
+    return (
+      <Badge variant={variant} className="capitalize flex items-center gap-1">
+        {getStatusIcon(status)}
+        {status}
+      </Badge>
+    );
+  };
+
+  const handleViewOrder = (id: string) => {
+    toast({
+      title: "View Order",
+      description: `Viewing Order #${id}`,
+    });
+  };
+
+  const handleProcessOrder = (id: string) => {
+    toast({
+      title: "Process Order",
+      description: `Processing Order #${id}`,
+    });
+  };
+
+  const filteredOrders = orderTab === "all" 
+    ? orders 
+    : orders.filter(order => order.status === orderTab);
+
   return (
-    <ErrorBoundary>
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            {tabsListContent}
-          </Tabs>
-          <Button variant="outline" className="ml-2 shrink-0" onClick={handleRefresh}>
-            Refresh
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="relative w-full sm:w-auto flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input placeholder="Search orders..." className="pl-10" />
+        </div>
+        <div className="flex gap-2 items-center w-full sm:w-auto justify-end">
+          <Button variant="outline" size="sm">
+            <Filter className="h-4 w-4 mr-1" />
+            Filter
+          </Button>
+          <Button variant="outline" size="sm">
+            <Calendar className="h-4 w-4 mr-1" />
+            Date Range
+          </Button>
+          <Button size="sm">
+            <Download className="h-4 w-4 mr-1" />
+            Export
           </Button>
         </div>
-        
-        <div className="rounded-md border">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-muted/50 text-left">
-                <th className="px-4 py-3 text-sm font-medium">Order ID</th>
-                <th className="px-4 py-3 text-sm font-medium">Customer</th>
-                <th className="px-4 py-3 text-sm font-medium">Total</th>
-                <th className="px-4 py-3 text-sm font-medium">Status</th>
-                <th className="px-4 py-3 text-sm font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.length > 0 ? orderItems : emptyState}
-            </tbody>
-          </table>
-        </div>
       </div>
-    </ErrorBoundary>
-  );
-});
 
-OrderManagement.displayName = 'OrderManagement';
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center">
+            <div className="mr-4 bg-blue-100 p-3 rounded-full">
+              <ShoppingBag className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Total Orders</p>
+              <p className="text-xl font-bold">124</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 flex items-center">
+            <div className="mr-4 bg-yellow-100 p-3 rounded-full">
+              <Clock className="h-6 w-6 text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Pending</p>
+              <p className="text-xl font-bold">12</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 flex items-center">
+            <div className="mr-4 bg-green-100 p-3 rounded-full">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Completed</p>
+              <p className="text-xl font-bold">96</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 flex items-center">
+            <div className="mr-4 bg-purple-100 p-3 rounded-full">
+              <CreditCard className="h-6 w-6 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Revenue</p>
+              <p className="text-xl font-bold">₹1.2L</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs value={orderTab} onValueChange={setOrderTab}>
+        <TabsList>
+          <TabsTrigger value="all">All Orders</TabsTrigger>
+          <TabsTrigger value="pending">Pending</TabsTrigger>
+          <TabsTrigger value="processing">Processing</TabsTrigger>
+          <TabsTrigger value="shipped">Shipped</TabsTrigger>
+          <TabsTrigger value="delivered">Delivered</TabsTrigger>
+          <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={orderTab} className="mt-4">
+          <div className="border rounded-md">
+            <div className="grid grid-cols-6 gap-4 p-4 border-b bg-gray-50 font-medium">
+              <div>Order ID</div>
+              <div>Customer</div>
+              <div>Date</div>
+              <div>Value</div>
+              <div>Status</div>
+              <div className="text-right">Actions</div>
+            </div>
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order, index) => (
+                <div 
+                  key={order.id}
+                  className={`grid grid-cols-6 gap-4 p-4 items-center ${
+                    index !== filteredOrders.length - 1 ? 'border-b' : ''
+                  }`}
+                >
+                  <div className="font-medium">#{order.id}</div>
+                  <div>{order.customer}</div>
+                  <div>{new Date(order.date).toLocaleDateString()}</div>
+                  <div>₹{order.value.toLocaleString()}</div>
+                  <div>{getStatusBadge(order.status)}</div>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleViewOrder(order.id)}
+                    >
+                      <FileText className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
+                    {(order.status === "pending" || order.status === "processing") && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleProcessOrder(order.id)}
+                      >
+                        Process
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-gray-500">
+                No orders found with the selected filter
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};

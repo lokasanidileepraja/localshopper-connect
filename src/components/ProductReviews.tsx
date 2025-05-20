@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Star } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 
 interface Review {

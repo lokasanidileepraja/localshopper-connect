@@ -1,43 +1,26 @@
-
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-export const BackToTop = memo(() => {
+export const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
 
-  // Throttle scroll handler to improve performance
-  const handleScroll = useCallback(() => {
-    // Only update state when visibility actually changes
-    const shouldBeVisible = window.pageYOffset > 300;
-    if (shouldBeVisible !== isVisible) {
-      setIsVisible(shouldBeVisible);
-    }
-  }, [isVisible]);
-
   useEffect(() => {
-    // Use throttled event listener to reduce performance impact
-    let scrollTimer: number | null = null;
-    
-    const throttledScrollHandler = () => {
-      if (scrollTimer === null) {
-        scrollTimer = window.setTimeout(() => {
-          handleScroll();
-          scrollTimer = null;
-        }, 150); // Throttle to once every 150ms
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
       }
     };
-    
-    window.addEventListener("scroll", throttledScrollHandler, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", throttledScrollHandler);
-      if (scrollTimer) clearTimeout(scrollTimer);
-    };
-  }, [handleScroll]);
 
-  const scrollToTop = useCallback(() => {
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -47,7 +30,7 @@ export const BackToTop = memo(() => {
       description: "Scrolling to the top of the page",
       duration: 2000,
     });
-  }, [toast]);
+  };
 
   return (
     <AnimatePresence>
@@ -74,6 +57,4 @@ export const BackToTop = memo(() => {
       )}
     </AnimatePresence>
   );
-});
-
-BackToTop.displayName = "BackToTop";
+};

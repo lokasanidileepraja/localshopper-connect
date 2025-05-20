@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { initializeMap, getRandomCoordinates } from "@/utils/mapUtils";
@@ -19,7 +19,7 @@ interface StoreMapProps {
   onShopSelect: (shopId: string) => void;
 }
 
-export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapProps) => {
+export const StoreMap = ({ shops, selectedShopId, onShopSelect }: StoreMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -32,8 +32,8 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Function to initialize the map - memoized to prevent unnecessary rerenders
-  const initMap = useCallback(() => {
+  // Function to initialize the map
+  const initMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
     
     setLoading(true);
@@ -45,10 +45,6 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
       
       // Initialize the base map without markers
       mapboxgl.accessToken = mapboxToken;
-      
-      if (map.current) {
-        map.current.remove();
-      }
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -111,10 +107,10 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
     } finally {
       setLoading(false);
     }
-  }, [mapboxToken, toast]);
+  };
 
-  // Function to add interactive markers to the map - memoized
-  const addMarkersToMap = useCallback(() => {
+  // Function to add interactive markers to the map
+  const addMarkersToMap = () => {
     if (!map.current) return;
     
     // Clear existing markers
@@ -178,7 +174,7 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
         maxZoom: 15
       });
     }
-  }, [shops, selectedShopId, onShopSelect]);
+  };
 
   // Fly to selected shop when selectedShopId changes
   useEffect(() => {
@@ -199,7 +195,7 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
     if (map.current && map.current.loaded()) {
       addMarkersToMap();
     }
-  }, [shops, addMarkersToMap]);
+  }, [shops]);
 
   // Initialize map on component mount if token exists
   useEffect(() => {
@@ -213,7 +209,6 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
       Object.values(markersRef.current).forEach(marker => {
         const markerElement = marker.getElement();
         ReactDOM.unmountComponentAtNode(markerElement);
-        marker.remove();
       });
       
       if (map.current) {
@@ -221,7 +216,7 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
         map.current = null;
       }
     };
-  }, [mapboxToken, showInput, initMap]);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,7 +277,4 @@ export const StoreMap = memo(({ shops, selectedShopId, onShopSelect }: StoreMapP
       )}
     </div>
   );
-});
-
-// Add displayName for better debugging
-StoreMap.displayName = "StoreMap";
+};

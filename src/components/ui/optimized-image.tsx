@@ -1,113 +1,66 @@
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useEffect, memo } from "react";
-import { cn } from "@/lib/utils";
 
-interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface OptimizedImageProps {
   src: string;
   alt: string;
+  className?: string;
   width?: number;
   height?: number;
-  aspectRatio?: number;
-  preload?: boolean;
   priority?: boolean;
-  onLoad?: () => void;
-  onError?: () => void;
-  fallbackSrc?: string;
 }
 
-export const OptimizedImage = memo(({
-  src,
-  alt,
-  width,
-  height,
-  aspectRatio,
-  preload = false,
-  priority = false,
-  className,
-  onLoad: onLoadProp,
-  onError: onErrorProp,
-  fallbackSrc = "",
-  ...props
+export const OptimizedImage = ({ 
+  src, 
+  alt, 
+  className = "", 
+  width = 400,
+  height = 300,
+  priority = false 
 }: OptimizedImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [imageSrc, setImageSrc] = useState(src);
-  
-  // Reset states when src changes
+
+  // Generate smaller image URL for better performance
+  const optimizedSrc = `${src}?w=${width}&q=75&auto=format`;
+
   useEffect(() => {
-    setImageSrc(src);
-    setIsLoading(true);
-    setError(false);
-  }, [src]);
-
-  // Handle image load
-  const handleLoad = () => {
-    setIsLoading(false);
-    onLoadProp?.();
-  };
-
-  // Handle image error
-  const handleError = () => {
-    setIsLoading(false);
-    setError(true);
-    if (fallbackSrc && fallbackSrc !== src) {
-      setImageSrc(fallbackSrc);
-    }
-    onErrorProp?.();
-  };
-
-  // Preload image if specified
-  useEffect(() => {
-    if (preload || priority) {
+    // Preload the image if priority is true
+    if (priority && optimizedSrc) {
       const img = new Image();
-      img.src = src;
+      img.src = optimizedSrc;
+      setImageSrc(optimizedSrc);
+      
+      img.onload = () => setIsLoading(false);
+      img.onerror = () => {
+        setError(true);
+        setIsLoading(false);
+      };
+    } else {
+      setImageSrc(optimizedSrc);
     }
-  }, [src, preload, priority]);
-  
-  // Determine if we should use an AspectRatio wrapper
-  const shouldUseAspectRatio = aspectRatio !== undefined || (width && height);
-  const calculatedAspectRatio = aspectRatio || (width && height ? width / height : undefined);
-  
-  // Render image with or without AspectRatio
-  const renderImage = () => (
-    <>
+  }, [optimizedSrc, priority]);
+
+  return (
+    <div className="relative">
       {isLoading && (
-        <Skeleton 
-          className="absolute inset-0 z-10 bg-muted/60" 
-        />
+        <Skeleton className={`absolute inset-0 ${className}`} />
       )}
       <img
-        src={imageSrc}
+        src={error ? "/placeholder.svg" : imageSrc}
         alt={alt}
-        onLoad={handleLoad}
-        onError={handleError}
-        className={cn(
-          "max-w-full h-auto object-cover transition-opacity",
-          isLoading ? "opacity-0" : "opacity-100",
-          error && !fallbackSrc ? "opacity-50" : "",
-          className
-        )}
+        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         loading={priority ? "eager" : "lazy"}
         width={width}
         height={height}
-        {...props}
+        onLoad={() => setIsLoading(false)}
+        onError={() => {
+          setError(true);
+          setIsLoading(false);
+        }}
       />
-    </>
+    </div>
   );
-
-  if (shouldUseAspectRatio && calculatedAspectRatio) {
-    return (
-      <div className="relative">
-        <AspectRatio ratio={calculatedAspectRatio}>
-          {renderImage()}
-        </AspectRatio>
-      </div>
-    );
-  }
-
-  return <div className="relative">{renderImage()}</div>;
-});
-
-OptimizedImage.displayName = "OptimizedImage";
+};

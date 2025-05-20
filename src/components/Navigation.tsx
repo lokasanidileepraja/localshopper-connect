@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { NavigationSearchBar } from "./navigation/SearchBar";
@@ -11,6 +10,8 @@ import {
   Star, 
   Tags, 
   Store,
+  User,
+  Bell,
   Grid2x2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -18,7 +19,6 @@ import { Button } from "./ui/button";
 import { TooltipWrapper } from "./common/TooltipWrapper";
 import { ThemeToggle } from "./ThemeToggle";
 import { useCartStore } from "@/store/cartStore";
-import { useToast } from "@/hooks/use-toast";
 
 export const Navigation = memo(() => {
   const location = useLocation();
