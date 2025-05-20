@@ -66,18 +66,22 @@ export default defineConfig(({ mode }) => ({
       }
     },
   },
-  // Optimize dev server
+  // Optimize dev server for SPA routing
   server: {
     hmr: true,
     port: 8080,
     open: true,
     cors: true,
     host: true,
+    // Add history API fallback for SPA routing
+    historyApiFallback: true,
   },
   // Optimize preview server
   preview: {
     port: 8080,
     open: true,
+    // Add history API fallback for SPA routing in preview
+    historyApiFallback: true,
   },
   // Optimize performance in development
   optimizeDeps: {
