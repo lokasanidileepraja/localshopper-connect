@@ -12,6 +12,7 @@ import { analytics } from './lib/analytics.ts'
 import { ToastProvider } from './hooks/use-toast.tsx'
 import { ErrorBoundary } from './components/common/ErrorBoundary.tsx'
 import RouterGuard from './guards/RouterGuard.tsx'
+import SpaRouterGuard from './guards/SpaRouterGuard.tsx'
 
 // Initialize analytics only once at the app root
 if (typeof window !== 'undefined' && !window.analyticsInitialized) {
@@ -45,6 +46,13 @@ const handleError = (error: Error) => {
   }
 };
 
+// Add global window type for analytics initialization
+declare global {
+  interface Window {
+    analyticsInitialized?: boolean;
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary onError={handleError}>
@@ -54,8 +62,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <AuthProvider>
               <BrowserRouter>
                 <RouterGuard>
-                  <App />
-                  <Toaster />
+                  <SpaRouterGuard>
+                    <App />
+                    <Toaster />
+                  </SpaRouterGuard>
                 </RouterGuard>
               </BrowserRouter>
             </AuthProvider>
