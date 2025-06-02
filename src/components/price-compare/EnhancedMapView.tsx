@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StoreMap } from "@/components/store/StoreMap";
 import { ELECTRONICS_SHOPS } from "@/data/shops";
-import { MapPin, Navigation, Phone, Clock, Star, Directions } from "lucide-react";
+import { MapPin, Navigation, Phone, Clock, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -137,7 +136,7 @@ export const EnhancedMapView = ({ searchQuery, filters }: EnhancedMapViewProps) 
                       onClick={() => handleGetDirections(selectedShop)}
                       className="flex items-center gap-1"
                     >
-                      <Directions className="h-3 w-3" />
+                      <Navigation className="h-3 w-3" />
                       Directions
                     </Button>
                     <Button
