@@ -1,198 +1,117 @@
-import { Shop } from "@/types/shop";
+
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  inStock: boolean;
+  category: string;
+  image?: string;
+}
+
+export interface Shop {
+  id: string;
+  name: string;
+  address: string;
+  distance: string;
+  rating: number;
+  isOpen: boolean;
+  phone: string;
+  products: Product[];
+  coordinates?: [number, number];
+}
 
 export const ELECTRONICS_SHOPS: Shop[] = [
   {
-    id: "shop1",
-    name: "TechHub Electronics",
-    category: "Electronics Store",
-    rating: 4.5,
-    distance: "0.8 km",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    isOpen: true,
-    address: "123 Tech Street, Electronics District",
-    phone: "+1234567890",
-    products: [
-      {
-        id: "1",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 79999,
-        brand: "Apple",
-        model: "iPhone 15",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 25
-      },
-      {
-        id: "2",
-        name: "MacBook Air M2",
-        category: "laptop",
-        price: 114900,
-        brand: "Apple",
-        model: "MacBook Air M2",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-        description: "Powerful and portable laptop with M2 chip",
-        rating: 4.9,
-        stock: 15
-      }
-    ]
-  },
-  {
-    id: "shop2",
-    name: "Digital World",
-    category: "Electronics Store",
-    rating: 4.7,
-    distance: "1.2 km",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    isOpen: true,
-    address: "456 Digital Avenue, Tech Park",
-    phone: "+1234567891",
-    products: [
-      {
-        id: "3",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 78999,
-        brand: "Apple",
-        model: "iPhone 15",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 20
-      },
-      {
-        id: "4",
-        name: "Samsung Galaxy S23",
-        category: "mobile",
-        price: 74999,
-        brand: "Samsung",
-        model: "Galaxy S23",
-        inStock: true,
-        description: "Flagship Android smartphone",
-        rating: 4.7,
-        stock: 18,
-        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
-      }
-    ]
-  },
-  {
-    id: "shop3",
-    name: "Gadget Galaxy",
-    category: "Electronics Store",
-    rating: 4.3,
+    id: "1",
+    name: "Tech Store Delhi",
+    address: "Connaught Place, New Delhi",
     distance: "0.5 km",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    isOpen: false,
-    address: "789 Gadget Road, Innovation Hub",
-    phone: "+1234567892",
+    rating: 4.5,
+    isOpen: true,
+    phone: "+91 9876543210",
     products: [
       {
-        id: "5",
-        name: "iPhone 15",
+        id: "p1",
+        name: "iPhone 15 Pro",
+        price: 134900,
+        inStock: true,
         category: "mobile",
-        price: 81999,
-        brand: "Apple",
-        model: "iPhone 15",
+        image: "/placeholder.svg"
+      },
+      {
+        id: "p2",
+        name: "Samsung Galaxy S24",
+        price: 89999,
         inStock: false,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 0
+        category: "mobile"
+      }
+    ]
+  },
+  {
+    id: "2",
+    name: "Mobile Hub",
+    address: "Karol Bagh, New Delhi",
+    distance: "1.2 km",
+    rating: 4.2,
+    isOpen: true,
+    phone: "+91 9876543211",
+    products: [
+      {
+        id: "p3",
+        name: "iPhone 15 Pro",
+        price: 132900,
+        inStock: true,
+        category: "mobile"
       },
       {
-        id: "6",
+        id: "p4",
+        name: "MacBook Pro",
+        price: 199000,
+        inStock: true,
+        category: "laptop"
+      }
+    ]
+  },
+  {
+    id: "3",
+    name: "Electronics Plus",
+    address: "Lajpat Nagar, New Delhi",
+    distance: "2.1 km",
+    rating: 4.0,
+    isOpen: false,
+    phone: "+91 9876543212",
+    products: [
+      {
+        id: "p5",
         name: "AirPods Pro",
-        category: "accessory",
-        price: 24999,
-        brand: "Apple",
-        model: "AirPods Pro 2nd Gen",
+        price: 24900,
         inStock: true,
-        description: "Premium wireless earbuds",
-        rating: 4.6,
-        stock: 30,
-        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5"
+        category: "audio"
       }
     ]
   },
   {
-    id: "shop4",
-    name: "Elite Electronics",
-    category: "Electronics Store",
-    rating: 4.6,
-    distance: "1.5 km",
-    image: "https://images.unsplash.com/photo-1478860409698-8707f313ee8b",
+    id: "4",
+    name: "Gadget World",
+    address: "Janpath, New Delhi",
+    distance: "0.8 km",
+    rating: 4.7,
     isOpen: true,
-    address: "321 Elite Street, Premium Plaza",
-    phone: "+1234567893",
+    phone: "+91 9876543213",
     products: [
       {
-        id: "7",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 77999,
-        brand: "Apple",
-        model: "iPhone 15",
+        id: "p6",
+        name: "iPhone 15 Pro",
+        price: 135900,
         inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 15
+        category: "mobile"
       },
       {
-        id: "8",
-        name: "Samsung Galaxy S23",
-        category: "mobile",
-        price: 72999,
-        brand: "Samsung",
-        model: "Galaxy S23",
+        id: "p7",
+        name: "iPad Pro",
+        price: 119900,
         inStock: true,
-        description: "Flagship Android smartphone",
-        rating: 4.7,
-        stock: 20,
-        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
-      }
-    ]
-  },
-  {
-    id: "shop5",
-    name: "Smart Store",
-    category: "Electronics Store",
-    rating: 4.4,
-    distance: "2.0 km",
-    image: "https://images.unsplash.com/photo-1491933382434-500287f9b54b",
-    isOpen: true,
-    address: "654 Smart Avenue, Tech Valley",
-    phone: "+1234567894",
-    products: [
-      {
-        id: "9",
-        name: "iPhone 15",
-        category: "mobile",
-        price: 76999,
-        brand: "Apple",
-        model: "iPhone 15",
-        inStock: true,
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-        description: "Latest iPhone model with advanced features",
-        rating: 4.8,
-        stock: 10
-      },
-      {
-        id: "10",
-        name: "Samsung Galaxy S23",
-        category: "mobile",
-        price: 73999,
-        brand: "Samsung",
-        model: "Galaxy S23",
-        inStock: true,
-        description: "Flagship Android smartphone",
-        rating: 4.7,
-        stock: 12,
-        image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+        category: "tablet"
       }
     ]
   }
