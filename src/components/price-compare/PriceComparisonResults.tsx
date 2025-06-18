@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -172,7 +171,7 @@ export const PriceComparisonResults = ({
                                       <p className="text-xs font-medium">EMI Options:</p>
                                       {product.emiOptions.map((emi, i) => (
                                         <div key={i} className="text-xs">
-                                          <span className="font-medium">{emi.provider}:</span> {emi.tenures[0].months} months at {emi.tenures[0].interestRate}%
+                                          {emi.duration} months: ₹{emi.monthlyAmount.toLocaleString()}/month
                                         </div>
                                       ))}
                                     </div>

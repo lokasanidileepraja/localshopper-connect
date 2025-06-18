@@ -15,7 +15,7 @@ const Welcome = () => {
   useEffect(() => {
     // Only initialize once per session
     if (!window.analyticsInitialized) {
-      analytics.init();
+      analytics.init("anonymous-user");
       analytics.trackPageView('/welcome');
       window.analyticsInitialized = true;
     } else {

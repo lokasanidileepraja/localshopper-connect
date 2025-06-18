@@ -148,7 +148,6 @@ const ProductDetails = () => {
       { 
         id: "shop-1", 
         name: "Tech Corner", 
-        price: product.price * 1.05, 
         inStock: true,
         category: "Electronics",
         rating: 4.2,
@@ -157,12 +156,13 @@ const ProductDetails = () => {
         isOpen: true,
         address: "123 Tech Street",
         phone: "123-456-7890",
-        products: []
+        products: [],
+        isVerified: true,
+        lastUpdated: "2024-01-15T10:30:00Z"
       },
       { 
         id: "shop-2", 
         name: "Digital Plaza", 
-        price: product.price * 0.95, 
         inStock: true,
         category: "Electronics",
         rating: 4.0,
@@ -171,12 +171,13 @@ const ProductDetails = () => {
         isOpen: true,
         address: "456 Digital Avenue",
         phone: "987-654-3210",
-        products: []
+        products: [],
+        isVerified: true,
+        lastUpdated: "2024-01-14T15:45:00Z"
       },
       { 
         id: "shop-3", 
         name: "Gadget World", 
-        price: product.price * 1.02, 
         inStock: false,
         category: "Electronics",
         rating: 3.8,
@@ -185,7 +186,9 @@ const ProductDetails = () => {
         isOpen: false,
         address: "789 Gadget Road",
         phone: "555-123-4567",
-        products: []
+        products: [],
+        isVerified: false,
+        lastUpdated: "2024-01-13T09:20:00Z"
       }
     ] : [];
   
