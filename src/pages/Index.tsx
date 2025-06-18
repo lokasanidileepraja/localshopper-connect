@@ -61,29 +61,54 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       <Helmet>
-        <meta name="description" content="Explore the best deals, categories, and products." />
+        <meta name="description" content="Discover premium electronics with intelligent simplicity." />
       </Helmet>
       
-      <main>
-        <Hero />
-        <SearchErrorBoundary>
-          <SearchBar onSearch={handleSearch} />
-        </SearchErrorBoundary>
+      <main className="space-y-32">
+        {/* Hero takes 60% of viewport - premium spacing */}
+        <div className="min-h-[60vh]">
+          <Hero />
+        </div>
         
-        {/* Show user points and gamification for authenticated users */}
+        {/* Premium search experience */}
+        <section className="container mx-auto px-8">
+          <SearchErrorBoundary>
+            <div className="max-w-2xl mx-auto">
+              <SearchBar onSearch={handleSearch} />
+            </div>
+          </SearchErrorBoundary>
+        </section>
+        
+        {/* Gamification for authenticated users - subtle placement */}
         {isAuthenticated && (
-          <div className="container mx-auto px-4 mt-6">
+          <section className="container mx-auto px-8">
             <UserPoints />
-          </div>
+          </section>
         )}
         
-        <Categories onCategorySelect={handleCategorySelect} />
-        <FeaturedProducts onProductClick={handleProductClick} />
-        <BrandsShowcase onBrandClick={handleBrandClick} />
-        <Testimonials />
-        <Newsletter onSubmit={handleNewsletterSubmit} />
+        {/* Ultra-wide spacing between sections */}
+        <section className="py-24">
+          <Categories onCategorySelect={handleCategorySelect} />
+        </section>
+        
+        <section className="py-24">
+          <FeaturedProducts onProductClick={handleProductClick} />
+        </section>
+        
+        <section className="py-24">
+          <BrandsShowcase onBrandClick={handleBrandClick} />
+        </section>
+        
+        <section className="py-24">
+          <Testimonials />
+        </section>
+        
+        <section className="py-24">
+          <Newsletter onSubmit={handleNewsletterSubmit} />
+        </section>
+        
         <BackToTop />
       </main>
     </div>
