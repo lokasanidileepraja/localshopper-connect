@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { products } from "@/data/products";
@@ -148,7 +147,6 @@ const ProductDetails = () => {
       { 
         id: "shop-1", 
         name: "Tech Corner", 
-        inStock: true,
         category: "Electronics",
         rating: 4.2,
         distance: "2.5km",
@@ -163,7 +161,6 @@ const ProductDetails = () => {
       { 
         id: "shop-2", 
         name: "Digital Plaza", 
-        inStock: true,
         category: "Electronics",
         rating: 4.0,
         distance: "3.2km",
@@ -178,7 +175,6 @@ const ProductDetails = () => {
       { 
         id: "shop-3", 
         name: "Gadget World", 
-        inStock: false,
         category: "Electronics",
         rating: 3.8,
         distance: "4.7km",
