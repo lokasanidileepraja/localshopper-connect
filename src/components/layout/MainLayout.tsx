@@ -26,9 +26,9 @@ export const MainLayout = () => {
   // Calculate dynamic main content padding based on navigation height and scroll
   const getMainPadding = () => {
     if (isMobile) {
-      return isScrolled ? 'mt-[90px] pb-20' : 'mt-[100px] pb-20';
+      return 'mt-16 pb-20';
     }
-    return isScrolled ? 'mt-[110px]' : 'mt-[120px] md:mt-[130px]';
+    return 'mt-20';
   };
   
   return (
