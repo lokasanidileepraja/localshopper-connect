@@ -1,199 +1,170 @@
-
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, Sparkles, Play } from "lucide-react";
+import { ArrowRight, MapPin, Smartphone, Laptop, Headphones, Watch } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { useImagePreload } from "@/hooks/useImagePreload";
-import { Skeleton } from "@/components/ui/skeleton";
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { motion } from "framer-motion";
+
+const stats = [
+  { icon: Smartphone, value: "50K+", label: "Products" },
+  { icon: MapPin, value: "1000+", label: "Stores" },
+  { icon: Laptop, value: "4.9", label: "Rating" },
+  { icon: Headphones, value: "24/7", label: "Support" },
+];
+
+const features = [
+  {
+    icon: MapPin,
+    title: "Find Local Stores",
+    description: "Discover electronics retailers near you with real-time availability.",
+    color: "from-blue-500 to-indigo-600",
+    link: "/stores"
+  },
+  {
+    icon: Laptop,
+    title: "Browse Products",
+    description: "Explore the latest electronics from phones to laptops and more.",
+    color: "from-emerald-500 to-teal-600",
+    link: "/categories"
+  },
+  {
+    icon: Watch,
+    title: "Smart Insights",
+    description: "Get AI-powered recommendations and price predictions.",
+    color: "from-violet-500 to-purple-600",
+    link: "/price-compare"
+  }
+];
 
 export const Hero = () => {
   const navigate = useNavigate();
-  const { isLoaded } = useImagePreload("https://images.unsplash.com/photo-1488590528505-98d2b5aba04b", { priority: true });
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Premium background with depth */}
-      <AnimatePresence>
-        {!isLoaded ? (
-          <Skeleton className="absolute inset-0" />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="absolute inset-0"
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40 z-10" />
-            <OptimizedImage 
-              src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"
-              alt="Premium technology showcase"
-              className="w-full h-full object-cover scale-105"
-              priority={true}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Ultra-premium content layout */}
-      <div className="relative z-20 min-h-screen flex items-center">
-        <div className="container mx-auto px-8 lg:px-16">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            
-            {/* Left: Premium Typography & Actions */}
-            <motion.div 
-              initial={{ opacity: 0, x: -60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-              className="space-y-12"
-            >
-              {/* Premium badge */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="inline-flex items-center gap-3 glass-card px-6 py-3 rounded-full backdrop-blur-xl border border-white/20"
-              >
-                <Sparkles className="h-4 w-4 text-white" />
-                <span className="text-sm font-medium text-white/90 tracking-wide">
-                  Discover Premium Technology
-                </span>
-              </motion.div>
-              
-              {/* Hero headline - Apple-inspired typography */}
-              <div className="space-y-6">
-                <motion.h1 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="text-5xl sm:text-7xl lg:text-8xl font-thin tracking-tight text-white leading-[0.9]"
-                >
-                  <span className="font-extralight">Think</span>
-                  <br />
-                  <span className="font-semibold bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
-                    Different
-                  </span>
-                </motion.h1>
-                
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9, duration: 0.8 }}
-                  className="text-xl sm:text-2xl font-light text-white/80 tracking-wide max-w-lg"
-                >
-                  Experience technology that adapts to your life, not the other way around.
-                </motion.h2>
-              </div>
-              
-              {/* Premium CTA buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-6 pt-8"
-              >
-                <Button 
-                  size="lg"
-                  className="group relative overflow-hidden bg-white text-black hover:bg-white/90 px-8 py-6 rounded-full text-lg font-medium tracking-wide transition-all duration-500 hover:scale-105 shadow-2xl"
-                  onClick={() => navigate("/stores")}
-                >
-                  <span className="relative z-10 flex items-center gap-3">
-                    Explore Now
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-white to-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="group glass-card border-white/30 text-white hover:bg-white/10 px-8 py-6 rounded-full text-lg font-medium tracking-wide backdrop-blur-xl transition-all duration-500 hover:scale-105"
-                  onClick={() => navigate("/price-compare")}
-                >
-                  <Play className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                  Watch Demo
-                </Button>
-              </motion.div>
-            </motion.div>
-
-            {/* Right: Premium Product Showcase */}
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.2, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-              className="relative"
-            >
-              {/* Floating product cards */}
-              <div className="relative h-96 lg:h-[600px]">
-                {/* Main product card */}
-                <motion.div
-                  animate={{ 
-                    y: [0, -10, 0],
-                    rotateY: [0, 5, 0]
-                  }}
-                  transition={{ 
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="absolute top-16 left-8 glass-card p-6 rounded-3xl backdrop-blur-xl border border-white/20 shadow-2xl"
-                >
-                  <div className="w-48 h-48 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center">
-                    <Sparkles className="h-16 w-16 text-white/70" />
-                  </div>
-                  <div className="mt-4 space-y-2">
-                    <h3 className="text-white font-semibold">iPhone 15 Pro</h3>
-                    <p className="text-white/60 text-sm">From ₹1,34,900</p>
-                  </div>
-                </motion.div>
-
-                {/* Secondary product card */}
-                <motion.div
-                  animate={{ 
-                    y: [0, 10, 0],
-                    rotateY: [0, -3, 0]
-                  }}
-                  transition={{ 
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 2
-                  }}
-                  className="absolute bottom-20 right-4 glass-card p-4 rounded-2xl backdrop-blur-xl border border-white/20 shadow-xl"
-                >
-                  <div className="w-32 h-32 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-xl flex items-center justify-center">
-                    <MapPin className="h-10 w-10 text-white/70" />
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    <h4 className="text-white text-sm font-medium">MacBook Pro</h4>
-                    <p className="text-white/60 text-xs">From ₹1,99,900</p>
-                  </div>
-                </motion.div>
-
-                {/* Ambient glow effects */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl" />
-              </div>
-            </motion.div>
-          </div>
-        </div>
+    <section className="relative overflow-hidden bg-background">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Premium scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-      >
+      <div className="relative container mx-auto px-6 lg:px-8">
+        {/* Hero Header */}
+        <div className="pt-8 pb-20 text-center max-w-4xl mx-auto">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8"
+          >
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-sm font-medium text-primary">Find the best tech near you</span>
+          </motion.div>
+
+          {/* Main Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6"
+          >
+            <span className="text-primary">Tech</span>
+            <span className="text-muted-foreground">Locator</span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
+            Your AI-powered electronics shopping companion. Discover, compare, and save with intelligent recommendations.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Button
+              size="lg"
+              className="group px-8 py-6 text-base font-medium rounded-full"
+              onClick={() => navigate("/stores")}
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="px-8 py-6 text-base font-medium rounded-full"
+              onClick={() => navigate("/stores")}
+            >
+              <MapPin className="mr-2 h-4 w-4" />
+              Find Stores Near Me
+            </Button>
+          </motion.div>
+        </div>
+
+        {/* Stats Row */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex flex-wrap justify-center gap-4 lg:gap-6 pb-20"
         >
-          <div className="w-1 h-3 bg-white/60 rounded-full" />
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+              className="flex flex-col items-center px-8 py-6 rounded-2xl bg-card border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300"
+            >
+              <stat.icon className="h-5 w-5 text-primary mb-2" />
+              <span className="text-2xl font-bold text-foreground">{stat.value}</span>
+              <span className="text-sm text-muted-foreground">{stat.label}</span>
+            </motion.div>
+          ))}
         </motion.div>
-      </motion.div>
-    </div>
+
+        {/* Feature Cards */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="pb-24"
+        >
+          <div className="grid md:grid-cols-3 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
+                onClick={() => navigate(feature.link)}
+                className="group relative p-8 rounded-3xl bg-card border border-border hover:border-primary/20 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              >
+                {/* Icon */}
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="h-7 w-7 text-white" />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed mb-4">{feature.description}</p>
+                
+                {/* Link */}
+                <div className="flex items-center text-primary font-medium group-hover:gap-2 transition-all">
+                  <span>Explore</span>
+                  <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 };

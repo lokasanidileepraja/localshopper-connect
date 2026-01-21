@@ -1,7 +1,4 @@
-
 import { Hero } from "@/components/Hero";
-import { SearchBar } from "@/components/SearchBar";
-import { SearchErrorBoundary } from "@/components/search/SearchErrorBoundary";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { Newsletter } from "@/components/Newsletter";
 import { Testimonials } from "@/components/Testimonials";
@@ -13,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserPoints } from "@/components/gamification/UserPoints";
+import { motion } from "framer-motion";
 
 const Index = () => {
   const { toast } = useToast();
@@ -61,53 +59,80 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
+    <div className="min-h-screen bg-background">
       <Helmet>
-        <meta name="description" content="Discover premium electronics with intelligent simplicity." />
+        <title>TechLocator - Find the Best Tech Near You</title>
+        <meta name="description" content="Your AI-powered electronics shopping companion. Discover, compare, and save with intelligent recommendations." />
       </Helmet>
       
-      <main className="space-y-32">
-        {/* Hero takes 60% of viewport - premium spacing */}
-        <div className="min-h-[60vh]">
-          <Hero />
-        </div>
+      <main>
+        {/* Hero Section */}
+        <Hero />
         
-        {/* Premium search experience */}
-        <section className="container mx-auto px-8">
-          <SearchErrorBoundary>
-            <div className="max-w-2xl mx-auto">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-          </SearchErrorBoundary>
-        </section>
-        
-        {/* Gamification for authenticated users - subtle placement */}
+        {/* Gamification for authenticated users */}
         {isAuthenticated && (
-          <section className="container mx-auto px-8">
+          <motion.section 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="container mx-auto px-6 lg:px-8 py-8"
+          >
             <UserPoints />
-          </section>
+          </motion.section>
         )}
         
-        {/* Ultra-wide spacing between sections */}
-        <section className="py-24">
+        {/* Categories Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-muted/30"
+        >
           <Categories onCategorySelect={handleCategorySelect} />
-        </section>
+        </motion.section>
         
-        <section className="py-24">
+        {/* Featured Products Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <FeaturedProducts onProductClick={handleProductClick} />
-        </section>
+        </motion.section>
         
-        <section className="py-24">
+        {/* Brands Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-muted/30"
+        >
           <BrandsShowcase onBrandClick={handleBrandClick} />
-        </section>
+        </motion.section>
         
-        <section className="py-24">
+        {/* Testimonials Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <Testimonials />
-        </section>
+        </motion.section>
         
-        <section className="py-24">
+        {/* Newsletter Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-muted/30"
+        >
           <Newsletter onSubmit={handleNewsletterSubmit} />
-        </section>
+        </motion.section>
         
         <BackToTop />
       </main>
