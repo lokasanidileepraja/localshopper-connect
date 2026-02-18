@@ -1,103 +1,49 @@
-
 import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
 
 interface BrandsShowcaseProps {
   onBrandClick: (brandName: string) => void;
 }
 
 export const BrandsShowcase = ({ onBrandClick }: BrandsShowcaseProps) => {
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const brands = [
-    { 
-      name: "Apple", 
-      logo: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9",
-      description: "Innovation at its finest",
-      stats: "Most Popular Brand"
-    },
-    { 
-      name: "Samsung", 
-      logo: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
-      description: "Technology for everyone",
-      stats: "Best Value"
-    },
-    { 
-      name: "Sony", 
-      logo: "https://images.unsplash.com/photo-1492107376256-4026437926cd",
-      description: "Creating new possibilities",
-      stats: "Top Rated"
-    },
-    { 
-      name: "Dell", 
-      logo: "https://images.unsplash.com/photo-1588200908342-23b585c03e26",
-      description: "Empowering professionals",
-      stats: "Most Reliable"
-    }
+    { name: "Apple", logo: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9", tag: "Popular" },
+    { name: "Samsung", logo: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c", tag: "Best Value" },
+    { name: "Sony", logo: "https://images.unsplash.com/photo-1492107376256-4026437926cd", tag: "Top Rated" },
+    { name: "Dell", logo: "https://images.unsplash.com/photo-1588200908342-23b585c03e26", tag: "Reliable" },
   ];
 
-  const handleBrandClick = (brandName: string) => {
-    try {
-      onBrandClick(brandName);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Unable to load brand page. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Brand navigation error:", error);
-    }
-  };
-
   return (
-    <section className="py-6 sm:py-12 bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4">
-        <motion.h2 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-8"
-        >
-          Featured Brands
-        </motion.h2>
-        <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'sm:grid-cols-4 gap-6'}`}>
-          {brands.map((brand, index) => (
-            <motion.div
-              key={brand.name}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              whileHover={{ 
-                scale: isMobile ? 1.02 : 1.05,
-                transition: { duration: 0.2 }
-              }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
-              onClick={() => handleBrandClick(brand.name)}
-              role="button"
-              tabIndex={0}
-              aria-label={`View ${brand.name} products`}
-            >
-              <motion.img
-                src={brand.logo}
-                alt={brand.name}
-                className={`${isMobile ? 'h-6 sm:h-8' : 'h-8 sm:h-12'} object-contain transition-all duration-300 group-hover:scale-110`}
-                whileHover={{ rotate: 5 }}
-              />
-              <p className="mt-2 text-xs sm:text-sm font-medium text-gray-600">{brand.stats}</p>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileHover={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white p-2 rounded-b-xl text-center text-xs sm:text-sm"
-              >
-                {brand.description}
-              </motion.div>
-            </motion.div>
-          ))}
-        </div>
+    <section className="px-4 py-5">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-base font-bold text-foreground">Top Brands</h2>
+        <button onClick={() => navigate("/brands")} className="text-xs font-medium text-primary flex items-center gap-0.5">
+          See all <ArrowRight className="h-3 w-3" />
+        </button>
+      </div>
+
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
+        {brands.map((brand, i) => (
+          <motion.button
+            key={brand.name}
+            initial={{ opacity: 0, x: 15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.05 }}
+            onClick={() => onBrandClick(brand.name)}
+            className="shrink-0 flex flex-col items-center gap-2 active:scale-95 transition-transform"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-card border border-border overflow-hidden p-2 flex items-center justify-center">
+              <img src={brand.logo} alt={brand.name} className="w-full h-full object-cover rounded-lg" />
+            </div>
+            <div className="text-center">
+              <p className="text-[11px] font-semibold text-foreground">{brand.name}</p>
+              <p className="text-[9px] text-muted-foreground">{brand.tag}</p>
+            </div>
+          </motion.button>
+        ))}
       </div>
     </section>
   );

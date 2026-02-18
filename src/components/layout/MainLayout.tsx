@@ -23,12 +23,12 @@ export const MainLayout = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // Calculate dynamic main content padding based on navigation height and scroll
+  // Compact padding for mobile app feel
   const getMainPadding = () => {
     if (isMobile) {
-      return 'mt-16 pb-20';
+      return 'mt-[88px] pb-20'; // nav (48px) + category pills (40px)
     }
-    return 'mt-20';
+    return 'mt-24';
   };
   
   return (
