@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { Mail, CheckCircle } from "lucide-react";
+import { Bell, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface NewsletterProps {
@@ -19,57 +18,42 @@ export const Newsletter = ({ onSubmit }: NewsletterProps) => {
     e.preventDefault();
     setIsSubmitted(true);
     onSubmit(email);
-    toast({
-      title: "Success!",
-      description: "Thank you for subscribing to our newsletter.",
-    });
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setEmail("");
-    }, 2000);
+    toast({ title: "Subscribed!", description: "You'll get the best deals." });
+    setTimeout(() => { setIsSubmitted(false); setEmail(""); }, 2000);
   };
 
   return (
-    <section className="bg-primary-100 py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <AnimatePresence mode="wait">
-            {isSubmitted ? (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                className="flex flex-col items-center"
-              >
-                <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                <p className="text-lg font-medium text-green-700">Successfully subscribed!</p>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <Mail className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-                <p className="text-gray-600 mb-6">
-                  Subscribe to our newsletter for the latest tech deals and updates.
-                </p>
-                <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-1"
-                  />
-                  <Button type="submit">Subscribe</Button>
-                </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+    <section className="px-4 py-5">
+      <div className="rounded-2xl bg-primary/5 border border-primary/10 p-5">
+        <AnimatePresence mode="wait">
+          {isSubmitted ? (
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center py-4">
+              <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
+              <p className="text-sm font-medium text-foreground">You're in! 🎉</p>
+            </motion.div>
+          ) : (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="flex items-center gap-2 mb-2">
+                <Bell className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-bold text-foreground">Deal Alerts</h3>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">Get notified about price drops & flash sales</p>
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="flex-1 h-9 text-sm rounded-xl"
+                />
+                <Button type="submit" size="sm" className="rounded-xl h-9 px-4 text-xs">
+                  Subscribe
+                </Button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );

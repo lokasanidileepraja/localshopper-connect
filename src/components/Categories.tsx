@@ -1,8 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
-import { useCategoryFilter } from "@/hooks/useCategoryFilter";
-import { useKeyboardNav } from "@/hooks/useKeyboardNav";
 import { categories } from "@/data/categories";
 import { motion } from "framer-motion";
 import { ArrowRight, Smartphone, Laptop, Headphones, Watch, Gamepad2, Camera, Monitor, Cpu } from "lucide-react";
@@ -12,133 +8,62 @@ interface CategoriesProps {
 }
 
 const categoryIcons: Record<string, React.ElementType> = {
-  "Mobiles": Smartphone,
-  "Laptops": Laptop,
-  "Audio": Headphones,
-  "Wearables": Watch,
-  "Gaming": Gamepad2,
-  "Cameras": Camera,
-  "TVs": Monitor,
-  "Accessories": Cpu,
+  "Mobiles": Smartphone, "Laptops": Laptop, "Audio": Headphones, "Wearables": Watch,
+  "Gaming": Gamepad2, "Cameras": Camera, "TVs": Monitor, "Accessories": Cpu,
 };
 
 const categoryColors: Record<string, string> = {
-  "Mobiles": "from-blue-500 to-indigo-600",
-  "Laptops": "from-slate-600 to-slate-800",
-  "Audio": "from-purple-500 to-violet-600",
-  "Wearables": "from-rose-500 to-pink-600",
-  "Gaming": "from-green-500 to-emerald-600",
-  "Cameras": "from-amber-500 to-orange-600",
-  "TVs": "from-cyan-500 to-teal-600",
-  "Accessories": "from-gray-500 to-zinc-600",
+  "Mobiles": "bg-blue-500/10 text-blue-600", "Laptops": "bg-slate-500/10 text-slate-600",
+  "Audio": "bg-purple-500/10 text-purple-600", "Wearables": "bg-rose-500/10 text-rose-600",
+  "Gaming": "bg-green-500/10 text-green-600", "Cameras": "bg-amber-500/10 text-amber-600",
+  "TVs": "bg-cyan-500/10 text-cyan-600", "Accessories": "bg-gray-500/10 text-gray-600",
 };
 
 export const Categories = ({ onCategorySelect }: CategoriesProps) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const { filter, setFilter, filteredCategories } = useCategoryFilter(categories);
 
-  const handleCategorySelect = (categoryName: string) => {
-    onCategorySelect(categoryName);
-    const categoryPath = `/category/${categoryName.toLowerCase()}`;
-    navigate(categoryPath);
-    toast({
-      title: "Category Selected",
-      description: `Browsing ${categoryName} products`,
-    });
+  const handleSelect = (name: string) => {
+    onCategorySelect(name);
+    navigate(`/category/${name.toLowerCase()}`);
   };
 
-  useKeyboardNav(
-    () => setSelectedIndex(prev => Math.max(0, prev - 1)),
-    () => setSelectedIndex(prev => Math.min(filteredCategories().length - 1, prev + 1)),
-    () => {
-      const selected = filteredCategories()[selectedIndex];
-      if (selected) {
-        handleCategorySelect(selected.name);
-      }
-    }
-  );
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [filter]);
-
-  const filtered = filteredCategories();
-
   return (
-    <section className="py-20 px-6 lg:px-8" id="categories">
-      <div className="container mx-auto max-w-7xl">
-        {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+    <section className="px-4 py-5">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-base font-bold text-foreground">Categories</h2>
+        <button
+          onClick={() => navigate("/categories")}
+          className="text-xs font-medium text-primary flex items-center gap-0.5"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Browse Categories
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Find exactly what you're looking for across our wide range of electronics
-          </p>
-        </motion.div>
+          See all <ArrowRight className="h-3 w-3" />
+        </button>
+      </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-          {filtered.map((category, index) => {
-            const IconComponent = categoryIcons[category.name] || Cpu;
-            const colorClass = categoryColors[category.name] || "from-gray-500 to-gray-600";
-            
-            return (
-              <motion.button
-                key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                onClick={() => handleCategorySelect(category.name)}
-                className={`
-                  group relative p-6 rounded-2xl bg-card border border-border
-                  hover:border-primary/20 hover:shadow-lg
-                  transition-all duration-300 hover:-translate-y-1
-                  text-left focus:outline-none focus:ring-2 focus:ring-primary/50
-                  ${selectedIndex === index ? 'ring-2 ring-primary/50' : ''}
-                `}
-              >
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colorClass} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="h-6 w-6 text-white" />
-                </div>
-                
-                {/* Content */}
-                <h3 className="text-lg font-semibold text-foreground mb-1">{category.name}</h3>
-                <p className="text-sm text-muted-foreground">50+ Products</p>
-                
-                {/* Arrow */}
-                <ArrowRight className="absolute bottom-6 right-6 h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              </motion.button>
-            );
-          })}
-        </div>
-
-        {/* View All Link */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-10"
-        >
-          <button
-            onClick={() => navigate("/categories")}
-            className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
-          >
-            View All Categories
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </motion.div>
+      {/* Horizontal Scroll */}
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
+        {categories.map((category, index) => {
+          const Icon = categoryIcons[category.name] || Cpu;
+          const color = categoryColors[category.name] || "bg-muted text-muted-foreground";
+          
+          return (
+            <motion.button
+              key={category.name}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.04 }}
+              onClick={() => handleSelect(category.name)}
+              className="flex flex-col items-center gap-2 shrink-0 w-16 active:scale-95 transition-transform"
+            >
+              <div className={`w-14 h-14 rounded-2xl ${color} flex items-center justify-center`}>
+                <Icon className="h-6 w-6" />
+              </div>
+              <span className="text-[11px] font-medium text-foreground text-center leading-tight line-clamp-1">
+                {category.name}
+              </span>
+            </motion.button>
+          );
+        })}
       </div>
     </section>
   );

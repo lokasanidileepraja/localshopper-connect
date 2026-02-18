@@ -1,54 +1,43 @@
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 
 const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Tech Enthusiast",
-    content: "Found the perfect laptop for my needs at a great price. The local store comparison feature saved me time and money!",
-    rating: 5
-  },
-  {
-    name: "Mike Chen",
-    role: "Professional Photographer",
-    content: "The detailed product comparisons helped me make an informed decision on my camera purchase. Excellent service!",
-    rating: 5
-  },
-  {
-    name: "Emily Davis",
-    role: "Student",
-    content: "Great platform for finding student-friendly deals on electronics. The price alerts feature is super helpful!",
-    rating: 4
-  }
+  { name: "Sarah J.", content: "Found the perfect laptop at a great price. The comparison feature saved me ₹8,000!", rating: 5, avatar: "SJ" },
+  { name: "Mike C.", content: "Best app for tech shopping. Price alerts helped me grab a deal instantly.", rating: 5, avatar: "MC" },
+  { name: "Emily D.", content: "Student-friendly deals and the UI is so smooth. Love it!", rating: 4, avatar: "ED" },
 ];
 
 export const Testimonials = () => {
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white p-6 rounded-lg shadow-lg"
-            >
-              <div className="flex mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                ))}
+    <section className="px-4 py-5">
+      <h2 className="text-base font-bold text-foreground mb-3">What Users Say</h2>
+      
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1">
+        {testimonials.map((t, i) => (
+          <motion.div
+            key={t.name}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.08 }}
+            className="shrink-0 w-64 p-4 rounded-2xl bg-card border border-border"
+          >
+            <Quote className="h-4 w-4 text-primary/40 mb-2" />
+            <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-3">{t.content}</p>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center">
+                {t.avatar}
               </div>
-              <p className="text-gray-600 mb-4">{testimonial.content}</p>
-              <div className="border-t pt-4">
-                <p className="font-semibold">{testimonial.name}</p>
-                <p className="text-sm text-gray-500">{testimonial.role}</p>
+              <div>
+                <p className="text-[11px] font-semibold text-foreground">{t.name}</p>
+                <div className="flex gap-0.5">
+                  {[...Array(t.rating)].map((_, j) => (
+                    <Star key={j} className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );

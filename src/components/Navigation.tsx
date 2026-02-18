@@ -1,130 +1,53 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { NavigationSearchBar } from "./navigation/SearchBar";
-import { UserActions } from "./navigation/UserActions";
-import { CategoryNav } from "./navigation/CategoryNav";
-import { 
-  ShoppingBag, 
-  Smartphone, 
-  ShoppingCart, 
-  Star, 
-  Tags, 
-  Store,
-  User,
-  Bell,
-  Grid2x2
-} from "lucide-react";
+import { ShoppingBag, Search, Bell } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { TooltipWrapper } from "./common/TooltipWrapper";
 import { ThemeToggle } from "./ThemeToggle";
 import { useCartStore } from "@/store/cartStore";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { CategoryNav } from "./navigation/CategoryNav";
 
 export const Navigation = memo(() => {
   const location = useLocation();
   const { totalItems } = useCartStore();
-
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  const mainNavItems = [
-    { path: "/categories", label: "Browse Gadgets", icon: Smartphone },
-    { path: "/enhanced-price-compare", label: "Compare Prices", icon: Tags },
-    { path: "/stores", label: "Stores", icon: Store },
-    { path: "/categories", label: "All Categories", icon: Grid2x2 },
-    { path: "/rewards", label: "Rewards", icon: Star },
-  ];
+  const isMobile = useIsMobile();
 
   return (
     <motion.nav 
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ 
-        duration: 0.5, 
-        type: "spring",
-        stiffness: 100,
-        damping: 20
-      }}
-      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b shadow-sm"
+      transition={{ duration: 0.3 }}
+      className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
     >
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center gap-2 md:gap-4" role="navigation" aria-label="Main Navigation">
-          <Link to="/" className="flex items-center gap-2 mr-2 md:mr-4 hover:opacity-80 transition-opacity" aria-label="TechLocator home">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ShoppingBag className="h-6 w-6 text-primary" />
-            </motion.div>
-            <span className="font-semibold text-lg hidden sm:block text-gradient-primary">TechLocator</span>
-          </Link>
+      {/* Main Header Bar - Compact for mobile */}
+      <div className="flex items-center justify-between px-4 h-12 md:h-14">
+        <Link to="/" className="flex items-center gap-1.5" aria-label="TechLocator home">
+          <ShoppingBag className="h-5 w-5 text-primary" />
+          <span className="font-bold text-base text-foreground">TechLocator</span>
+        </Link>
 
-          <div className="flex-1 flex justify-center items-center gap-2">
-            {mainNavItems.map(({ path, label, icon: Icon }) => (
-              <motion.div
-                key={label}
-                whileHover={{ y: -2 }}
-                whileTap={{ y: 0 }}
-              >
-                <TooltipWrapper content={label}>
-                  <Button 
-                    variant={isActive(path) ? "default" : "ghost"} 
-                    size="icon" 
-                    asChild
-                    className="rounded-full text-foreground hover:text-primary hover:bg-secondary transition-all duration-300"
-                    aria-label={label}
-                  >
-                    <Link to={path}>
-                      <Icon className="h-5 w-5" />
-                    </Link>
-                  </Button>
-                </TooltipWrapper>
-              </motion.div>
-            ))}
-          </div>
+        <div className="flex items-center gap-1">
+          {/* Search - mobile gets icon only */}
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9 rounded-full">
+            <Link to="/search" aria-label="Search">
+              <Search className="h-[18px] w-[18px] text-muted-foreground" />
+            </Link>
+          </Button>
 
-          <div className="flex items-center gap-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <TooltipWrapper content="Cart">
-                <Button 
-                  variant={isActive("/cart") ? "default" : "ghost"}
-                  size="icon" 
-                  asChild
-                  className="rounded-full text-foreground hover:text-primary hover:bg-secondary relative transition-all duration-300"
-                  aria-label="Shopping cart"
-                >
-                  <Link to="/cart">
-                    <ShoppingCart className="h-5 w-5" />
-                    {totalItems > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center"
-                      >
-                        {totalItems}
-                      </motion.span>
-                    )}
-                  </Link>
-                </Button>
-              </TooltipWrapper>
-            </motion.div>
+          <Button variant="ghost" size="icon" asChild className="h-9 w-9 rounded-full relative">
+            <Link to="/notifications" aria-label="Notifications">
+              <Bell className="h-[18px] w-[18px] text-muted-foreground" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+            </Link>
+          </Button>
 
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ThemeToggle />
-            </motion.div>
-            
-            <UserActions />
-          </div>
+          {!isMobile && <ThemeToggle />}
         </div>
-        <CategoryNav />
       </div>
+
+      {/* Category Pills - horizontal scroll */}
+      <CategoryNav />
     </motion.nav>
   );
 });
