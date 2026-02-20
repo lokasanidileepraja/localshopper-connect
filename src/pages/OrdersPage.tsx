@@ -1,25 +1,39 @@
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
-import { Phone, ArrowRight, Package, Truck, CheckCircle, Clock, AlertTriangle, ChevronRight, RotateCcw } from "lucide-react";
+import { Phone, Package, Truck, CheckCircle, AlertTriangle, ChevronRight, RotateCcw, Clock, Store } from "lucide-react";
 import { MOCK_ORDERS } from "@/data/marketplace";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const STEPS = [
-  { key: "confirmed", label: "Confirmed", icon: CheckCircle },
-  { key: "preparing", label: "Preparing", icon: Package },
-  { key: "out_for_delivery", label: "On the way", icon: Truck },
-  { key: "delivered", label: "Delivered", icon: CheckCircle },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "preparing", label: "Preparing" },
+  { key: "out_for_delivery", label: "On the way" },
+  { key: "delivered", label: "Delivered" },
 ];
 
 const PICKUP_STEPS = [
-  { key: "confirmed", label: "Confirmed", icon: CheckCircle },
-  { key: "preparing", label: "Preparing", icon: Package },
-  { key: "ready_for_pickup", label: "Ready", icon: Package },
-  { key: "delivered", label: "Picked up", icon: CheckCircle },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "preparing", label: "Preparing" },
+  { key: "ready_for_pickup", label: "Ready" },
+  { key: "delivered", label: "Picked up" },
 ];
+
+const STATUS_COLOR: Record<string, string> = {
+  confirmed: "bg-blue-500/10 text-blue-600",
+  preparing: "bg-orange-500/10 text-orange-600",
+  out_for_delivery: "bg-purple-500/10 text-purple-600",
+  ready_for_pickup: "bg-green-500/10 text-green-600",
+  delivered: "bg-green-500/10 text-green-700",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  confirmed: "Confirmed",
+  preparing: "Preparing",
+  out_for_delivery: "On the way",
+  ready_for_pickup: "Ready for pickup",
+  delivered: "Delivered",
+};
 
 const OrdersPage = () => {
   const [tab, setTab] = useState<"active" | "past">("active");
@@ -33,34 +47,40 @@ const OrdersPage = () => {
     return idx >= 0 ? idx : 0;
   };
 
+  const displayOrders = tab === "active" ? activeOrders : pastOrders;
+
   return (
     <div className="bg-background min-h-screen">
       <Helmet><title>Orders - TechLocator</title></Helmet>
 
       {/* Header */}
-      <div className="px-4 pt-3 pb-2">
+      <div className="px-4 pt-4 pb-3">
         <h1 className="text-lg font-bold text-foreground">My Orders</h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 px-4 mb-3">
-        {(["active", "past"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={cn(
-              "px-4 py-1.5 rounded-full text-xs font-medium transition-colors",
-              tab === t ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-            )}
-          >
-            {t === "active" ? `Active (${activeOrders.length})` : `Past (${pastOrders.length})`}
-          </button>
-        ))}
+      <div className="px-4 mb-4">
+        <div className="flex gap-1 p-1 rounded-2xl bg-secondary">
+          {(["active", "past"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={cn(
+                "flex-1 py-2 rounded-xl text-xs font-semibold transition-all",
+                tab === t
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground"
+              )}
+            >
+              {t === "active" ? `Active (${activeOrders.length})` : `Past (${pastOrders.length})`}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Orders List */}
-      <div className="px-4 space-y-3 pb-4">
-        {(tab === "active" ? activeOrders : pastOrders).map((order) => {
+      {/* Orders */}
+      <div className="px-4 space-y-3 pb-6">
+        {displayOrders.map((order, i) => {
           const steps = order.fulfillment === "pickup" ? PICKUP_STEPS : STEPS;
           const currentStep = getStepIndex(order.status, order.fulfillment);
           const item = order.items[0];
@@ -73,71 +93,71 @@ const OrdersPage = () => {
           return (
             <motion.div
               key={order.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl bg-card border border-border overflow-hidden"
+              transition={{ delay: i * 0.07 }}
+              className="rounded-2xl bg-card border border-border overflow-hidden"
             >
-              {/* Order Header */}
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-                <div>
-                  <p className="text-[10px] text-muted-foreground">{order.id}</p>
-                  <p className="text-xs font-semibold text-foreground">{order.storeName}</p>
+              {/* Order header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                    <Store className="h-3.5 w-3.5 text-foreground" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-foreground truncate">{order.storeName}</p>
+                    <p className="text-[10px] text-muted-foreground">{order.id}</p>
+                  </div>
                 </div>
-                <Badge
-                  className={cn(
-                    "text-[9px] border-0",
-                    isDelivered ? "bg-green-100 text-green-700" : "bg-primary/10 text-primary"
-                  )}
-                >
-                  {order.status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                </Badge>
+                <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full", STATUS_COLOR[order.status] || "bg-secondary text-muted-foreground")}>
+                  {STATUS_LABEL[order.status] || order.status}
+                </span>
               </div>
 
-              {/* Item Preview */}
+              {/* Item */}
               <div className="flex items-center gap-3 px-4 py-3">
-                <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden shrink-0">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-foreground line-clamp-1">{item.name}</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {item.variant} · Qty: {item.quantity}
-                  </p>
-                  <p className="text-xs font-bold text-foreground">₹{order.total.toLocaleString("en-IN")}</p>
+                  <p className="text-xs font-bold text-foreground line-clamp-1">{item.name}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.variant} · Qty {item.quantity}</p>
+                  <p className="text-sm font-bold text-foreground mt-1">₹{order.total.toLocaleString("en-IN")}</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
               </div>
 
-              {/* Live Stepper (active orders) */}
+              {/* Stepper (active only) */}
               {!isDelivered && (
                 <div className="px-4 pb-3">
-                  <div className="flex items-center justify-between">
-                    {steps.map((step, i) => {
-                      const StepIcon = step.icon;
-                      const isComplete = i <= currentStep;
-                      const isCurrent = i === currentStep;
+                  <div className="relative flex items-center justify-between">
+                    {/* Track line */}
+                    <div className="absolute left-3 right-3 top-3 h-0.5 bg-border" />
+                    <div
+                      className="absolute left-3 top-3 h-0.5 bg-primary transition-all duration-500"
+                      style={{ width: `${(currentStep / (steps.length - 1)) * (100 - 10)}%` }}
+                    />
+                    {steps.map((step, idx) => {
+                      const done = idx <= currentStep;
+                      const current = idx === currentStep;
                       return (
-                        <div key={step.key} className="flex flex-col items-center flex-1 relative">
-                          {i > 0 && (
-                            <div
-                              className={cn(
-                                "absolute top-3 right-1/2 w-full h-0.5 -z-10",
-                                i <= currentStep ? "bg-primary" : "bg-border"
-                              )}
-                            />
-                          )}
+                        <div key={step.key} className="flex flex-col items-center gap-1.5 relative z-10">
                           <div
                             className={cn(
-                              "w-6 h-6 rounded-full flex items-center justify-center",
-                              isComplete ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground",
-                              isCurrent && "ring-2 ring-primary/30"
+                              "w-6 h-6 rounded-full flex items-center justify-center transition-all",
+                              done ? "bg-primary" : "bg-border",
+                              current && "ring-2 ring-primary/30 ring-offset-1 ring-offset-card"
                             )}
                           >
-                            <StepIcon className="h-3 w-3" />
+                            {done ? (
+                              <CheckCircle className="h-3.5 w-3.5 text-primary-foreground" />
+                            ) : (
+                              <div className="w-2 h-2 rounded-full bg-muted-foreground/40" />
+                            )}
                           </div>
                           <span className={cn(
-                            "text-[9px] mt-1 font-medium text-center",
-                            isComplete ? "text-primary" : "text-muted-foreground"
+                            "text-[9px] font-medium text-center max-w-[52px] leading-tight",
+                            done ? "text-primary" : "text-muted-foreground"
                           )}>
                             {step.label}
                           </span>
@@ -149,38 +169,57 @@ const OrdersPage = () => {
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 px-4 py-2.5 border-t border-border">
+              <div className="flex gap-2 px-4 py-3 border-t border-border">
                 {!isDelivered && (
-                  <Button variant="outline" size="sm" className="rounded-full text-[11px] h-8 gap-1.5 flex-1">
-                    <Phone className="h-3 w-3" />
+                  <button className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl border border-border bg-card text-[11px] font-semibold text-foreground active:bg-secondary transition-colors">
+                    <Phone className="h-3.5 w-3.5" />
                     Call Store
-                  </Button>
+                  </button>
                 )}
                 {isDelivered && (
-                  <Button variant="outline" size="sm" className="rounded-full text-[11px] h-8 gap-1.5 flex-1">
-                    <RotateCcw className="h-3 w-3" />
+                  <button className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl border border-border bg-card text-[11px] font-semibold text-foreground active:bg-secondary transition-colors">
+                    <RotateCcw className="h-3.5 w-3.5" />
                     Reorder
-                  </Button>
+                  </button>
                 )}
                 {canReport && (
-                  <Button variant="destructive" size="sm" className="rounded-full text-[11px] h-8 gap-1.5">
-                    <AlertTriangle className="h-3 w-3" />
+                  <button className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl bg-destructive/10 border border-destructive/30 text-[11px] font-semibold text-destructive active:bg-destructive/20 transition-colors">
+                    <AlertTriangle className="h-3.5 w-3.5" />
                     Report Issue
-                  </Button>
+                  </button>
+                )}
+                {isDelivered && canReport && (
+                  <p className="sr-only">48-hr support window active</p>
                 )}
               </div>
+
+              {/* 48h window notice */}
+              {isDelivered && canReport && (
+                <div className="flex items-center gap-2 px-4 pb-3">
+                  <Clock className="h-3 w-3 text-amber-500 shrink-0" />
+                  <p className="text-[10px] text-amber-600 font-medium">
+                    48-hr support window active · Report issues now
+                  </p>
+                </div>
+              )}
             </motion.div>
           );
         })}
 
-        {(tab === "active" ? activeOrders : pastOrders).length === 0 && (
-          <div className="text-center py-12">
-            <Package className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground">No {tab} orders</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {tab === "active" ? "Your active orders will appear here" : "Your past orders will appear here"}
+        {displayOrders.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-16 text-center"
+          >
+            <div className="w-16 h-16 rounded-3xl bg-secondary flex items-center justify-center mb-4">
+              <Package className="h-7 w-7 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-bold text-foreground mb-1">No {tab} orders</p>
+            <p className="text-xs text-muted-foreground">
+              {tab === "active" ? "Your active orders will appear here" : "Completed orders will appear here"}
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

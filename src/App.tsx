@@ -45,8 +45,9 @@ function App() {
     <ErrorBoundary>
       <FeatureFlagProvider>
         <Routes>
-          {/* Welcome / Onboarding */}
-          <Route path="/" element={<Welcome />} />
+          {/* Splash / Onboarding */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
