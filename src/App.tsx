@@ -16,7 +16,7 @@ import ProfilePage from "@/pages/ProfilePage";
 // Existing pages (kept for deep linking)
 import Welcome from "@/pages/Welcome";
 import Category from "@/pages/Category";
-import ProductDetails from "@/pages/ProductDetails";
+import ProductDetailPage from "@/pages/ProductDetailPage";
 import SearchResults from "@/pages/SearchResults";
 import Stores from "@/pages/Stores";
 import StoreDetails from "@/pages/StoreDetails";
@@ -66,7 +66,7 @@ function App() {
             } />
             <Route path="/categories" element={<AllCategories />} />
             <Route path="/category/:categoryName" element={<Category />} />
-            <Route path="/product/:productId" element={<ProductDetails />} />
+            <Route path="/product/:productId" element={<ProductDetailPage />} />
             <Route path="/stores" element={<Stores />} />
             <Route path="/store/:storeName" element={<StoreDetails />} />
             <Route path="/notifications" element={<Notifications />} />
