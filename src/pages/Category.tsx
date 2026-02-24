@@ -203,106 +203,151 @@ const Category = () => {
         </div>
       </div>
 
-      {/* Product Grid — 2 columns */}
-      <div className="px-3">
-        <div className="grid grid-cols-2 gap-2">
-          {filtered.map((product, i) => {
-            const disc = discountPct(product);
-            const save = savings(product);
-            const lowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+      {/* Product List — single column, Amazon-style */}
+      <div className="divide-y divide-border">
+        {filtered.map((product, i) => {
+          const disc = discountPct(product);
+          const save = savings(product);
+          const lowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+          const bought = product.reviewCount ? `${(product.reviewCount / 10).toFixed(0)}K+ bought in past month` : null;
 
-            return (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="bg-card rounded-2xl border border-border overflow-hidden"
-              >
-                {/* Image */}
+          return (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: i * 0.03 }}
+              className="bg-background px-4 py-4"
+            >
+              <div className="flex gap-4">
+                {/* Product Image — left column */}
                 <button
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="relative w-full aspect-square bg-muted overflow-hidden"
+                  className="relative w-[130px] shrink-0 self-start"
                 >
-                  <img
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  {/* Discount badge */}
-                  {disc > 0 && (
-                    <div className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-[9px] font-bold px-1.5 py-0.5 rounded-md">
-                      ↓{disc}% OFF
-                    </div>
-                  )}
-                  {/* Wishlist */}
-                  <div className="absolute top-2 right-2">
+                  <div className="aspect-[3/4] rounded-xl bg-muted overflow-hidden">
+                    <img
+                      src={product.image || "/placeholder.svg"}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  {/* Wishlist icon bottom-left */}
+                  <div className="absolute bottom-2 left-2">
                     <WishlistButton productId={product.id} />
                   </div>
-                  {/* Low stock */}
-                  {lowStock && (
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-amber-500/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md">
-                      <Flame className="h-2.5 w-2.5" /> Only {product.stock} left
-                    </div>
-                  )}
                   {!product.inStock && (
-                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
-                      <span className="text-xs font-bold text-muted-foreground">Out of Stock</span>
+                    <div className="absolute inset-0 rounded-xl bg-background/60 flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-muted-foreground">Out of Stock</span>
                     </div>
                   )}
                 </button>
 
-                {/* Info */}
-                <div className="p-2.5">
-                  {/* Rating */}
+                {/* Product Info — right column */}
+                <div className="flex-1 min-w-0 pt-0.5">
+                  {/* Brand */}
+                  <p className="text-[10px] text-muted-foreground font-medium">{product.brand}</p>
+
+                  {/* Name + Description */}
+                  <button onClick={() => navigate(`/product/${product.id}`)} className="text-left">
+                    <p className="text-[13px] font-medium text-foreground leading-snug mt-0.5 line-clamp-3">
+                      {product.name} {product.description ? `– ${product.description}` : ""}
+                    </p>
+                  </button>
+
+                  {/* Rating row */}
                   {product.rating && (
-                    <div className="flex items-center gap-1 mb-1">
-                      <div className="flex items-center gap-0.5 bg-green-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">
-                        {product.rating} <Star className="h-2 w-2 fill-white" />
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <div className="flex items-center gap-0.5">
+                        <span className="text-[12px] font-semibold text-foreground">{product.rating}</span>
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            className={cn(
+                              "h-3 w-3",
+                              s <= Math.floor(product.rating!)
+                                ? "fill-amber-400 text-amber-400"
+                                : s - 0.5 <= product.rating!
+                                  ? "fill-amber-400/50 text-amber-400"
+                                  : "text-border fill-border"
+                            )}
+                          />
+                        ))}
                       </div>
                       {product.reviewCount && (
-                        <span className="text-[9px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
+                        <span className="text-[10px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
                       )}
                     </div>
                   )}
 
-                  {/* Brand + Name */}
-                  <p className="text-[9px] text-muted-foreground font-semibold tracking-[0.15em] uppercase">{product.brand}</p>
-                  <p className="text-[11px] font-semibold text-foreground leading-tight mt-0.5 line-clamp-2">{product.name}</p>
+                  {/* Social proof */}
+                  {bought && (
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{bought}</p>
+                  )}
 
-                  {/* Pricing */}
-                  <div className="mt-1.5 flex items-baseline gap-1.5 flex-wrap">
-                    <span className="text-sm font-bold text-foreground">₹{product.price.toLocaleString("en-IN")}</span>
-                    {product.originalPrice && product.originalPrice > product.price && (
-                      <span className="text-[10px] text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
-                    )}
+                  {/* Limited deal badge */}
+                  {disc >= 10 && (
+                    <div className="mt-2">
+                      <span className="inline-block bg-destructive text-destructive-foreground text-[9px] font-bold px-2 py-0.5 rounded-sm">
+                        Limited time deal
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Price block */}
+                  <div className="mt-1.5">
+                    <div className="flex items-baseline gap-1.5">
+                      {disc > 0 && (
+                        <span className="text-[11px] text-destructive font-semibold">↓{disc}%</span>
+                      )}
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <span className="text-[11px] text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
+                      )}
+                    </div>
+                    <p className="text-xl font-bold text-foreground leading-tight">
+                      ₹{product.price.toLocaleString("en-IN")}
+                    </p>
                   </div>
 
-                  {/* Savings badge */}
-                  {save > 0 && (
-                    <p className="text-[9px] font-bold text-emerald-600 mt-0.5">
-                      Save ₹{save.toLocaleString("en-IN")}
+                  {/* Bank offer */}
+                  {save > 2000 && (
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <span className="bg-emerald-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-sm">
+                        Buy for ₹{(product.price - 1000).toLocaleString("en-IN")}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground">with Bank offer</span>
+                    </div>
+                  )}
+
+                  {/* Delivery */}
+                  <div className="mt-2 flex items-center gap-1">
+                    <Truck className="h-3 w-3 text-primary" />
+                    <span className="text-[10px] font-medium text-foreground">FREE delivery</span>
+                    <span className="text-[10px] text-muted-foreground">· Get it today</span>
+                  </div>
+
+                  {/* Low stock */}
+                  {lowStock && (
+                    <p className="text-[10px] font-semibold text-destructive mt-1">
+                      Only {product.stock} left in stock
                     </p>
                   )}
 
-                  {/* EMI + delivery */}
-                  <div className="mt-1.5 space-y-0.5">
-                    {product.emiOptions?.[0] && (
-                      <p className="text-[9px] text-muted-foreground">
-                        EMI from ₹{product.emiOptions[0].monthlyAmount.toLocaleString("en-IN")}/mo
-                      </p>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Zap className="h-2.5 w-2.5 text-primary" />
-                      <span className="text-[9px] text-muted-foreground font-medium">Get it today</span>
-                    </div>
-                  </div>
+                  {/* Add to cart */}
+                  {product.inStock && (
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="mt-3 w-full h-9 rounded-full bg-primary text-primary-foreground text-xs font-bold active:scale-[0.98] transition-transform"
+                    >
+                      Add to Cart
+                    </button>
+                  )}
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
+              </div>
+            </motion.div>
+          );
+        })}
 
         {filtered.length === 0 && (
           <div className="text-center py-16">
