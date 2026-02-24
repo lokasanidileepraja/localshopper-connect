@@ -1,17 +1,17 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { products } from "@/data/products";
+import { MOCK_STORE_PRODUCTS, MOCK_STORES } from "@/data/marketplace";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useState, useMemo, useCallback } from "react";
 import { useCartStore } from "@/store/cartStore";
 import {
-  ArrowLeft, SlidersHorizontal, ChevronDown, Star, Heart,
-  Truck, ShieldCheck, Tag, Flame, Zap,
+  ArrowLeft, ChevronDown, Star, MapPin,
+  Truck, ShieldCheck, Tag, Flame, Zap, Store, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WishlistButton } from "@/components/WishlistButton";
-import { Badge } from "@/components/ui/badge";
 
 type SortKey = "relevance" | "price_low" | "price_high" | "rating" | "discount";
 
@@ -36,6 +36,21 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "discount", label: "Discount" },
 ];
 
+// Simulated hyperlocal store availability per product
+const getLocalAvailability = (productName: string) => {
+  const storeCount = Math.floor(Math.random() * 4) + 2;
+  const distances = ["0.3 km", "0.5 km", "1.2 km", "1.8 km", "2.1 km"];
+  const etas = ["10 mins", "15 mins", "25 mins", "30 mins"];
+  const storeNames = ["Croma Indiranagar", "Samsung SmartPlaza", "Local Mobile Hub", "Reliance Digital", "Sony Center"];
+  return {
+    storeCount,
+    nearestDistance: distances[Math.floor(Math.random() * 3)],
+    nearestEta: etas[Math.floor(Math.random() * 3)],
+    nearestStore: storeNames[Math.floor(Math.random() * storeNames.length)],
+    hasVerified: Math.random() > 0.3,
+  };
+};
+
 const Category = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
@@ -49,14 +64,9 @@ const Category = () => {
 
   const rawProducts = categoryName ? (products[categoryName.toLowerCase()] || []) : [];
 
-  // Filter logic
   const filtered = useMemo(() => {
     let list = [...rawProducts];
-
-    if (brandFilter) {
-      list = list.filter((p) => p.brand === brandFilter);
-    }
-
+    if (brandFilter) list = list.filter((p) => p.brand === brandFilter);
     switch (activeFilter) {
       case "Under ₹15K": list = list.filter((p) => p.price < 15000); break;
       case "₹15K–₹30K": list = list.filter((p) => p.price >= 15000 && p.price <= 30000); break;
@@ -65,7 +75,6 @@ const Category = () => {
       case "Top Rated": list = list.filter((p) => (p.rating || 0) >= 4.5); break;
       case "5G": list = list.filter((p) => p.name.includes("5G") || p.description?.includes("5G")); break;
     }
-
     switch (sortKey) {
       case "price_low": list.sort((a, b) => a.price - b.price); break;
       case "price_high": list.sort((a, b) => b.price - a.price); break;
@@ -76,7 +85,6 @@ const Category = () => {
         return dB - dA;
       }); break;
     }
-
     return list;
   }, [rawProducts, activeFilter, sortKey, brandFilter]);
 
@@ -87,6 +95,13 @@ const Category = () => {
 
   const discountPct = (p: any) => p.originalPrice ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0;
   const savings = (p: any) => p.originalPrice ? p.originalPrice - p.price : 0;
+
+  // Memoize local availability per product
+  const localData = useMemo(() => {
+    const map: Record<string, ReturnType<typeof getLocalAvailability>> = {};
+    rawProducts.forEach((p) => { map[p.id] = getLocalAvailability(p.name); });
+    return map;
+  }, [rawProducts]);
 
   if (!categoryName) return null;
 
@@ -99,9 +114,10 @@ const Category = () => {
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
           <h1 className="text-sm font-bold text-foreground capitalize flex-1">{categoryName}</h1>
-          <span className="text-[10px] text-muted-foreground tracking-[0.15em] uppercase">
-            {filtered.length} products
-          </span>
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+            <MapPin className="h-3 w-3 text-primary" />
+            <span className="tracking-[0.1em]">Indiranagar</span>
+          </div>
         </div>
 
         {/* Sort + Filter bar */}
@@ -155,26 +171,19 @@ const Category = () => {
         )}
       </div>
 
-      {/* Promotional Banner */}
-      <div className="mx-4 mt-3 mb-2 flex gap-2">
-        <div className="flex-1 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3 py-2.5 flex items-center gap-2">
-          <Tag className="h-3.5 w-3.5 text-emerald-600" />
-          <div>
-            <p className="text-[10px] font-bold text-emerald-700">Up to 40% Off</p>
-            <p className="text-[9px] text-emerald-600/80">On top brands</p>
-          </div>
+      {/* Hyperlocal context banner */}
+      <div className="mx-4 mt-3 mb-2 rounded-xl bg-primary/5 border border-primary/15 px-3.5 py-2.5 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <MapPin className="h-4 w-4 text-primary" />
         </div>
-        <div className="flex-1 rounded-xl bg-primary/5 border border-primary/20 px-3 py-2.5 flex items-center gap-2">
-          <Truck className="h-3.5 w-3.5 text-primary" />
-          <div>
-            <p className="text-[10px] font-bold text-primary">Express Delivery</p>
-            <p className="text-[9px] text-muted-foreground">Get it today</p>
-          </div>
+        <div className="flex-1">
+          <p className="text-[11px] font-semibold text-foreground">Showing prices from stores near you</p>
+          <p className="text-[9px] text-muted-foreground mt-0.5">Indiranagar, Bangalore · {filtered.length} products at {MOCK_STORES.length}+ local stores</p>
         </div>
       </div>
 
       {/* Brand Explorer */}
-      <div className="px-4 mt-3 mb-3">
+      <div className="px-4 mt-3 mb-1">
         <p className="text-[10px] font-bold text-muted-foreground tracking-[0.15em] uppercase mb-2">Shop by Brand</p>
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
           {BRANDS.map((b) => (
@@ -187,7 +196,7 @@ const Category = () => {
               )}
             >
               <div className={cn(
-                "w-12 h-12 rounded-xl border flex items-center justify-center text-lg transition-all",
+                "w-11 h-11 rounded-xl border flex items-center justify-center text-base transition-all",
                 brandFilter === b.name
                   ? "bg-primary/10 border-primary shadow-sm"
                   : "bg-card border-border"
@@ -203,27 +212,27 @@ const Category = () => {
         </div>
       </div>
 
-      {/* Product List — single column, Amazon-style */}
-      <div className="divide-y divide-border">
+      {/* Product List */}
+      <div className="mt-2">
         {filtered.map((product, i) => {
           const disc = discountPct(product);
           const save = savings(product);
           const lowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
-          const bought = product.reviewCount ? `${(product.reviewCount / 10).toFixed(0)}K+ bought in past month` : null;
+          const local = localData[product.id];
 
           return (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.03 }}
-              className="bg-background px-4 py-4"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className="bg-card border-b border-border"
             >
-              <div className="flex gap-4">
-                {/* Product Image — left column */}
+              <div className="flex gap-3.5 p-4">
+                {/* Image */}
                 <button
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="relative w-[130px] shrink-0 self-start"
+                  className="relative w-[120px] shrink-0 self-start"
                 >
                   <div className="aspect-[3/4] rounded-xl bg-muted overflow-hidden">
                     <img
@@ -233,7 +242,6 @@ const Category = () => {
                       loading="lazy"
                     />
                   </div>
-                  {/* Wishlist icon bottom-left */}
                   <div className="absolute bottom-2 left-2">
                     <WishlistButton productId={product.id} />
                   </div>
@@ -244,103 +252,112 @@ const Category = () => {
                   )}
                 </button>
 
-                {/* Product Info — right column */}
-                <div className="flex-1 min-w-0 pt-0.5">
+                {/* Info */}
+                <div className="flex-1 min-w-0">
                   {/* Brand */}
-                  <p className="text-[10px] text-muted-foreground font-medium">{product.brand}</p>
+                  <p className="text-[9px] text-muted-foreground font-semibold tracking-[0.15em] uppercase">{product.brand}</p>
 
-                  {/* Name + Description */}
+                  {/* Title */}
                   <button onClick={() => navigate(`/product/${product.id}`)} className="text-left">
-                    <p className="text-[13px] font-medium text-foreground leading-snug mt-0.5 line-clamp-3">
-                      {product.name} {product.description ? `– ${product.description}` : ""}
+                    <p className="text-[13px] font-medium text-foreground leading-snug mt-0.5 line-clamp-2">
+                      {product.name}
                     </p>
                   </button>
 
-                  {/* Rating row */}
+                  {/* Rating */}
                   {product.rating && (
-                    <div className="flex items-center gap-1.5 mt-2">
+                    <div className="flex items-center gap-1.5 mt-1.5">
                       <div className="flex items-center gap-0.5">
-                        <span className="text-[12px] font-semibold text-foreground">{product.rating}</span>
+                        <span className="text-[11px] font-semibold text-foreground">{product.rating}</span>
                         {[1, 2, 3, 4, 5].map((s) => (
                           <Star
                             key={s}
                             className={cn(
-                              "h-3 w-3",
+                              "h-2.5 w-2.5",
                               s <= Math.floor(product.rating!)
                                 ? "fill-amber-400 text-amber-400"
-                                : s - 0.5 <= product.rating!
-                                  ? "fill-amber-400/50 text-amber-400"
-                                  : "text-border fill-border"
+                                : "text-border fill-border"
                             )}
                           />
                         ))}
                       </div>
                       {product.reviewCount && (
-                        <span className="text-[10px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
+                        <span className="text-[9px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
                       )}
                     </div>
                   )}
 
-                  {/* Social proof */}
-                  {bought && (
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{bought}</p>
-                  )}
-
-                  {/* Limited deal badge */}
-                  {disc >= 10 && (
-                    <div className="mt-2">
-                      <span className="inline-block bg-destructive text-destructive-foreground text-[9px] font-bold px-2 py-0.5 rounded-sm">
-                        Limited time deal
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Price block */}
-                  <div className="mt-1.5">
-                    <div className="flex items-baseline gap-1.5">
-                      {disc > 0 && (
-                        <span className="text-[11px] text-destructive font-semibold">↓{disc}%</span>
-                      )}
-                      {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="text-[11px] text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
-                      )}
-                    </div>
-                    <p className="text-xl font-bold text-foreground leading-tight">
+                  {/* Price */}
+                  <div className="mt-2">
+                    {disc > 0 && (
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-[10px] text-destructive font-bold">↓{disc}%</span>
+                        {product.originalPrice && (
+                          <span className="text-[10px] text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
+                        )}
+                      </div>
+                    )}
+                    <p className="text-lg font-bold text-foreground leading-none">
                       ₹{product.price.toLocaleString("en-IN")}
                     </p>
+                    {save > 0 && (
+                      <p className="text-[9px] font-bold text-emerald-600 mt-0.5">
+                        Save ₹{save.toLocaleString("en-IN")}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Bank offer */}
-                  {save > 2000 && (
-                    <div className="flex items-center gap-1.5 mt-1.5">
-                      <span className="bg-emerald-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-sm">
-                        Buy for ₹{(product.price - 1000).toLocaleString("en-IN")}
-                      </span>
-                      <span className="text-[9px] text-muted-foreground">with Bank offer</span>
+                  {/* === HYPERLOCAL SECTION === */}
+                  {local && product.inStock && (
+                    <div className="mt-2.5 rounded-lg bg-secondary/60 border border-border/50 p-2">
+                      {/* Store availability */}
+                      <div className="flex items-center gap-1.5">
+                        <Store className="h-3 w-3 text-primary shrink-0" />
+                        <span className="text-[10px] text-foreground font-medium">
+                          At <span className="font-bold">{local.storeCount} stores</span> near you
+                        </span>
+                        {local.hasVerified && (
+                          <ShieldCheck className="h-3 w-3 text-primary shrink-0" />
+                        )}
+                      </div>
+
+                      {/* Nearest + ETA */}
+                      <div className="flex items-center gap-3 mt-1">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-2.5 w-2.5 text-muted-foreground" />
+                          <span className="text-[9px] text-muted-foreground">{local.nearestDistance}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-2.5 w-2.5 text-muted-foreground" />
+                          <span className="text-[9px] text-muted-foreground">Pickup in {local.nearestEta}</span>
+                        </div>
+                      </div>
+
+                      {/* Nearest store name */}
+                      <p className="text-[9px] text-muted-foreground mt-1">
+                        Nearest: <span className="font-medium text-foreground">{local.nearestStore}</span>
+                      </p>
                     </div>
                   )}
-
-                  {/* Delivery */}
-                  <div className="mt-2 flex items-center gap-1">
-                    <Truck className="h-3 w-3 text-primary" />
-                    <span className="text-[10px] font-medium text-foreground">FREE delivery</span>
-                    <span className="text-[10px] text-muted-foreground">· Get it today</span>
-                  </div>
 
                   {/* Low stock */}
                   {lowStock && (
-                    <p className="text-[10px] font-semibold text-destructive mt-1">
-                      Only {product.stock} left in stock
-                    </p>
+                    <div className="flex items-center gap-1 mt-1.5">
+                      <Flame className="h-3 w-3 text-destructive" />
+                      <p className="text-[10px] font-semibold text-destructive">
+                        Only {product.stock} left nearby
+                      </p>
+                    </div>
                   )}
 
-                  {/* Add to cart */}
+                  {/* CTA */}
                   {product.inStock && (
                     <button
-                      onClick={() => handleAddToCart(product)}
-                      className="mt-3 w-full h-9 rounded-full bg-primary text-primary-foreground text-xs font-bold active:scale-[0.98] transition-transform"
+                      onClick={() => navigate(`/product/${product.id}`)}
+                      className="mt-2.5 w-full h-9 rounded-xl bg-primary text-primary-foreground text-[11px] font-bold active:scale-[0.98] transition-transform flex items-center justify-center gap-1.5"
                     >
-                      Add to Cart
+                      <MapPin className="h-3 w-3" />
+                      Compare Local Prices
                     </button>
                   )}
                 </div>
