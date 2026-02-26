@@ -28,6 +28,7 @@ import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import AllCategories from "@/pages/AllCategories";
 import NotFound from "@/pages/NotFound";
+import ManageAddresses from "@/pages/ManageAddresses";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
 
@@ -71,6 +72,7 @@ function App() {
             <Route path="/store/:storeName" element={<StoreDetails />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/addresses" element={<ManageAddresses />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/terms" element={<Terms />} />
