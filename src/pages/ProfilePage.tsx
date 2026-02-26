@@ -69,6 +69,7 @@ const ProfilePage = () => {
         {savedAddresses.map((addr, i) => (
           <button
             key={addr.label}
+            onClick={() => navigate("/addresses")}
             className={cn(
               "flex items-center gap-3 px-4 py-3.5 w-full active:bg-secondary transition-colors",
               i > 0 && "border-t border-border"
@@ -92,11 +93,14 @@ const ProfilePage = () => {
             <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
           </button>
         ))}
-        <button className="flex items-center gap-3 px-4 py-3.5 w-full border-t border-border active:bg-secondary transition-colors">
+        <button
+          onClick={() => navigate("/addresses")}
+          className="flex items-center gap-3 px-4 py-3.5 w-full border-t border-border active:bg-secondary transition-colors"
+        >
           <div className="w-9 h-9 rounded-xl border border-dashed border-primary/40 flex items-center justify-center shrink-0">
             <MapPin className="h-4 w-4 text-primary" />
           </div>
-          <p className="text-xs font-semibold text-primary">Add New Address</p>
+          <p className="text-xs font-semibold text-primary">Manage Addresses</p>
         </button>
       </SectionCard>
 

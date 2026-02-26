@@ -36,7 +36,6 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "discount", label: "Discount" },
 ];
 
-// Simulated hyperlocal store availability per product
 const getLocalAvailability = (productName: string) => {
   const storeCount = Math.floor(Math.random() * 4) + 2;
   const distances = ["0.3 km", "0.5 km", "1.2 km", "1.8 km", "2.1 km"];
@@ -96,7 +95,6 @@ const Category = () => {
   const discountPct = (p: any) => p.originalPrice ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0;
   const savings = (p: any) => p.originalPrice ? p.originalPrice - p.price : 0;
 
-  // Memoize local availability per product
   const localData = useMemo(() => {
     const map: Record<string, ReturnType<typeof getLocalAvailability>> = {};
     rawProducts.forEach((p) => { map[p.id] = getLocalAvailability(p.name); });
@@ -109,33 +107,33 @@ const Category = () => {
     <div className="bg-background min-h-screen pb-20">
       {/* Header */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="flex items-center h-12 px-4 gap-3">
-          <button onClick={() => navigate(-1)} className="p-1 -ml-1">
+        <div className="flex items-center h-14 px-4 gap-3">
+          <button onClick={() => navigate(-1)} className="p-1.5 -ml-1 rounded-xl active:bg-secondary transition-colors">
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
-          <h1 className="text-sm font-bold text-foreground capitalize flex-1">{categoryName}</h1>
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <MapPin className="h-3 w-3 text-primary" />
-            <span className="tracking-[0.1em]">Indiranagar</span>
+          <h1 className="text-base font-bold text-foreground capitalize flex-1">{categoryName}</h1>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 text-primary" />
+            <span className="font-medium">Indiranagar</span>
           </div>
         </div>
 
         {/* Sort + Filter bar */}
-        <div className="flex items-center gap-2 px-4 pb-2.5">
+        <div className="flex items-center gap-2 px-4 pb-3">
           <button
             onClick={() => setShowSort(!showSort)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-card border border-border text-[11px] font-semibold text-foreground"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-semibold text-foreground"
           >
-            Sort <ChevronDown className="h-3 w-3" />
+            Sort <ChevronDown className="h-3.5 w-3.5" />
           </button>
           <div className="flex-1 overflow-x-auto no-scrollbar">
-            <div className="flex gap-1.5">
+            <div className="flex gap-2">
               {FILTER_CHIPS.map((chip) => (
                 <button
                   key={chip}
                   onClick={() => setActiveFilter(activeFilter === chip ? "All" : chip)}
                   className={cn(
-                    "px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap border transition-all",
+                    "px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all",
                     activeFilter === chip
                       ? "bg-primary text-primary-foreground border-primary"
                       : "bg-card border-border text-muted-foreground"
@@ -160,7 +158,7 @@ const Category = () => {
                 key={opt.key}
                 onClick={() => { setSortKey(opt.key); setShowSort(false); }}
                 className={cn(
-                  "w-full px-4 py-3 text-left text-xs font-medium border-b border-border/50 last:border-0",
+                  "w-full px-5 py-3.5 text-left text-sm font-medium border-b border-border/50 last:border-0",
                   sortKey === opt.key ? "text-primary bg-primary/5" : "text-foreground"
                 )}
               >
@@ -172,31 +170,31 @@ const Category = () => {
       </div>
 
       {/* Hyperlocal context banner */}
-      <div className="mx-4 mt-3 mb-2 rounded-xl bg-primary/5 border border-primary/15 px-3.5 py-2.5 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+      <div className="mx-4 mt-3 mb-2 rounded-xl bg-primary/5 border border-primary/15 px-4 py-3 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
           <MapPin className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1">
-          <p className="text-[11px] font-semibold text-foreground">Showing prices from stores near you</p>
-          <p className="text-[9px] text-muted-foreground mt-0.5">Indiranagar, Bangalore · {filtered.length} products at {MOCK_STORES.length}+ local stores</p>
+          <p className="text-xs font-semibold text-foreground">Showing prices from stores near you</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Indiranagar, Bangalore · {filtered.length} products at {MOCK_STORES.length}+ local stores</p>
         </div>
       </div>
 
       {/* Brand Explorer */}
-      <div className="px-4 mt-3 mb-1">
-        <p className="text-[10px] font-bold text-muted-foreground tracking-[0.15em] uppercase mb-2">Shop by Brand</p>
+      <div className="px-4 mt-4 mb-2">
+        <p className="text-[11px] font-bold text-muted-foreground tracking-[0.12em] uppercase mb-2.5">Shop by Brand</p>
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
           {BRANDS.map((b) => (
             <button
               key={b.name}
               onClick={() => setBrandFilter(brandFilter === b.name ? null : b.name)}
               className={cn(
-                "flex flex-col items-center gap-1 min-w-[52px] transition-all",
+                "flex flex-col items-center gap-1.5 min-w-[56px] transition-all",
                 brandFilter === b.name && "scale-110"
               )}
             >
               <div className={cn(
-                "w-11 h-11 rounded-xl border flex items-center justify-center text-base transition-all",
+                "w-12 h-12 rounded-xl border flex items-center justify-center text-lg transition-all",
                 brandFilter === b.name
                   ? "bg-primary/10 border-primary shadow-sm"
                   : "bg-card border-border"
@@ -204,7 +202,7 @@ const Category = () => {
                 {b.emoji}
               </div>
               <span className={cn(
-                "text-[9px] font-semibold",
+                "text-[10px] font-semibold",
                 brandFilter === b.name ? "text-primary" : "text-muted-foreground"
               )}>{b.name}</span>
             </button>
@@ -213,7 +211,7 @@ const Category = () => {
       </div>
 
       {/* Product List */}
-      <div className="mt-2">
+      <div className="mt-3">
         {filtered.map((product, i) => {
           const disc = discountPct(product);
           const save = savings(product);
@@ -228,11 +226,11 @@ const Category = () => {
               transition={{ delay: i * 0.04 }}
               className="bg-card border-b border-border"
             >
-              <div className="flex gap-3.5 p-4">
+              <div className="flex gap-4 p-4">
                 {/* Image */}
                 <button
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="relative w-[120px] shrink-0 self-start"
+                  className="relative w-[130px] shrink-0 self-start"
                 >
                   <div className="aspect-[3/4] rounded-xl bg-muted overflow-hidden">
                     <img
@@ -247,7 +245,7 @@ const Category = () => {
                   </div>
                   {!product.inStock && (
                     <div className="absolute inset-0 rounded-xl bg-background/60 flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-muted-foreground">Out of Stock</span>
+                      <span className="text-xs font-bold text-muted-foreground">Out of Stock</span>
                     </div>
                   )}
                 </button>
@@ -255,25 +253,25 @@ const Category = () => {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   {/* Brand */}
-                  <p className="text-[9px] text-muted-foreground font-semibold tracking-[0.15em] uppercase">{product.brand}</p>
+                  <p className="text-[10px] text-muted-foreground font-semibold tracking-[0.12em] uppercase">{product.brand}</p>
 
                   {/* Title */}
                   <button onClick={() => navigate(`/product/${product.id}`)} className="text-left">
-                    <p className="text-[13px] font-medium text-foreground leading-snug mt-0.5 line-clamp-2">
+                    <p className="text-sm font-medium text-foreground leading-snug mt-1 line-clamp-2">
                       {product.name}
                     </p>
                   </button>
 
                   {/* Rating */}
                   {product.rating && (
-                    <div className="flex items-center gap-1.5 mt-1.5">
-                      <div className="flex items-center gap-0.5">
-                        <span className="text-[11px] font-semibold text-foreground">{product.rating}</span>
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-semibold text-foreground">{product.rating}</span>
                         {[1, 2, 3, 4, 5].map((s) => (
                           <Star
                             key={s}
                             className={cn(
-                              "h-2.5 w-2.5",
+                              "h-3 w-3",
                               s <= Math.floor(product.rating!)
                                 ? "fill-amber-400 text-amber-400"
                                 : "text-border fill-border"
@@ -282,59 +280,56 @@ const Category = () => {
                         ))}
                       </div>
                       {product.reviewCount && (
-                        <span className="text-[9px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
+                        <span className="text-[11px] text-muted-foreground">({product.reviewCount.toLocaleString("en-IN")})</span>
                       )}
                     </div>
                   )}
 
                   {/* Price */}
-                  <div className="mt-2">
+                  <div className="mt-2.5">
                     {disc > 0 && (
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[10px] text-destructive font-bold">↓{disc}%</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-destructive font-bold">↓{disc}% OFF</span>
                         {product.originalPrice && (
-                          <span className="text-[10px] text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
+                          <span className="text-xs text-muted-foreground line-through">₹{product.originalPrice.toLocaleString("en-IN")}</span>
                         )}
                       </div>
                     )}
-                    <p className="text-lg font-bold text-foreground leading-none">
+                    <p className="text-xl font-bold text-foreground leading-none">
                       ₹{product.price.toLocaleString("en-IN")}
                     </p>
                     {save > 0 && (
-                      <p className="text-[9px] font-bold text-emerald-600 mt-0.5">
-                        Save ₹{save.toLocaleString("en-IN")}
+                      <p className="text-[11px] font-semibold text-emerald-600 mt-1">
+                        You save ₹{save.toLocaleString("en-IN")}
                       </p>
                     )}
                   </div>
 
                   {/* === HYPERLOCAL SECTION === */}
                   {local && product.inStock && (
-                    <div className="mt-2.5 rounded-lg bg-secondary/60 border border-border/50 p-2">
-                      {/* Store availability */}
-                      <div className="flex items-center gap-1.5">
-                        <Store className="h-3 w-3 text-primary shrink-0" />
-                        <span className="text-[10px] text-foreground font-medium">
+                    <div className="mt-3 rounded-xl bg-secondary/60 border border-border/50 p-2.5">
+                      <div className="flex items-center gap-2">
+                        <Store className="h-3.5 w-3.5 text-primary shrink-0" />
+                        <span className="text-xs text-foreground font-medium">
                           At <span className="font-bold">{local.storeCount} stores</span> near you
                         </span>
                         {local.hasVerified && (
-                          <ShieldCheck className="h-3 w-3 text-primary shrink-0" />
+                          <ShieldCheck className="h-3.5 w-3.5 text-primary shrink-0" />
                         )}
                       </div>
 
-                      {/* Nearest + ETA */}
-                      <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-4 mt-1.5">
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-2.5 w-2.5 text-muted-foreground" />
-                          <span className="text-[9px] text-muted-foreground">{local.nearestDistance}</span>
+                          <MapPin className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-[11px] text-muted-foreground">{local.nearestDistance}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock className="h-2.5 w-2.5 text-muted-foreground" />
-                          <span className="text-[9px] text-muted-foreground">Pickup in {local.nearestEta}</span>
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-[11px] text-muted-foreground">Pickup {local.nearestEta}</span>
                         </div>
                       </div>
 
-                      {/* Nearest store name */}
-                      <p className="text-[9px] text-muted-foreground mt-1">
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
                         Nearest: <span className="font-medium text-foreground">{local.nearestStore}</span>
                       </p>
                     </div>
@@ -342,9 +337,9 @@ const Category = () => {
 
                   {/* Low stock */}
                   {lowStock && (
-                    <div className="flex items-center gap-1 mt-1.5">
-                      <Flame className="h-3 w-3 text-destructive" />
-                      <p className="text-[10px] font-semibold text-destructive">
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <Flame className="h-3.5 w-3.5 text-destructive" />
+                      <p className="text-xs font-semibold text-destructive">
                         Only {product.stock} left nearby
                       </p>
                     </div>
@@ -354,9 +349,9 @@ const Category = () => {
                   {product.inStock && (
                     <button
                       onClick={() => navigate(`/product/${product.id}`)}
-                      className="mt-2.5 w-full h-9 rounded-xl bg-primary text-primary-foreground text-[11px] font-bold active:scale-[0.98] transition-transform flex items-center justify-center gap-1.5"
+                      className="mt-3 w-full h-10 rounded-xl bg-primary text-primary-foreground text-sm font-semibold active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
                     >
-                      <MapPin className="h-3 w-3" />
+                      <MapPin className="h-4 w-4" />
                       Compare Local Prices
                     </button>
                   )}
@@ -371,7 +366,7 @@ const Category = () => {
             <p className="text-sm text-muted-foreground">No products match your filters</p>
             <button
               onClick={() => { setActiveFilter("All"); setBrandFilter(null); }}
-              className="mt-2 text-xs font-semibold text-primary"
+              className="mt-3 text-sm font-semibold text-primary"
             >
               Clear all filters
             </button>
